@@ -16,6 +16,10 @@ A real-time, collaborative task management application - a shared sheet where a 
 
 A **sheet** (board) contains **tasks**. Multiple users can open and edit the same sheet simultaneously - moving tasks, editing fields, adding subtasks - and observing each other's changes propagate live. Every change is tracked, and the system runs its own background logic for recurring work and due dates rather than relying on someone to check in manually.
 
+## End User Description
+
+Project manager Marius is looking for a simple way to create a task allocation plan that multiple people can edit simultaneously. He wants more interactivity than Google Docs offers—specifically, the ability to add to-do lists, flowcharts, etc. During the project, he wants the team to clearly see what has and has not been completed, as well as which tasks are running behind schedule or progressing faster than expected. These inquiries lead him to discover ManageD. With ManageD, project execution runs smoother than ever thanks to the clear visualization of the plan.
+
 ## Features
 
 ### Alpha Version
