@@ -40,4 +40,37 @@ Tying the system together and extending it beyond the app itself.
 - **Notifications**: a background service that watches for due dates and mentions, and delivers in-app or email alerts.
 - **Import / export**: bring data in or take it out via CSV, Excel, or JSON.
 
-  
+## Getting Started
+
+**Requirements:** .NET 10, Node 24
+
+Backend and frontent must be run simultaneously in separate terminals.
+
+### Setup
+
+```bash
+cd backend
+dotnet restore
+
+cd frontend
+npm install
+```
+
+### Running
+
+**Backend:**
+
+```bash
+cd backend
+dotnet run
+```
+
+**Frontend:**
+
+```bash
+cd frontend
+npm run dev
+```
+
+Frontend runs on `localhost:5173`. The proxy in `frontend/vite.config.ts`
+forwards `/api/*` requests to the .NET backend on `localhost:5001`.
