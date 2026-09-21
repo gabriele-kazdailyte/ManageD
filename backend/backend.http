@@ -1,6 +1,26 @@
 @backend_HostAddress = http://localhost:5093
 
-GET {{backend_HostAddress}}/weatherforecast/
-Accept: application/json
+### 1 GET Current Text
+GET {{backend_HostAddress}}/api/users
+Accept: text/plain
 
 ###
+
+### 2 POST (Overwrite)
+POST {{backend_HostAddress}}/api/users
+Content-Type: application/json
+
+{
+  "content": "Hello World!"
+}
+
+### 3. PUT (Append Text)
+PUT {{backend_HostAddress}}/api/users
+Content-Type: application/json
+
+{
+  "content": " Adding more text."
+}
+
+### 4. DELETE 
+DELETE {{backend_HostAddress}}/api/users
