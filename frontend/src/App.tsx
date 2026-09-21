@@ -1,7 +1,11 @@
+import Sidebar from './components/Sidebar'
+import './App.css'
+
 function App() {
   return (
     <div id="app">
-      {/* Your task sheet UI goes here */}
+      <Sidebar />
+      <main className="main-content"></main>
     </div>
   )
 }
