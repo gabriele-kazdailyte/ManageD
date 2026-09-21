@@ -54,7 +54,7 @@ Backend and frontent must be run simultaneously in separate terminals.
 
 ```bash
 cd backend
-dotnet restore
+dotnet restore ManageD.slnx
 
 cd frontend
 npm install
@@ -66,7 +66,7 @@ npm install
 
 ```bash
 cd backend
-dotnet run
+dotnet run --project src/ManageD.Api
 ```
 
 **Frontend:**
@@ -96,10 +96,24 @@ Standards are based on the official Microsoft C# coding conventions (https://lea
 
 
 ## Branch Naming
+
 - `name/purpose`: the author and the purpose of the branch is clearly stated.
 
+## Continuous Integration
 
+Every pull request targeting `main` runs the **Backend Format Check** GitHub Action (`.github/workflows/backend-format-check.yaml`), which verifies the
+backend code is formatted according to `backend/.editorconfig`. PRs with unformatted code will fail this check and cannot be merged.
 
+**Before pushing**, format your code locally:
 
+```bash
+cd backend
+dotnet format ManageD.slnx
+```
 
+To check formatting without modifying files (same check CI runs):
 
+```bash
+cd backend
+dotnet format ManageD.slnx --verify-no-changes
+```
