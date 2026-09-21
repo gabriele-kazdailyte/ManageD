@@ -77,4 +77,29 @@ npm run dev
 ```
 
 Frontend runs on `localhost:5173`. The proxy in `frontend/vite.config.ts`
+
 forwards `/api/*` requests to the .NET backend on `localhost:5001`.
+
+
+## Coding Standards
+
+Standards are based on the official Microsoft C# coding conventions (https://learn.microsoft.com/dotnet/csharp/fundamentals/coding-style/coding-conventions):
+
+- **Naming**: `PascalCase` for classes, methods, properties, and public members; `camelCase` for local variables and private fields (prefixed with `_`, e.g. `_taskRepository`).
+- **Braces**: Allman style (opening brace on its own line).
+- **`var`**: use when the type is obvious from the right-hand side; otherwise use an explicit type.
+- **Nullable reference types**: enabled project-wide - avoid `!` suppression unless justified with a comment.
+- **Async**: all I/O-bound methods are `async` and suffixed with `Async` (e.g. `GetTaskByIdAsync`).
+- **One class per file**, file name matches the class name.
+- **Avoid hardcoded values**: use named constants or enums instead of hardcoded strings/numbers.
+- **Comments**: explain *why*, not *what*, the code should be self-explanatory for the *what.*
+
+
+## Branch Naming
+- `name/purpose`: the author and the purpose of the branch is clearly stated.
+
+
+
+
+
+
