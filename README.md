@@ -117,3 +117,4 @@ To check formatting without modifying files (same check CI runs):
 cd backend
 dotnet format ManageD.slnx --verify-no-changes
 ```
+
