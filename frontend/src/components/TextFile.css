@@ -1,0 +1,16 @@
+.draggable-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  color: var(--text-h);
+  font-size: 14px;
+  line-height: 1.2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  cursor: grab;
+  user-select: none;
+}
+
+.draggable-block:active {
+  cursor: grabbing;
+}
