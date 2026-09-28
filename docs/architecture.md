@@ -6,7 +6,7 @@ Frontend (React) talks to two backend entry points: a REST API for CRUD, and a S
 
 CORS is enabled from the start: frontend and backend run on different ports in dev, so the backend must explicitly allow the frontend's origin, for both the REST API and the hub.
 
-Exact request/response/payload shapes are in `api-contract.md` — this doc covers design, that one covers the wire format BED and FED both build against.
+Exact request/response/payload shapes are in `api-contract.md` — this doc covers design, that one covers the wire format backend and frontend both build against.
 
 ## Entities
 

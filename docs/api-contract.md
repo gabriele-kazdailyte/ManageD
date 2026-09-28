@@ -1,6 +1,6 @@
 # API Contract — Alpha
 
-Exact wire shapes for REST and the hub. BED and FED both build against this — if a shape needs to change, update it here first, then tell the other side.
+Exact wire shapes for REST and the hub. Backend and frontend both build against this — if a shape needs to change, update it here first, then tell the other side.
 
 Types: `uuid` = string, `datetime` = ISO 8601 string, UTC. `"type | null"` inside a JSON block is schema notation for an optional/nullable field, not a literal value to send.
 

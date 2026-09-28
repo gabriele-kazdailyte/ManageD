@@ -1,4 +1,4 @@
-# Alpha Plan — Frontend (FED)
+# Alpha Plan — Frontend
 
 See `architecture.md` for design, `alpha.md` for scope, `api-contract.md` for exact request/response/payload shapes.
 
@@ -16,9 +16,9 @@ See `architecture.md` for design, `alpha.md` for scope, `api-contract.md` for ex
 
 ## Sequencing notes
 
-- Steps 1–3 don't need a real backend — build against a stub REST layer (hardcoded/mocked responses) while BED is still wiring up the database.
+- Steps 1–3 don't need a real backend — build against a stub REST layer (hardcoded/mocked responses) while backend is still wiring up the database.
 - Step 4 (`DocumentProvider`) is the one piece everything else in the document view depends on — build and test its reducer logic against fake events before wiring up a real hub connection.
-- Get the hub method/event names and REST endpoint shapes from BED as soon as they're settled (see `plan-backend.md`), so the stub layer matches the real contract and swapping it in later is a non-event.
+- Get the hub method/event names and REST endpoint shapes from backend as soon as they're settled (see `plan-backend.md`), so the stub layer matches the real contract and swapping it in later is a non-event.
 
 ## Out of scope for alpha
 

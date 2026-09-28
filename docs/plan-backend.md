@@ -1,4 +1,4 @@
-# Alpha Plan — Backend (BED)
+# Alpha Plan — Backend
 
 See `architecture.md` for design, `alpha.md` for scope, `api-contract.md` for exact request/response/payload shapes.
 
@@ -20,7 +20,7 @@ This list is numbered by dependency order, not by when to write tests — per th
 
 - Steps 2–3 can be stubbed (in-memory fake data, no real DB) so 4–8 aren't blocked waiting on a working EF setup — swap the stub for the real `DbContext` once it's ready.
 - Step 6 is the one piece of logic both the controller and the hub depend on — write its tests first, build it against them, before wiring either entry point to it.
-- Hand the frontend team the hub method/event names (step 8) and REST endpoints (steps 4–5) as soon as they're decided, even before they're implemented — FED can build against that contract with a stub server.
+- Hand the frontend team the hub method/event names (step 8) and REST endpoints (steps 4–5) as soon as they're decided, even before they're implemented — frontend can build against that contract with a stub server.
 
 ## Out of scope for alpha
 
