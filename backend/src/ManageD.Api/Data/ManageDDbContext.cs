@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ManageD.Api.Models;
 
 namespace ManageD.Api.Data;
 
@@ -8,4 +9,8 @@ public class ManageDDbContext : DbContext
         : base(options)
     {
     }
+
+    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<Document> Documents { get; set; } = null!;
+    public DbSet<TodoItem> TodoItems { get; set; } = null!;
 }
