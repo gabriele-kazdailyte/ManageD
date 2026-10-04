@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using ManageD.Api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ManageD.Api.Data;
 

@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using ManageD.Api.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
