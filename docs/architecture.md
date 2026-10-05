@@ -4,6 +4,8 @@
 
 Frontend (React) talks to two backend entry points: a REST API for CRUD, and a SignalR hub for real-time editing. Both call one shared service layer, which is the only thing that touches the database.
 
+Containment: a **User** belongs to one or more **Workspace**s. A **Workspace** contains **Asset**s — a wrapper around a typed content object (`TemplateType`, `Todo` only for alpha). Workspace membership gates what's listed for a user; it isn't role-based — RBAC (owner/editor/viewer per asset) stays out of scope, see `alpha.md`.
+
 CORS is enabled from the start: frontend and backend run on different ports in dev, so the backend must explicitly allow the frontend's origin, for both the REST API and the hub.
 
 Exact request/response/payload shapes are in `api-contract.md` — this doc covers design, that one covers the wire format backend and frontend both build against.
@@ -11,8 +13,9 @@ Exact request/response/payload shapes are in `api-contract.md` — this doc cove
 ## Entities
 
 - **User** — `Id (uuid), DisplayName (string), CreatedAt (datetime, UTC)`
-- **Document** — `Id (uuid), Title (string), TemplateType (enum, Todo only), Revision (int, concurrency token), OwnerId (uuid, ForeignKey→User), CreatedAt (datetime, UTC), UpdatedAt (datetime, UTC)`
-- **TodoItem** — `Id (uuid), DocumentId (uuid, ForeignKey→Document), Text (string), IsDone (bool), Order (int)`
+- **Workspace** — `Id (uuid), Name (string), CreatedAt (datetime, UTC)`. Has a many-to-many `Users` navigation (membership) and a one-to-many `Assets` navigation.
+- **Asset** — `Id (uuid), Title (string), TemplateType (enum, Todo only), Revision (int, concurrency token), WorkspaceId (uuid, ForeignKey→Workspace), CreatedAt (datetime, UTC), UpdatedAt (datetime, UTC)`
+- **TodoItem** — `Id (uuid), AssetId (uuid, ForeignKey→Asset), Text (string), IsDone (bool), Order (int)`
 
 ## REST API
 
@@ -23,31 +26,42 @@ Exact request/response/payload shapes are in `api-contract.md` — this doc cove
 | `POST /api/users` | Creates a user from a display name, returns the user id. |
 | `GET /api/users/{id}` | Returns a user's display name. |
 
-### DocumentsController — `/api/documents`
+### WorkspacesController — `/api/workspaces`
 
 | Endpoint | Description |
 |---|---|
-| `POST /api/documents` | Creates an empty Todo document owned by the given user. |
-| `GET /api/documents?ownerId=` | Lists documents owned by the given user. `ownerId` is required — this is always "my documents," not a global list; there's no other access boundary in alpha. |
-| `GET /api/documents/{id}` | Returns a document's full snapshot: title, revision, items. |
-| `DELETE /api/documents/{id}` | Deletes a document. |
+| `POST /api/workspaces` | Creates a workspace and adds the creator as its first member. |
+| `GET /api/workspaces?userId=` | Lists workspaces the given user is a member of. `userId` is required. |
+| `POST /api/workspaces/{id}/members` | Adds a user to the workspace. No permission check — any caller naming a `userId` can add it, consistent with alpha having no real auth. |
+| `DELETE /api/workspaces/{id}` | Deletes a workspace. |
+
+### AssetsController — `/api/assets`
+
+| Endpoint | Description |
+|---|---|
+| `POST /api/assets` | Creates an empty Todo asset inside the given workspace. |
+| `GET /api/assets?workspaceId=` | Lists assets inside the given workspace. `workspaceId` is required. |
+| `GET /api/assets/{id}` | Returns an asset's full snapshot: title, revision, items. |
+| `DELETE /api/assets/{id}` | Deletes an asset. |
 
 Content is never created or edited via REST — only through the hub.
 
-Validation failures return the framework-default 400 `application/problem+json` body. A missing document/user returns an empty 404.
+Validation failures return the framework-default 400 `application/problem+json` body. A missing workspace/asset/user returns an empty 404.
 
-## SignalR Hub — `DocumentHub` at `/hubs/document`
+Membership isn't enforced as a security boundary on direct-by-id lookups (`GET /api/assets/{id}` etc.) — there's no auth to make that enforcement meaningful yet. It governs what's *listed* for a user, not what's reachable with an id already in hand.
+
+## SignalR Hub — `AssetHub` at `/hubs/asset`
 
 ### Client → Server
 
 | Method | Description |
 |---|---|
-| `JoinDocument(documentId, userId)` | Adds the connection to the document's group, registers presence, notifies the group. |
-| `LeaveDocument(documentId)` | Removes the connection from the group and presence. |
-| `AddItem(documentId, baseRevision, text)` | Adds a new item against a known revision. Appended at the end — `Order` is set to the current max `Order` in the document, plus one. |
-| `UpdateItem(documentId, baseRevision, itemId, text?, isDone?)` | Edits an item's text and/or done state against a known revision. `null` on either parameter means that field is left unchanged, not cleared — `Text` is already required non-empty by validation, so there's no valid "clear it" state to distinguish from "don't touch it." |
-| `DeleteItem(documentId, baseRevision, itemId)` | Removes an item against a known revision. |
-| `ReorderItem(documentId, baseRevision, itemId, newOrder)` | Moves an item to a new integer position against a known revision. `Order` is a plain integer; every item between the old and new position shifts by one to make room, so a reorder can touch — and conflict with edits to — items it didn't directly target. |
+| `JoinAsset(assetId, userId)` | Adds the connection to the asset's group, registers presence, notifies the group. |
+| `LeaveAsset(assetId)` | Removes the connection from the group and presence. |
+| `AddItem(assetId, baseRevision, text)` | Adds a new item against a known revision. Appended at the end — `Order` is set to the current max `Order` in the asset, plus one. |
+| `UpdateItem(assetId, baseRevision, itemId, text?, isDone?)` | Edits an item's text and/or done state against a known revision. `null` on either parameter means that field is left unchanged, not cleared — `Text` is already required non-empty by validation, so there's no valid "clear it" state to distinguish from "don't touch it." |
+| `DeleteItem(assetId, baseRevision, itemId)` | Removes an item against a known revision. |
+| `ReorderItem(assetId, baseRevision, itemId, newOrder)` | Moves an item to a new integer position against a known revision. `Order` is a plain integer; every item between the old and new position shifts by one to make room, so a reorder can touch — and conflict with edits to — items it didn't directly target. |
 
 One hub method per operation, rather than a single method taking a generic payload, avoids needing a JSON type discriminator for a polymorphic operation type.
 
@@ -60,60 +74,67 @@ One hub method per operation, rather than a single method taking a generic paylo
 | `ItemDeleted(itemId, newRevision)` | Broadcast when `DeleteItem` is accepted. |
 | `ItemReordered(changes, newRevision)` | Broadcast when `ReorderItem` is accepted. `changes` is a list of `{itemId, order}` — every item whose `Order` actually changed, including the moved item itself, not just the one targeted. |
 | `EditRejected(currentRevision, currentSnapshot)` | Sent to the caller only, when `baseRevision` is stale. |
-| `UserJoined(userId, displayName)` | Broadcast when a user joins a document. |
-| `UserLeft(userId)` | Broadcast when a user leaves a document. |
+| `UserJoined(userId, displayName)` | Broadcast when a user joins an asset. |
+| `UserLeft(userId)` | Broadcast when a user leaves an asset. |
 
 Outbound events mirror the inbound methods one-for-one, for the same reason inbound is split: a single generic `EditApplied(operation, newRevision)` would need the same polymorphic serialization the split methods were chosen to avoid.
 
-A hub method that targets a missing document/item, or hits any failure unrelated to `baseRevision`, throws a `HubException` — SignalR surfaces this as a rejected invocation to the caller only. `EditRejected` is reserved specifically for a stale `baseRevision`, not for errors generally.
+A hub method that targets a missing asset/item, or hits any failure unrelated to `baseRevision`, throws a `HubException` — SignalR surfaces this as a rejected invocation to the caller only. `EditRejected` is reserved specifically for a stale `baseRevision`, not for errors generally.
 
-On disconnect — explicit `LeaveDocument`, or an ungraceful drop (tab closed, network loss) handled by overriding `OnDisconnectedAsync` — the hub looks up every document this connection was present in via `PresenceService`, removes it, and broadcasts `UserLeft` for each. Presence is keyed by connection id specifically so this lookup works without the client having to say anything on its way out.
+On disconnect — explicit `LeaveAsset`, or an ungraceful drop (tab closed, network loss) handled by overriding `OnDisconnectedAsync` — the hub looks up every asset this connection was present in via `PresenceService`, removes it, and broadcasts `UserLeft` for each. Presence is keyed by connection id specifically so this lookup works without the client having to say anything on its way out.
 
 ## Service Layer
 
 | Service | Responsibility |
 |---|---|
-| `DocumentService` | Create, read, list documents; one internal `ApplyOperation(documentId, baseRevision, operation)` method, taking an internal discriminated-union operation type, used by all four hub methods. Increments `Revision` on success. |
-| `PresenceService` | Tracks which connections are viewing which document, in memory, keyed by connection id. |
+| `WorkspaceService` | Creates a workspace (adding the creator as its first member), adds members, lists a user's workspaces. |
+| `AssetService` | Create, read, list assets; one internal `ApplyOperation(assetId, baseRevision, operation)` method, taking an internal discriminated-union operation type, used by all four hub methods. Increments `Revision` on success. |
+| `PresenceService` | Tracks which connections are viewing which asset, in memory, keyed by connection id. |
 | `UserService` | Creates and reads users. |
 
 Each hub method constructs the matching operation record and calls `ApplyOperation`; the polymorphism avoided on the wire (see SignalR Hub) doesn't apply here, since this type never gets serialized — it exists only to avoid repeating the load-check-revision-save sequence four times.
 
 ## Validation
 
-Data Annotations on REST DTOs (`[Required]`, `[MaxLength]`) for shape validation — display name, title, item text non-empty and within length limits. The framework rejects malformed requests with a 400 before a handler runs. Rules that need DB access (e.g. an `itemId` belongs to the given `documentId`) aren't shape validation and live in `DocumentService`, not on a DTO.
+Data Annotations on REST DTOs (`[Required]`, `[MaxLength]`) for shape validation — display name, workspace/asset name/title, item text non-empty and within length limits. The framework rejects malformed requests with a 400 before a handler runs. Rules that need DB access (e.g. an `itemId` belongs to the given `assetId`) aren't shape validation and live in the relevant service, not on a DTO.
 
 ## Data Access
 
 **SQLite** — single file, no external DB process to run in dev. Chosen for alpha because the goal is proving the concurrency mechanism works, not production-grade storage; revisit for beta if real concurrent-load behavior needs testing.
 
+`Workspace`-`User` membership uses EF Core's skip navigations (`Workspace.Users`, `User.Workspaces`, both `ICollection<T>`) rather than an explicit join entity — EF generates and manages the bridge table itself. No membership class to write or maintain; add one back only if membership ever needs its own data (a role, a joined-at timestamp exposed to the API, etc.) beyond the plain yes/no it is now.
+
 Services talk to the database through EF Core's `DbContext`/`DbSet<T>` directly — no repository layer. `DbContext` already provides Unit of Work (batches changes, commits them as one transaction on `SaveChangesAsync`) and per-entity querying, so a hand-rolled repository on top would just forward to it. Entities are plain C# classes; EF maps them to tables and translates LINQ queries into SQL.
 
 ## Concurrency
 
-`Revision` is a plain `int`, marked `[ConcurrencyCheck]` — not the `[Timestamp]`/rowversion pattern common in EF Core tutorials, which is a `byte[]` column type SQLite doesn't support the way SQL Server does. The app increments `Revision` itself as part of applying an operation. Applying an operation loads the document, mutates the relevant `TodoItem`, and increments `Revision`, all in one `SaveChangesAsync()` call. EF emits `UPDATE ... WHERE Id = @id AND Revision = @loadedRevision`; if another operation already advanced the revision, zero rows match and EF throws `DbUpdateConcurrencyException`. `DocumentService` catches this and returns `Conflict`. The database enforces atomicity of check-and-increment — the service never compares revisions in memory before writing.
+`Revision` is a plain `int`, marked `[ConcurrencyCheck]` — not the `[Timestamp]`/rowversion pattern common in EF Core tutorials, which is a `byte[]` column type SQLite doesn't support the way SQL Server does. The app increments `Revision` itself as part of applying an operation. Applying an operation loads the asset, mutates the relevant `TodoItem`, and increments `Revision`, all in one `SaveChangesAsync()` call. EF emits `UPDATE ... WHERE Id = @id AND Revision = @loadedRevision`; if another operation already advanced the revision, zero rows match and EF throws `DbUpdateConcurrencyException`. `AssetService` catches this and returns `Conflict`. The database enforces atomicity of check-and-increment — the service never compares revisions in memory before writing.
+
+Only `Asset.Revision` is a concurrency token — `Workspace` has no concurrent-editing concept in alpha; it's created and listed, never collaboratively edited.
 
 ## Routing
 
-React Router, two routes:
+React Router, three routes, drilling down the containment chain:
 
 | Route | Renders |
 |---|---|
-| `/` | Dashboard — list/create/delete documents. |
-| `/documents/:id` | Document view — the id comes from the URL, so refresh and shareable links work. |
+| `/` | Workspaces the current user belongs to — list/create. |
+| `/workspaces/:workspaceId` | Assets inside that workspace — list/create/delete. |
+| `/workspaces/:workspaceId/assets/:assetId` | The asset view — live editing. Every id comes from the URL, so refresh and shareable links work at every level. |
 
 ## Frontend State
 
-Context + `useReducer`, scoped to the document view. Each hub event maps to a reducer action (`ITEM_ADDED`, `ITEM_UPDATED`, `ITEM_DELETED`, `ITEM_REORDERED`, `EDIT_REJECTED`, `USER_JOINED`, `USER_LEFT`), plus a `LOCAL_EDIT` action for the optimistic apply. A `DocumentProvider` owns the reducer, seeded from the REST snapshot; child components read state and dispatch via context instead of prop drilling.
+Context + `useReducer`, scoped to the asset view (the one screen with real-time state). Each hub event maps to a reducer action (`ITEM_ADDED`, `ITEM_UPDATED`, `ITEM_DELETED`, `ITEM_REORDERED`, `EDIT_REJECTED`, `USER_JOINED`, `USER_LEFT`), plus a `LOCAL_EDIT` action for the optimistic apply. An `AssetProvider` owns the reducer, seeded from the REST snapshot; child components read state and dispatch via context instead of prop drilling. Workspace/asset lists are plain REST data, no reducer needed — they're not edited in real time.
 
 ## Frontend Flow
 
 1. On boot, load `{userId, displayName}` from localStorage, or create one via `POST /api/users`.
-2. `/` lists documents via `GET /api/documents`; creating one calls `POST /api/documents` and navigates to `/documents/:id`.
-3. Opening `/documents/:id` — always `GET /api/documents/{id}` for the snapshot first, then connect to the hub and call `JoinDocument`. This runs on every connect, including reconnects after a dropped connection, so the client never resumes from state that might have missed edits made while it was offline.
-4. Local edits apply optimistically, then are sent via the matching hub method (`AddItem`/`UpdateItem`/`DeleteItem`/`ReorderItem`); state is only confirmed once the matching broadcast event is received back from the group.
-5. `EditRejected` discards the optimistic change and replaces state with `currentSnapshot`.
-6. Leaving a document calls `LeaveDocument` and closes the connection.
+2. `/` lists the user's workspaces (`GET /api/workspaces?userId=`); creating one calls `POST /api/workspaces` and navigates into it.
+3. `/workspaces/:workspaceId` lists that workspace's assets (`GET /api/assets?workspaceId=`); creating one calls `POST /api/assets` and navigates into it.
+4. Opening an asset — always `GET /api/assets/{id}` for the snapshot first, then connect to the hub and call `JoinAsset`. This runs on every connect, including reconnects after a dropped connection, so the client never resumes from state that might have missed edits made while it was offline.
+5. Local edits apply optimistically, then are sent via the matching hub method (`AddItem`/`UpdateItem`/`DeleteItem`/`ReorderItem`); state is only confirmed once the matching broadcast event is received back from the group.
+6. `EditRejected` discards the optimistic change and replaces state with `currentSnapshot`.
+7. Leaving an asset calls `LeaveAsset` and closes the connection.
 
 ## Deferred
 
@@ -121,3 +142,4 @@ Not part of alpha, decided later:
 
 - **CI** — no GitHub Actions gate on PRs yet.
 - **Deployment/hosting** — no target environment chosen yet.
+- **RBAC** — per-asset owner/editor/viewer roles. Workspace membership (this doc) is a flat yes/no gate, not a replacement for this.
