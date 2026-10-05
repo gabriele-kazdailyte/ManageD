@@ -8,7 +8,7 @@ function WorkspacePage() {
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
 
-    const item = event.dataTransfer.getData('application/text-file')
+    const item = event.dataTransfer.getData('application/todo-list')
     if (!item) {
       return
     }

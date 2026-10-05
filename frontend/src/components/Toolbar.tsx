@@ -1,15 +1,15 @@
-import TextFile from './TextFile'
+import TodoList from './TodoList'
 import './Toolbar.css'
 
 type ToolbarProps = {
   blockLabel?: string
 }
 
-function Toolbar({ blockLabel = 'Text File' }: ToolbarProps) {
+function Toolbar({ blockLabel = 'Todo List' }: ToolbarProps) {
   return (
     <div className="toolbar" aria-label="Toolbar">
       <div className="toolbar__dropzone" aria-label="Toolbar drop zone">
-        <TextFile label={blockLabel} />
+        <TodoList label={blockLabel} />
       </div>
     </div>
   )
