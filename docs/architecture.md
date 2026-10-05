@@ -114,27 +114,28 @@ Only `Asset.Revision` is a concurrency token — `Workspace` has no concurrent-e
 
 ## Routing
 
-React Router, three routes, drilling down the containment chain:
+React Router, two routes. There is no per-asset route: a workspace is a canvas, and its assets live on it and are edited inline.
 
 | Route | Renders |
 |---|---|
 | `/` | Workspaces the current user belongs to — list/create. |
-| `/workspaces/:workspaceId` | Assets inside that workspace — list/create/delete. |
-| `/workspaces/:workspaceId/assets/:assetId` | The asset view — live editing. Every id comes from the URL, so refresh and shareable links work at every level. |
+| `/workspaces/:workspaceId` | The workspace canvas — its assets, edited inline, with live sync. The id comes from the URL, so refresh and shareable links work. |
 
 ## Frontend State
 
-Context + `useReducer`, scoped to the asset view (the one screen with real-time state). Each hub event maps to a reducer action (`ITEM_ADDED`, `ITEM_UPDATED`, `ITEM_DELETED`, `ITEM_REORDERED`, `EDIT_REJECTED`, `USER_JOINED`, `USER_LEFT`), plus a `LOCAL_EDIT` action for the optimistic apply. An `AssetProvider` owns the reducer, seeded from the REST snapshot; child components read state and dispatch via context instead of prop drilling. Workspace/asset lists are plain REST data, no reducer needed — they're not edited in real time.
+Context + `useReducer`, scoped to the workspace canvas (the one screen with real-time state). Each hub event maps to a reducer action (`ITEM_ADDED`, `ITEM_UPDATED`, `ITEM_DELETED`, `ITEM_REORDERED`, `EDIT_REJECTED`, `USER_JOINED`, `USER_LEFT`), plus a `LOCAL_EDIT` action for the optimistic apply. A `WorkspaceProvider` owns the reducer, seeded from the REST snapshot; child components read state and dispatch via context instead of prop drilling. The workspaces list on `/` is plain REST data, no reducer needed — it's not edited in real time.
+
+Canvas-specific actions (placing, moving, resizing assets) aren't listed here yet — they depend on the hub and entity changes planned in a separate PR.
 
 ## Frontend Flow
 
 1. On boot, load `{userId, displayName}` from localStorage, or create one via `POST /api/users`.
 2. `/` lists the user's workspaces (`GET /api/workspaces?userId=`); creating one calls `POST /api/workspaces` and navigates into it.
-3. `/workspaces/:workspaceId` lists that workspace's assets (`GET /api/assets?workspaceId=`); creating one calls `POST /api/assets` and navigates into it.
-4. Opening an asset — always `GET /api/assets/{id}` for the snapshot first, then connect to the hub and call `JoinAsset`. This runs on every connect, including reconnects after a dropped connection, so the client never resumes from state that might have missed edits made while it was offline.
+3. `/workspaces/:workspaceId` is the canvas. Opening it — always fetch the snapshot first (the workspace's assets, `GET /api/assets?workspaceId=`), then connect to the hub and join the workspace. This runs on every connect, including reconnects after a dropped connection, so the client never resumes from state that might have missed edits made while it was offline.
+4. Creating an asset happens on the canvas itself (`POST /api/assets`), not on a separate page.
 5. Local edits apply optimistically, then are sent via the matching hub method (`AddItem`/`UpdateItem`/`DeleteItem`/`ReorderItem`); state is only confirmed once the matching broadcast event is received back from the group.
 6. `EditRejected` discards the optimistic change and replaces state with `currentSnapshot`.
-7. Leaving an asset calls `LeaveAsset` and closes the connection.
+7. Leaving the canvas leaves the workspace on the hub and closes the connection.
 
 ## Deferred
 
