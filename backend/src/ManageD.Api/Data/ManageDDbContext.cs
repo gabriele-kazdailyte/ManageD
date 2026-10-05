@@ -11,6 +11,7 @@ public class ManageDDbContext : DbContext
     }
 
     public DbSet<User> Users { get; set; } = null!;
-    public DbSet<Document> Documents { get; set; } = null!;
+    public DbSet<Workspace> Workspaces { get; set; } = null!;
+    public DbSet<Asset> Assets { get; set; } = null!;
     public DbSet<TodoItem> TodoItems { get; set; } = null!;
 }
