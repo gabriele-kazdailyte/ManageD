@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
-namespace ManageD.Controllers
+namespace ManageD.Api.Controllers
 {
-	public class TextRequest
-	{
-    	public string Content { get; set; } = string.Empty;
-	}
+    public class TextRequest
+    {
+        public string Content { get; set; } = string.Empty;
+    }
 
     [ApiController]
     [Route("api/[controller]")]

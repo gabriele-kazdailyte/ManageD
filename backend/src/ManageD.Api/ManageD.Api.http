@@ -1,0 +1,24 @@
+@ManageD_Api_HostAddress = http://localhost:5093
+
+### 1. GET Current Text
+GET {{ManageD_Api_HostAddress}}/api/users
+Accept: text/plain
+
+### 2. POST (Overwrite)
+POST {{ManageD_Api_HostAddress}}/api/users
+Content-Type: application/json
+
+{
+  "content": "Hello World!"
+}
+
+### 3. PUT (Append Text)
+PUT {{ManageD_Api_HostAddress}}/api/users
+Content-Type: application/json
+
+{
+  "content": " Adding more text."
+}
+
+### 4. DELETE
+DELETE {{ManageD_Api_HostAddress}}/api/users
