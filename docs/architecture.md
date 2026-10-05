@@ -14,7 +14,7 @@ Exact request/response/payload shapes are in `api-contract.md` — this doc cove
 
 - **User** — `Id (uuid), DisplayName (string), CreatedAt (datetime, UTC)`
 - **Workspace** — `Id (uuid), Name (string), CreatedAt (datetime, UTC)`. Has a many-to-many `Users` navigation (membership) and a one-to-many `Assets` navigation.
-- **Asset** — `Id (uuid), Title (string), TemplateType (enum, Todo only), Revision (int, concurrency token), WorkspaceId (uuid, ForeignKey→Workspace), CreatedAt (datetime, UTC), UpdatedAt (datetime, UTC)`
+- **Asset** — `Id (uuid), Title (string), TemplateType (enum, Todo only), Revision (int, concurrency token), WorkspaceId (uuid, ForeignKey→Workspace), X (float), Y (float), SizeX (float), SizeY (float), ZPos (int), CreatedAt (datetime, UTC), UpdatedAt (datetime, UTC)`. The canvas fields (`X`…`ZPos`) are added now so beta doesn't need another schema redo; nothing reads or writes them in alpha — see Canvas (beta).
 - **TodoItem** — `Id (uuid), AssetId (uuid, ForeignKey→Asset), Text (string), IsDone (bool), Order (int)`
 
 ## REST API
@@ -137,6 +137,32 @@ Canvas-specific actions (placing, moving, resizing assets) aren't listed here ye
 6. `EditRejected` discards the optimistic change and replaces state with `currentSnapshot`.
 7. Leaving the canvas leaves the workspace on the hub and closes the connection.
 
+## Canvas (beta)
+
+A workspace is a canvas: its assets are placed on it, resized and stacked, and edited inline. **In alpha only the database fields exist** — `X`, `Y`, `SizeX`, `SizeY` (float) and `ZPos` (int) on `Asset`, listed under Entities — so beta doesn't need another schema redo. Everything below is beta, not built yet.
+
+### REST
+
+Creating an asset accepts its position and size. Listing a workspace's assets and fetching a snapshot return them.
+
+### Hub: one group per workspace
+
+A SignalR "group" is the set of connections that receive the same messages. In alpha a client joins a group per asset (`JoinAsset`), so it only hears about the one asset it has open. On a canvas, one screen shows all of a workspace's assets at once, so per-asset groups would mean joining one group per asset. Instead the client joins once per workspace (`JoinWorkspace`) and gets one stream of events for everything on that canvas.
+
+- **Join/leave:** `JoinWorkspace(workspaceId, userId)` and `LeaveWorkspace(workspaceId)` replace `JoinAsset`/`LeaveAsset`. Presence becomes "who is on this canvas", and disconnect cleanup runs per workspace, same mechanism as before.
+- **Layout operations (new):** `AddAsset`, `MoveAsset`, `ResizeAsset`, `SetZPos`, `DeleteAsset`. One method per operation, as in alpha, each with a matching broadcast event (`AssetAdded`, `AssetMoved`, `AssetResized`, `AssetZPosChanged`, `AssetDeleted`).
+- **Item operations:** `AddItem`, `UpdateItem`, `DeleteItem`, `ReorderItem` keep their shape. They still target an `assetId`, and their events now carry it, so every client knows which asset on the canvas changed.
+- **Broadcast and errors:** same as alpha — events go to the whole group including the sender, and a missing workspace or asset throws a `HubException`.
+- **Connect/reconnect:** the client first fetches the workspace's assets over REST, then joins the group, so it never resumes from stale state.
+
+### Open: revision and conflict rules
+
+How layout changes interact with `Revision` and conflict detection is undecided — see `tbd.md`.
+
+### Not stored
+
+Pan offset and zoom level are per-user view state in the frontend and never reach the backend.
+
 ## Deferred
 
 Not part of alpha, decided later:
@@ -144,3 +170,4 @@ Not part of alpha, decided later:
 - **CI** — no GitHub Actions gate on PRs yet.
 - **Deployment/hosting** — no target environment chosen yet.
 - **RBAC** — per-asset owner/editor/viewer roles. Workspace membership (this doc) is a flat yes/no gate, not a replacement for this.
+- **Open decisions** — see `tbd.md`.
