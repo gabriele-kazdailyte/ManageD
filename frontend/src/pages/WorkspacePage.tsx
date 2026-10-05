@@ -1,13 +1,26 @@
-import { useParams } from 'react-router-dom'
+import { useState } from 'react'
+import Toolbar from '../components/Toolbar'
+import Canvas from '../components/Canvas'
 
 function WorkspacePage() {
-  const { workspaceId } = useParams()
+  const [droppedBlocks, setDroppedBlocks] = useState<string[]>([])
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+
+    const item = event.dataTransfer.getData('application/text-file')
+    if (!item) {
+      return
+    }
+
+    setDroppedBlocks((current) => [...current, item])
+  }
 
   return (
-    <div>
-      <h1>Workspace</h1>
-      <p>workspaceId: {workspaceId}</p>
-    </div>
+    <>
+      <Toolbar />
+      <Canvas droppedBlocks={droppedBlocks} onDrop={handleDrop} />
+    </>
   )
 }
 

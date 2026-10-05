@@ -1,4 +1,4 @@
-.workspace {
+.canvas {
   flex: 1;
   padding: 24px;
   display: flex;
@@ -7,7 +7,7 @@
   min-height: 0;
 }
 
-.workspace__empty {
+.canvas__empty {
   width: min(80%, 520px);
   min-height: 220px;
   border: 1px dashed var(--border);
@@ -20,7 +20,7 @@
   font-size: 16px;
 }
 
-.workspace__block {
+.canvas__block {
   min-width: 180px;
   background: var(--bg);
   border: 1px solid var(--border);
