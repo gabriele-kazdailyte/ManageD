@@ -1,9 +1,5 @@
 function WorkspacesPage() {
-  return (
-    <div>
-      <h1>Workspaces</h1>
-    </div>
-  )
+  return <div />
 }
 
 export default WorkspacesPage
