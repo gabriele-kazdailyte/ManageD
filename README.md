@@ -59,6 +59,31 @@ dotnet restore ManageD.slnx
 cd frontend
 npm install
 ```
+### Database
+
+The backend uses SQLite through EF Core. The database file (`manageD.db`) is created locally and is not committed, so every team member sets up their own.
+
+**First-time setup** (once per machine):
+
+```bash
+dotnet tool install --global dotnet-ef
+cd backend/src/ManageD.Api
+dotnet ef database update
+```
+
+This creates `manageD.db` and applies every migration in `Migrations/`. Run `dotnet ef database update` again after pulling any change that adds a migration.
+
+**Changing the data model** (add or edit an entity or property):
+
+```bash
+cd backend/src/ManageD.Api
+dotnet ef migrations add DescribeTheChange
+dotnet ef database update
+```
+
+Commit the generated files in `Migrations/` together with the code change. Never edit a migration that is already merged to `main`; add a new one instead.
+
+**If `database update` fails** with a "table already exists" error, your local database is out of sync with the migration history. Delete `manageD.db`, `manageD.db-shm` and `manageD.db-wal` from `backend/src/ManageD.Api/`, then run `dotnet ef database update` again. Deleting is fine during development because the database holds no real data.
 
 ### Running
 
