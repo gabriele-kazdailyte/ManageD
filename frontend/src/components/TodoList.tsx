@@ -1,11 +1,11 @@
-import './TextFile.css'
+import './TodoList.css'
 
-type TextFileProps = {
+type TodoListProps = {
   label: string
   type?: string
 }
 
-function TextFile({ label, type = 'application/text-file' }: TextFileProps) {
+function TodoList({ label, type = 'application/todo-list' }: TodoListProps) {
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
     event.dataTransfer.setData(type, label)
     event.dataTransfer.effectAllowed = 'copy'
@@ -23,4 +23,4 @@ function TextFile({ label, type = 'application/text-file' }: TextFileProps) {
   )
 }
 
-export default TextFile
+export default TodoList

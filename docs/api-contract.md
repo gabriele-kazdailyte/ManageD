@@ -24,20 +24,54 @@ Response `200`:
 { "id": "uuid", "displayName": "string" }
 ```
 
-### `POST /api/documents`
+### `POST /api/workspaces`
 
 Request:
 ```json
-{ "title": "string", "ownerId": "uuid" }
+{ "name": "string", "creatorUserId": "uuid" }
+```
+Response `201`:
+```json
+{ "id": "uuid", "name": "string" }
+```
+
+### `GET /api/workspaces?userId={uuid}`
+
+`userId` is required — lists only workspaces that user is a member of.
+
+Response `200`:
+```json
+[
+  { "id": "uuid", "name": "string" }
+]
+```
+
+### `POST /api/workspaces/{id}/members`
+
+Request:
+```json
+{ "userId": "uuid" }
+```
+Response: `204`, empty body.
+
+### `DELETE /api/workspaces/{id}`
+
+Response: `204`, empty body.
+
+### `POST /api/assets`
+
+Request:
+```json
+{ "title": "string", "workspaceId": "uuid" }
 ```
 Response `201`:
 ```json
 { "id": "uuid", "title": "string", "revision": 0, "items": [] }
 ```
 
-### `GET /api/documents?ownerId={uuid}`
+### `GET /api/assets?workspaceId={uuid}`
 
-`ownerId` is required, not optional — always scoped to one user's own documents.
+`workspaceId` is required.
 
 Response `200`:
 ```json
@@ -46,7 +80,7 @@ Response `200`:
 ]
 ```
 
-### `GET /api/documents/{id}`
+### `GET /api/assets/{id}`
 
 Response `200`:
 ```json
@@ -60,27 +94,27 @@ Response `200`:
 }
 ```
 
-### `DELETE /api/documents/{id}`
+### `DELETE /api/assets/{id}`
 
 Response: `204`, empty body.
 
 ### Errors
 
-- Validation failure (e.g. empty `title`): `400`, framework-default `application/problem+json` body.
-- Missing document/user: `404`, empty body.
+- Validation failure (e.g. empty `title`/`name`): `400`, framework-default `application/problem+json` body.
+- Missing workspace/asset/user: `404`, empty body.
 
-## Hub — `/hubs/document`
+## Hub — `/hubs/asset`
 
 ### Client → Server (invoked by name, args in order)
 
 | Method | Args |
 |---|---|
-| `JoinDocument` | `documentId: uuid, userId: uuid` |
-| `LeaveDocument` | `documentId: uuid` |
-| `AddItem` | `documentId: uuid, baseRevision: int, text: string` — appended at the end, `Order` = current max + 1 |
-| `UpdateItem` | `documentId: uuid, baseRevision: int, itemId: uuid, text: string \| null, isDone: bool \| null` — `null` means "leave unchanged," not "clear" |
-| `DeleteItem` | `documentId: uuid, baseRevision: int, itemId: uuid` |
-| `ReorderItem` | `documentId: uuid, baseRevision: int, itemId: uuid, newOrder: int` |
+| `JoinAsset` | `assetId: uuid, userId: uuid` |
+| `LeaveAsset` | `assetId: uuid` |
+| `AddItem` | `assetId: uuid, baseRevision: int, text: string` — appended at the end, `Order` = current max + 1 |
+| `UpdateItem` | `assetId: uuid, baseRevision: int, itemId: uuid, text: string \| null, isDone: bool \| null` — `null` means "leave unchanged," not "clear" |
+| `DeleteItem` | `assetId: uuid, baseRevision: int, itemId: uuid` |
+| `ReorderItem` | `assetId: uuid, baseRevision: int, itemId: uuid, newOrder: int` |
 
 ### Server → Client (event name, payload)
 
@@ -129,4 +163,4 @@ Response: `204`, empty body.
 
 ### Errors
 
-A method call against a missing document/item, or any failure unrelated to `baseRevision`, throws a `HubException` with a message — the client's invocation call rejects, caller only. `EditRejected` is reserved for a stale `baseRevision` specifically.
+A method call against a missing asset/item, or any failure unrelated to `baseRevision`, throws a `HubException` with a message — the client's invocation call rejects, caller only. `EditRejected` is reserved for a stale `baseRevision` specifically.
