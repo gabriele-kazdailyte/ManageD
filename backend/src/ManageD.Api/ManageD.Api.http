@@ -1,24 +1,56 @@
 @ManageD_Api_HostAddress = http://localhost:5093
+@userId = 00000000-0000-0000-0000-000000000000
+@workspaceId = 00000000-0000-0000-0000-000000000000
+@assetId = 00000000-0000-0000-0000-000000000000
 
-### 1. GET Current Text
-GET {{ManageD_Api_HostAddress}}/api/users
-Accept: text/plain
-
-### 2. POST (Overwrite)
+### Create user
 POST {{ManageD_Api_HostAddress}}/api/users
 Content-Type: application/json
 
 {
-  "content": "Hello World!"
+  "displayName": "Alice"
 }
 
-### 3. PUT (Append Text)
-PUT {{ManageD_Api_HostAddress}}/api/users
+### Get user
+GET {{ManageD_Api_HostAddress}}/api/users/{{userId}}
+
+### Create workspace
+POST {{ManageD_Api_HostAddress}}/api/workspaces
 Content-Type: application/json
 
 {
-  "content": " Adding more text."
+  "name": "My workspace",
+  "creatorUserId": "{{userId}}"
 }
 
-### 4. DELETE
-DELETE {{ManageD_Api_HostAddress}}/api/users
+### List a user's workspaces
+GET {{ManageD_Api_HostAddress}}/api/workspaces?userId={{userId}}
+
+### Add member to workspace
+POST {{ManageD_Api_HostAddress}}/api/workspaces/{{workspaceId}}/members
+Content-Type: application/json
+
+{
+  "userId": "{{userId}}"
+}
+
+### Delete workspace
+DELETE {{ManageD_Api_HostAddress}}/api/workspaces/{{workspaceId}}
+
+### Create asset
+POST {{ManageD_Api_HostAddress}}/api/assets
+Content-Type: application/json
+
+{
+  "title": "Groceries",
+  "workspaceId": "{{workspaceId}}"
+}
+
+### List assets in a workspace
+GET {{ManageD_Api_HostAddress}}/api/assets?workspaceId={{workspaceId}}
+
+### Get asset
+GET {{ManageD_Api_HostAddress}}/api/assets/{{assetId}}
+
+### Delete asset
+DELETE {{ManageD_Api_HostAddress}}/api/assets/{{assetId}}

@@ -6,14 +6,17 @@ namespace ManageD.Api.Controllers;
 public class CreateWorkspaceRequest
 {
     [Required]
+    [MaxLength(100)]
     public string Name { get; set; } = string.Empty;
 
-    public Guid CreatorId { get; set; }
+    [Required]
+    public Guid? CreatorUserId { get; set; }
 }
 
 public class AddMemberRequest
 {
-    public Guid UserId { get; set; }
+    [Required]
+    public Guid? UserId { get; set; }
 }
 
 [ApiController]
@@ -27,7 +30,7 @@ public class WorkspacesController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetWorkspaces(Guid userId)
+    public IActionResult GetWorkspaces([Required] Guid? userId)
     {
         throw new NotImplementedException();
     }

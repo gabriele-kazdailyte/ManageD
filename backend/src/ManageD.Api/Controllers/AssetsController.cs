@@ -6,9 +6,11 @@ namespace ManageD.Api.Controllers;
 public class CreateAssetRequest
 {
     [Required]
+    [MaxLength(200)]
     public string Title { get; set; } = string.Empty;
 
-    public Guid WorkspaceId { get; set; }
+    [Required]
+    public Guid? WorkspaceId { get; set; }
 }
 
 [ApiController]
@@ -22,7 +24,7 @@ public class AssetsController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetAssets(Guid workspaceId)
+    public IActionResult GetAssets([Required] Guid? workspaceId)
     {
         throw new NotImplementedException();
     }

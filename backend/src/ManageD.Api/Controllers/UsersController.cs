@@ -6,6 +6,7 @@ namespace ManageD.Api.Controllers;
 public class CreateUserRequest
 {
     [Required]
+    [MaxLength(100)]
     public string DisplayName { get; set; } = string.Empty;
 }
 
