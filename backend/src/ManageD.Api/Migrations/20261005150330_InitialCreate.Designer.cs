@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManageD.Api.Migrations
 {
     [DbContext(typeof(ManageDDbContext))]
-    [Migration("20261004182756_InitialCreate")]
+    [Migration("20261005150330_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace ManageD.Api.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.12");
 
-            modelBuilder.Entity("ManageD.Api.Models.Document", b =>
+            modelBuilder.Entity("ManageD.Api.Models.Asset", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,10 +29,8 @@ namespace ManageD.Api.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Revision")
+                        .IsConcurrencyToken()
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TemplateType")
@@ -45,11 +43,14 @@ namespace ManageD.Api.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("WorkspaceId");
 
-                    b.ToTable("Documents");
+                    b.ToTable("Assets");
                 });
 
             modelBuilder.Entity("ManageD.Api.Models.TodoItem", b =>
@@ -58,7 +59,7 @@ namespace ManageD.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("DocumentId")
+                    b.Property<Guid>("AssetId")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsDone")
@@ -73,7 +74,7 @@ namespace ManageD.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DocumentId");
+                    b.HasIndex("AssetId");
 
                     b.ToTable("TodoItems");
                 });
@@ -96,31 +97,84 @@ namespace ManageD.Api.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ManageD.Api.Models.Document", b =>
+            modelBuilder.Entity("ManageD.Api.Models.Workspace", b =>
                 {
-                    b.HasOne("ManageD.Api.Models.User", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Workspaces");
+                });
+
+            modelBuilder.Entity("UserWorkspace", b =>
+                {
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("WorkspacesId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UsersId", "WorkspacesId");
+
+                    b.HasIndex("WorkspacesId");
+
+                    b.ToTable("UserWorkspace");
+                });
+
+            modelBuilder.Entity("ManageD.Api.Models.Asset", b =>
+                {
+                    b.HasOne("ManageD.Api.Models.Workspace", "Workspace")
+                        .WithMany("Assets")
+                        .HasForeignKey("WorkspaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Owner");
+                    b.Navigation("Workspace");
                 });
 
             modelBuilder.Entity("ManageD.Api.Models.TodoItem", b =>
                 {
-                    b.HasOne("ManageD.Api.Models.Document", "Document")
+                    b.HasOne("ManageD.Api.Models.Asset", "Asset")
                         .WithMany("Items")
-                        .HasForeignKey("DocumentId")
+                        .HasForeignKey("AssetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Document");
+                    b.Navigation("Asset");
                 });
 
-            modelBuilder.Entity("ManageD.Api.Models.Document", b =>
+            modelBuilder.Entity("UserWorkspace", b =>
+                {
+                    b.HasOne("ManageD.Api.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ManageD.Api.Models.Workspace", null)
+                        .WithMany()
+                        .HasForeignKey("WorkspacesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ManageD.Api.Models.Asset", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("ManageD.Api.Models.Workspace", b =>
+                {
+                    b.Navigation("Assets");
                 });
 #pragma warning restore 612, 618
         }
