@@ -102,8 +102,8 @@ npm run dev
 ```
 
 Frontend runs on `localhost:5173`. The proxy in `frontend/vite.config.ts`
-
-forwards `/api/*` requests to the .NET backend on `localhost:5001`.
+forwards `/api/*` requests to the .NET backend on `http://localhost:5093`,
+as configured by the backend's HTTP launch profile.
 
 
 ## Coding Standards
@@ -142,4 +142,3 @@ To check formatting without modifying files (same check CI runs):
 cd backend
 dotnet format ManageD.slnx --verify-no-changes
 ```
-
