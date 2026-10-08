@@ -6,7 +6,7 @@ See `architecture.md` for design, `alpha.md` for scope, `api-contract.md` for ex
 
 1. **Routing** — **Done.** React Router installed, two routes: `/` and `/workspaces/:workspaceId`. No per-asset route; assets live on the workspace canvas.
 2. **Identity** — on boot, load `{userId, displayName}` from localStorage; if absent, prompt for a display name and `POST /api/users`.
-3. **Workspaces list (`/`)** — list the current user's workspaces (`GET /api/workspaces?userId=`), create (`POST /api/workspaces`, navigate into it).
+3. **Workspaces list (`/`)** — **Done.** List the current user's workspaces (`GET /api/workspaces?userId=`), create (`POST /api/workspaces`, navigate into it).
 4. **Workspace canvas (`/workspaces/:workspaceId`)** — on mount and on every reconnect: fetch the workspace's assets (`GET /api/assets?workspaceId=`) first, replace state entirely, then connect to the hub and join the workspace. Render the assets on the canvas; create and delete them there, not on a separate page.
 5. **`WorkspaceProvider`** — Context + `useReducer`, scoped to the workspace canvas. Actions: `ITEM_ADDED`, `ITEM_UPDATED`, `ITEM_DELETED`, `ITEM_REORDERED`, `EDIT_REJECTED`, `USER_JOINED`, `USER_LEFT`, `LOCAL_EDIT`. Seeded from the REST snapshot on mount.
 6. **Editing UI** — add/edit/toggle/delete/reorder todo items. Each action dispatches `LOCAL_EDIT` immediately (optimistic), then calls the matching hub method (`AddItem`/`UpdateItem`/`DeleteItem`/`ReorderItem`). `ITEM_REORDERED` applies a list of `{itemId, order}` changes, not a single item — a reorder can shift more than the one dragged.
