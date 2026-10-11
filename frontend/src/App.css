@@ -1,3 +1,69 @@
+.identity-gate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f7f6fa;
+}
+
+.identity-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: min(100%, 420px);
+  padding: 2rem;
+  border: 1px solid #e5e4e7;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(10, 10, 20, 0.08);
+}
+
+.identity-form h1 {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+}
+
+.identity-form label {
+  font-weight: 600;
+  color: #2d2a32;
+}
+
+.identity-form input {
+  padding: 0.8rem 1rem;
+  border: 1px solid #d9d7dc;
+  border-radius: 10px;
+  font: inherit;
+  color: #1f1b2a;
+}
+
+.identity-form input:focus {
+  outline: 2px solid rgba(170, 59, 255, 0.2);
+  border-color: #aa3bff;
+}
+
+.identity-form button {
+  margin-top: 0.5rem;
+  padding: 0.8rem 1rem;
+  border: none;
+  border-radius: 10px;
+  background: #aa3bff;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.identity-form button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.identity-error {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.95rem;
+}
+
 #app {
   height: 100vh;
   display: flex;
