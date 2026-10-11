@@ -26,42 +26,6 @@
   margin-top: 8px;
 }
 
-.workspace-create {
-  padding: 24px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--bg);
-}
-
-.workspace-create label {
-  display: block;
-  margin-bottom: 10px;
-  color: var(--text-h);
-  font-weight: 650;
-}
-
-.workspace-create__controls {
-  display: flex;
-  gap: 12px;
-}
-
-.workspace-create input {
-  flex: 1;
-  min-width: 0;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  background: var(--bg);
-  color: var(--text-h);
-  font: inherit;
-}
-
-.workspace-create input:focus {
-  outline: 2px solid var(--accent-border);
-  outline-offset: 1px;
-}
-
-.workspace-create button,
 .workspaces-page__error button {
   padding: 11px 16px;
   border: 0;
@@ -72,11 +36,6 @@
   font-size: 0.9rem;
   font-weight: 650;
   cursor: pointer;
-}
-
-.workspace-create button:disabled {
-  cursor: wait;
-  opacity: 0.7;
 }
 
 .workspaces-page__error {
@@ -209,15 +168,6 @@
 @media (max-width: 640px) {
   .workspaces-page {
     padding: 28px 18px;
-  }
-
-  .workspace-create {
-    padding: 18px;
-  }
-
-  .workspace-create__controls {
-    align-items: stretch;
-    flex-direction: column;
   }
 
   .workspaces-page__error {

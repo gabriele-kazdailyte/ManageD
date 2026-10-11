@@ -36,6 +36,11 @@
   color: #1f1b2a;
 }
 
+.identity-form input::placeholder {
+  color: #6b6375;
+  opacity: 1;
+}
+
 .identity-form input:focus {
   outline: 2px solid rgba(170, 59, 255, 0.2);
   border-color: #aa3bff;
