@@ -2,7 +2,7 @@
 
 Exact wire shapes for REST and the hub. Backend and frontend both build against this — if a shape needs to change, update it here first, then tell the other side.
 
-Types: `uuid` = string, `datetime` = ISO 8601 string, UTC. `"type | null"` inside a JSON block is schema notation for an optional/nullable field, not a literal value to send.
+Types: `uuid` = string, `datetime` = ISO 8601 string, UTC, `templateType` = enum name as a string (`"Todo"` — the only value in alpha), never its numeric value. `"type | null"` inside a JSON block is schema notation for an optional/nullable field, not a literal value to send.
 
 ## REST
 
@@ -62,11 +62,11 @@ Response: `204`, empty body.
 
 Request:
 ```json
-{ "title": "string", "workspaceId": "uuid" }
+{ "title": "string", "workspaceId": "uuid", "templateType": "templateType | null" }
 ```
 Response `201`:
 ```json
-{ "id": "uuid", "title": "string", "revision": 0, "items": [] }
+{ "id": "uuid", "title": "string", "templateType": "TemplateType", "revision": 0, "items": [] }
 ```
 
 ### `GET /api/assets?workspaceId={uuid}`
@@ -76,7 +76,7 @@ Response `201`:
 Response `200`:
 ```json
 [
-  { "id": "uuid", "title": "string", "updatedAt": "datetime", "itemCount": 0 }
+  { "id": "uuid", "title": "string", "templateType": "TemplateType", "updatedAt": "datetime", "itemCount": 0 }
 ]
 ```
 
@@ -87,6 +87,7 @@ Response `200`:
 {
   "id": "uuid",
   "title": "string",
+  "templateType": "TemplateType",
   "revision": 0,
   "items": [
     { "id": "uuid", "text": "string", "isDone": false, "order": 0 }
@@ -100,7 +101,7 @@ Response: `204`, empty body.
 
 ### Errors
 
-- Validation failure (e.g. empty `title`/`name`): `400`, framework-default `application/problem+json` body.
+- Validation failure (e.g. empty `title`/`name`, or a `templateType` that isn't a known template name): `400`, framework-default `application/problem+json` body.
 - Missing workspace/asset/user: `404`, empty body.
 
 ## Hub — `/hubs/asset`
