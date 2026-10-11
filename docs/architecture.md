@@ -39,9 +39,9 @@ Exact request/response/payload shapes are in `api-contract.md` — this doc cove
 
 | Endpoint | Description |
 |---|---|
-| `POST /api/assets` | Creates an empty Todo asset inside the given workspace. |
-| `GET /api/assets?workspaceId=` | Lists assets inside the given workspace. `workspaceId` is required. |
-| `GET /api/assets/{id}` | Returns an asset's full snapshot: title, revision, items. |
+| `POST /api/assets` | Creates an empty asset of the requested `templateType` inside the given workspace. `templateType` is optional and defaults to `Todo`. |
+| `GET /api/assets?workspaceId=` | Lists assets inside the given workspace, each with its `templateType`. `workspaceId` is required. |
+| `GET /api/assets/{id}` | Returns an asset's full snapshot: title, template type, revision, items. |
 | `DELETE /api/assets/{id}` | Deletes an asset. |
 
 Content is never created or edited via REST — only through the hub.
@@ -88,7 +88,7 @@ On disconnect — explicit `LeaveAsset`, or an ungraceful drop (tab closed, netw
 | Service | Responsibility |
 |---|---|
 | `WorkspaceService` | Creates a workspace (adding the creator as its first member), adds members, lists a user's workspaces. |
-| `AssetService` | Create, read, list assets; one internal `ApplyOperation(assetId, baseRevision, operation)` method, taking an internal discriminated-union operation type, used by all four hub methods. Increments `Revision` on success. |
+| `AssetService` | Create (choosing initial content by `TemplateType`), read, list assets; one internal `ApplyOperation(assetId, baseRevision, operation)` method, taking an internal discriminated-union operation type, used by all four hub methods. Increments `Revision` on success. |
 | `PresenceService` | Tracks which connections are viewing which asset, in memory, keyed by connection id. |
 | `UserService` | Creates and reads users. |
 
