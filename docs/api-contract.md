@@ -66,7 +66,7 @@ Request:
 ```
 Response `201`:
 ```json
-{ "id": "uuid", "title": "string", "templateType": "TemplateType", "revision": 0, "items": [] }
+{ "id": "uuid", "title": "string", "templateType": "templateType", "revision": 0, "items": [] }
 ```
 
 ### `GET /api/assets?workspaceId={uuid}`
@@ -76,7 +76,7 @@ Response `201`:
 Response `200`:
 ```json
 [
-  { "id": "uuid", "title": "string", "templateType": "TemplateType", "updatedAt": "datetime", "itemCount": 0 }
+  { "id": "uuid", "title": "string", "templateType": "templateType", "updatedAt": "datetime", "itemCount": 0 }
 ]
 ```
 
@@ -87,7 +87,7 @@ Response `200`:
 {
   "id": "uuid",
   "title": "string",
-  "templateType": "TemplateType",
+  "templateType": "templateType",
   "revision": 0,
   "items": [
     { "id": "uuid", "text": "string", "isDone": false, "order": 0 }
