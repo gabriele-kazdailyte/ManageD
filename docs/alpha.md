@@ -10,7 +10,7 @@ A shared `Todo` asset, inside a workspace, that multiple users can edit at the s
 
 - Identity: display name only, no auth.
 - Workspaces: create, list the current user's own, add a member (no approval step, no roles).
-- Assets: create, list within a workspace, open, delete. Todo template only.
+- Assets: create, list within a workspace, open, delete. Todo template only. The API already carries an optional `templateType` (defaulting to `Todo`) so later templates don't need a contract change, but `Todo` is the only value accepted.
 - Items: add, edit text, toggle done, delete, reorder.
 - Live sync of item changes across everyone viewing the same asset.
 - Presence: see who else is viewing an asset.
@@ -18,7 +18,7 @@ A shared `Todo` asset, inside a workspace, that multiple users can edit at the s
 
 ## Out of scope
 
-Real auth, RBAC (role-based permissions on a workspace/asset — membership is flat, not role-based), unique join codes (members are added directly by id, not by code), any template besides `Todo`, subtasks, dependencies, due dates, recurring tasks, activity feed, notifications, comments, search, import/export. Beta/final concerns — do not build ahead of them.
+Real auth, RBAC (role-based permissions on a workspace/asset — membership is flat, not role-based), unique join codes (members are added directly by id, not by code), any template besides `Todo` (the `templateType` field exists, its other values don't), subtasks, dependencies, due dates, recurring tasks, activity feed, notifications, comments, search, import/export. Beta/final concerns — do not build ahead of them.
 
 ## Definition of done
 
