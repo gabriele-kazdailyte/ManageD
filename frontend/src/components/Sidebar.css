@@ -108,3 +108,37 @@
   font-size: 0.8rem;
   overflow-wrap: anywhere;
 }
+
+.sidebar__back {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 7px;
+  color: var(--text);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.sidebar__back:hover {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.sidebar__back:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.sidebar--collapsed .sidebar__content {
+  padding: 8px 4px;
+}
+
+.sidebar--collapsed .sidebar__back {
+  justify-content: center;
+  padding: 8px 4px;
+}
+
+.sidebar--collapsed .sidebar__back-label {
+  display: none;
+}

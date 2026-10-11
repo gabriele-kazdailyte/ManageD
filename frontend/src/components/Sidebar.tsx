@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useMatch, useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import './Sidebar.css'
 
@@ -10,6 +10,7 @@ function Sidebar() {
   const [createError, setCreateError] = useState<string | null>(null)
   const { identity } = useUser()
   const navigate = useNavigate()
+  const isInWorkspace = useMatch('/workspaces/:workspaceId') !== null
 
   const handleCreateWorkspace = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -56,7 +57,14 @@ function Sidebar() {
           {collapsed ? '›' : '‹'}
         </button>
       </div>
-      {!collapsed && (
+      {isInWorkspace ? (
+        <div className="sidebar__content">
+          <Link className="sidebar__back" to="/" aria-label="Back to main menu" title="Back to main menu">
+            <span aria-hidden="true">←</span>
+            <span className="sidebar__back-label">Main menu</span>
+          </Link>
+        </div>
+      ) : !collapsed ? (
         <div className="sidebar__content">
           <form className="sidebar__workspace-form" onSubmit={handleCreateWorkspace}>
             <label htmlFor="sidebarWorkspaceName">Create a workspace</label>
@@ -75,7 +83,7 @@ function Sidebar() {
             {createError ? <p className="sidebar__error" role="alert">{createError}</p> : null}
           </form>
         </div>
-      )}
+      ) : null}
     </aside>
   )
 }
