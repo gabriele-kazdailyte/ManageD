@@ -3,8 +3,7 @@ import { Link, useMatch, useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import './Sidebar.css'
 
-function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false)
+function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCollapsed: (collapsed: boolean) => void }) {
   const [workspaceName, setWorkspaceName] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
