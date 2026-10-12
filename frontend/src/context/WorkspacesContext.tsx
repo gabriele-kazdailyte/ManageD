@@ -22,9 +22,6 @@ export function WorkspacesProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null)
 
   const load = useCallback((signal?: AbortSignal) => {
-    setIsLoading(true)
-    setError(null)
-
     fetch(`/api/workspaces?userId=${encodeURIComponent(identity.userId)}`, { signal })
       .then((response) => {
         if (!response.ok) {
@@ -46,6 +43,12 @@ export function WorkspacesProvider({ children }: { children: ReactNode }) {
       })
   }, [identity.userId])
 
+  const reload = useCallback(() => {
+    setIsLoading(true)
+    setError(null)
+    load()
+  }, [load])
+
   useEffect(() => {
     const controller = new AbortController()
     load(controller.signal)
@@ -53,12 +56,13 @@ export function WorkspacesProvider({ children }: { children: ReactNode }) {
   }, [load])
 
   return (
-    <WorkspacesContext.Provider value={{ workspaces, isLoading, error, reload: () => load() }}>
+    <WorkspacesContext.Provider value={{ workspaces, isLoading, error, reload }}>
       {children}
     </WorkspacesContext.Provider>
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useWorkspaces() {
   const context = useContext(WorkspacesContext)
   if (!context) {
