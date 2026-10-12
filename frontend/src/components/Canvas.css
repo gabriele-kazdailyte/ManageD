@@ -2,8 +2,11 @@
   flex: 1;
   padding: 24px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  align-content: center;
   justify-content: center;
+  gap: 12px;
   min-height: 0;
 }
 
@@ -20,12 +23,18 @@
   font-size: 16px;
 }
 
-.canvas__block {
-  min-width: 180px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 18px;
-  color: var(--text-h);
-  box-shadow: var(--shadow);
+.canvas--filled {
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: flex-start;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.canvas__error {
+  flex-basis: 100%;
+  text-align: center;
+  margin: 0;
+  color: #d33;
+  font-size: 14px;
 }

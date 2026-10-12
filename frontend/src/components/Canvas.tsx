@@ -1,26 +1,52 @@
+import type { AssetSnapshot } from '../api/assets'
+import TodoAsset from './TodoAsset'
 import './Canvas.css'
 
 type CanvasProps = {
-  droppedBlocks: string[]
+  assets: AssetSnapshot[]
+  isLoading: boolean
+  error: string | null
+  deletingIds: ReadonlySet<string>
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void
+  onDelete: (assetId: string) => void
 }
 
-function Canvas({ droppedBlocks, onDrop }: CanvasProps) {
+function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete }: CanvasProps) {
+  // Each template type gets its own component; Todo is the only one so far.
+  const renderAsset = (asset: AssetSnapshot) => {
+    switch (asset.templateType) {
+      case 'Todo':
+        return (
+          <TodoAsset
+            key={asset.id}
+            asset={asset}
+            isDeleting={deletingIds.has(asset.id)}
+            onDelete={onDelete}
+          />
+        )
+    }
+  }
+
+  const renderContent = () => {
+    if (isLoading) {
+      return <div className="canvas__empty">Loading…</div>
+    }
+
+    if (assets.length === 0) {
+      return <div className="canvas__empty">Drop here</div>
+    }
+
+    return assets.map(renderAsset)
+  }
+
   return (
     <section
-      className="canvas"
+      className={isLoading || assets.length === 0 ? 'canvas' : 'canvas canvas--filled'}
       onDragOver={(event) => event.preventDefault()}
       onDrop={onDrop}
     >
-      {droppedBlocks.length === 0 ? (
-        <div className="canvas__empty">Drop here</div>
-      ) : (
-        droppedBlocks.map((block, index) => (
-          <div key={`${block}-${index}`} className="canvas__block">
-            {block}
-          </div>
-        ))
-      )}
+      {error ? <p className="canvas__error">{error}</p> : null}
+      {renderContent()}
     </section>
   )
 }
