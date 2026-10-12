@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using ManageD.Api.Data;
+using ManageD.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,10 @@ builder.Services.AddControllers()
 
 builder.Services.AddDbContext<ManageDDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// The store is a singleton so assets survive between requests; the service is scoped because it uses the scoped DbContext.
+builder.Services.AddSingleton<InMemoryAssetStore>();
+builder.Services.AddScoped<AssetService>();
 
 var app = builder.Build();
 
