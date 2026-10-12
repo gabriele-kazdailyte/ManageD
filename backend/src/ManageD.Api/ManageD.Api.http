@@ -37,13 +37,54 @@ Content-Type: application/json
 ### Delete workspace
 DELETE {{ManageD_Api_HostAddress}}/api/workspaces/{{workspaceId}}
 
-### Create asset
+# Assets are kept in memory for now, so they disappear when the backend restarts
+# and any @assetId copied before the restart returns 404.
+
+### Create asset (templateType omitted, defaults to Todo)
 POST {{ManageD_Api_HostAddress}}/api/assets
 Content-Type: application/json
 
 {
   "title": "Groceries",
   "workspaceId": "{{workspaceId}}"
+}
+
+### Create asset with explicit template type
+POST {{ManageD_Api_HostAddress}}/api/assets
+Content-Type: application/json
+
+{
+  "title": "Sprint tasks",
+  "workspaceId": "{{workspaceId}}",
+  "templateType": "Todo"
+}
+
+### Create asset with unknown template type (expect 400)
+POST {{ManageD_Api_HostAddress}}/api/assets
+Content-Type: application/json
+
+{
+  "title": "Board",
+  "workspaceId": "{{workspaceId}}",
+  "templateType": "Kanban"
+}
+
+### Create asset with empty title (expect 400)
+POST {{ManageD_Api_HostAddress}}/api/assets
+Content-Type: application/json
+
+{
+  "title": "",
+  "workspaceId": "{{workspaceId}}"
+}
+
+### Create asset in unknown workspace (expect 404)
+POST {{ManageD_Api_HostAddress}}/api/assets
+Content-Type: application/json
+
+{
+  "title": "Groceries",
+  "workspaceId": "00000000-0000-0000-0000-000000000000"
 }
 
 ### List assets in a workspace
