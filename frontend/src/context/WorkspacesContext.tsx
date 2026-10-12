@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useUser } from './UserContext'
 
 export type Workspace = {
@@ -20,9 +20,14 @@ export function WorkspacesProvider({ children }: { children: ReactNode }) {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const controllerRef = useRef<AbortController | null>(null)
 
-  const load = useCallback((signal?: AbortSignal) => {
-    fetch(`/api/workspaces?userId=${encodeURIComponent(identity.userId)}`, { signal })
+  const startLoad = useCallback(() => {
+    controllerRef.current?.abort()
+    const controller = new AbortController()
+    controllerRef.current = controller
+
+    fetch(`/api/workspaces?userId=${encodeURIComponent(identity.userId)}`, { signal: controller.signal })
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Could not load workspaces (HTTP ${response.status}).`)
@@ -37,7 +42,7 @@ export function WorkspacesProvider({ children }: { children: ReactNode }) {
         setError(loadError instanceof Error ? loadError.message : 'Could not load workspaces.')
       })
       .finally(() => {
-        if (!signal?.aborted) {
+        if (!controller.signal.aborted) {
           setIsLoading(false)
         }
       })
@@ -46,14 +51,13 @@ export function WorkspacesProvider({ children }: { children: ReactNode }) {
   const reload = useCallback(() => {
     setIsLoading(true)
     setError(null)
-    load()
-  }, [load])
+    startLoad()
+  }, [startLoad])
 
   useEffect(() => {
-    const controller = new AbortController()
-    load(controller.signal)
-    return () => controller.abort()
-  }, [load])
+    startLoad()
+    return () => controllerRef.current?.abort()
+  }, [startLoad])
 
   return (
     <WorkspacesContext.Provider value={{ workspaces, isLoading, error, reload }}>

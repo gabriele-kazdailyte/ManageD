@@ -73,7 +73,7 @@ function App() {
 
   return (
     <UserContext.Provider value={{ identity, setIdentity }}>
-      <WorkspacesProvider>
+      <WorkspacesProvider key={identity.userId}>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<WorkspacesPage />} />
