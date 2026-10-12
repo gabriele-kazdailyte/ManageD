@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using ManageD.Api.Models;
+using ManageD.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManageD.Api.Controllers;
@@ -11,33 +13,57 @@ public class CreateAssetRequest
 
     [Required]
     public Guid? WorkspaceId { get; set; }
+
+    [EnumDataType(typeof(TemplateType))]
+    public TemplateType? TemplateType { get; set; }
 }
 
 [ApiController]
 [Route("api/assets")]
 public class AssetsController : ControllerBase
 {
-    [HttpPost]
-    public IActionResult CreateAsset(CreateAssetRequest request)
+    private readonly AssetService _assetService;
+
+    public AssetsController(AssetService assetService)
     {
-        throw new NotImplementedException();
+        _assetService = assetService;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateAssetAsync(CreateAssetRequest request, CancellationToken cancellationToken)
+    {
+        // [Required] rejects a missing WorkspaceId with a 400 before this runs, so it can't be null here.
+        var asset = await _assetService.CreateAsync(
+            request.Title,
+            request.WorkspaceId!.Value,
+            request.TemplateType ?? TemplateType.Todo,
+            cancellationToken);
+
+        return asset is null
+            ? NotFound()
+            : CreatedAtRoute("GetAssetById", new { id = asset.Id }, asset);
     }
 
     [HttpGet]
-    public IActionResult GetAssets([Required] Guid? workspaceId)
+    public async Task<IActionResult> GetAssetsAsync([Required] Guid? workspaceId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        // [Required] rejects a missing workspaceId with a 400 before this runs, so it can't be null here.
+        var assets = await _assetService.ListAsync(workspaceId!.Value, cancellationToken);
+
+        return assets is null ? NotFound() : Ok(assets);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "GetAssetById")]
     public IActionResult GetAsset(Guid id)
     {
-        throw new NotImplementedException();
+        var asset = _assetService.Get(id);
+
+        return asset is null ? NotFound() : Ok(asset);
     }
 
     [HttpDelete("{id}")]
     public IActionResult DeleteAsset(Guid id)
     {
-        throw new NotImplementedException();
+        return _assetService.Delete(id) ? NoContent() : NotFound();
     }
 }
