@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #f7f6fa;
+  background: var(--bg);
 }
 
 .identity-form {
@@ -12,9 +12,9 @@
   gap: 0.75rem;
   width: min(100%, 420px);
   padding: 2rem;
-  border: 1px solid #e5e4e7;
+  border: 1px solid var(--border);
   border-radius: 16px;
-  background: #ffffff;
+  background: var(--surface);
   box-shadow: 0 10px 30px rgba(10, 10, 20, 0.08);
 }
 
@@ -25,25 +25,25 @@
 
 .identity-form label {
   font-weight: 600;
-  color: #2d2a32;
+  color: var(--text-h);
 }
 
 .identity-form input {
   padding: 0.8rem 1rem;
-  border: 1px solid #d9d7dc;
+  border: 1px solid var(--border);
   border-radius: 10px;
   font: inherit;
-  color: #1f1b2a;
+  color: var(--text-h);
 }
 
 .identity-form input::placeholder {
-  color: #6b6375;
+  color: var(--muted);
   opacity: 1;
 }
 
 .identity-form input:focus {
-  outline: 2px solid rgba(170, 59, 255, 0.2);
-  border-color: #aa3bff;
+  outline: 2px solid rgba(56, 128, 135, 0.2);
+  border-color: var(--accent);
 }
 
 .identity-form button {
@@ -51,7 +51,7 @@
   padding: 0.8rem 1rem;
   border: none;
   border-radius: 10px;
-  background: #aa3bff;
+  background: var(--accent);
   color: #fff;
   font: inherit;
   font-weight: 600;
@@ -79,5 +79,5 @@
   display: flex;
   flex-direction: column;
   overflow: auto;
-  background: #f7f6fa;
+  background: var(--panel);
 }
