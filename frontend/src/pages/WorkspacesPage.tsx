@@ -10,6 +10,15 @@ type Workspace = {
 
 function WorkspacesPage() {
   const { identity } = useUser()
+  const now = new Date()
+  const greeting =
+    now.getHours() < 12 ? 'Good morning' : now.getHours() < 18 ? 'Good afternoon' : 'Good evening'
+  const today = new Intl.DateTimeFormat(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  }).format(now)
+
   const [workspaces, setWorkspaces] = useState<Workspace[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -57,12 +66,11 @@ function WorkspacesPage() {
   return (
     <section className="workspaces-page">
       <header className="workspaces-page__header">
-        <div>
-          <p className="workspaces-page__eyebrow">ManageD</p>
-          <h1>Your workspaces</h1>
-          <p className="workspaces-page__welcome">Welcome, {identity.displayName}</p>
-        </div>
+        <p className="workspaces-page__eyebrow">Overview</p>
+        <h1>{greeting}, {identity.displayName}</h1>
+        <p className="workspaces-page__welcome">{today}</p>
       </header>
+
 
       {loadError ? (
         <div className="workspaces-page__error" role="alert">
