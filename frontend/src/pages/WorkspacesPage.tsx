@@ -29,6 +29,10 @@ function WorkspacesPage() {
 
   return (
     <section className="workspaces-page">
+      <span className="workspaces-page__avatar" aria-hidden="true">
+        {identity.displayName.trim().charAt(0).toUpperCase() || 'U'}
+      </span>
+
       <header className="workspaces-page__header">
         <p className="workspaces-page__eyebrow">Overview</p>
         <h1>{greeting}, {identity.displayName}</h1>

@@ -5,6 +5,20 @@
   box-sizing: border-box;
 }
 
+.workspaces-page__avatar {
+  position: absolute;
+  top: 20px;
+  right: 28px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--avatar-bg);
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
 .workspaces-page__header {
   margin-bottom: 32px;
 }
