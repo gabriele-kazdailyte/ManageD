@@ -1,12 +1,7 @@
-import { useCallback, useEffect, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
+import { useWorkspaces } from '../context/WorkspacesContext'
 import './WorkspacesPage.css'
-
-type Workspace = {
-  id: string
-  name: string
-}
 
 const WS_TILES = [
   { bg: 'var(--ws-teal-bg)', fg: 'var(--ws-teal-text)' },
@@ -19,9 +14,9 @@ function iconLetter(name: string) {
   return name.trim().charAt(0).toUpperCase() || 'W'
 }
 
-
 function WorkspacesPage() {
   const { identity } = useUser()
+  const { workspaces, isLoading, error, reload } = useWorkspaces()
   const { setCollapsed } = useOutletContext<{ setCollapsed: (collapsed: boolean) => void }>()
 
   const openNewWorkspace = () => {
@@ -42,50 +37,6 @@ function WorkspacesPage() {
     day: 'numeric',
   }).format(now)
 
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
-
-  const fetchWorkspaces = useCallback(async (signal?: AbortSignal) => {
-    const response = await fetch(`/api/workspaces?userId=${encodeURIComponent(identity.userId)}`, { signal })
-
-    if (!response.ok) {
-      throw new Error(`Could not load workspaces (HTTP ${response.status}).`)
-    }
-
-    return (await response.json()) as Workspace[]
-  }, [identity.userId])
-
-  const loadWorkspaces = useCallback((signal?: AbortSignal) => {
-    void fetchWorkspaces(signal)
-      .then(setWorkspaces)
-      .catch((loadError: unknown) => {
-        if (loadError instanceof Error && loadError.name === 'AbortError') {
-          return
-        }
-
-        setLoadError(loadError instanceof Error ? loadError.message : 'Could not load workspaces.')
-      })
-      .finally(() => {
-        if (!signal?.aborted) {
-          setIsLoading(false)
-        }
-      })
-  }, [fetchWorkspaces])
-
-  const retryLoading = () => {
-    setIsLoading(true)
-    setLoadError(null)
-    void loadWorkspaces()
-  }
-
-  useEffect(() => {
-    const controller = new AbortController()
-    void loadWorkspaces(controller.signal)
-
-    return () => controller.abort()
-  }, [loadWorkspaces])
-
   return (
     <section className="workspaces-page">
       <header className="workspaces-page__header">
@@ -94,16 +45,15 @@ function WorkspacesPage() {
         <p className="workspaces-page__welcome">{today}</p>
       </header>
 
-
-      {loadError ? (
+      {error ? (
         <div className="workspaces-page__error" role="alert">
-          <p>{loadError}</p>
-          <button type="button" onClick={retryLoading}>Retry loading</button>
+          <p>{error}</p>
+          <button type="button" onClick={reload}>Retry loading</button>
         </div>
       ) : null}
 
       <div className="workspace-list__heading">
-        <h2>Workspaces</h2>
+        <h2>Your workspaces</h2>
         {!isLoading ? <span>{workspaces.length}</span> : null}
       </div>
 
@@ -114,7 +64,6 @@ function WorkspacesPage() {
           {workspaces.map((workspace, index) => {
             const tile = WS_TILES[index % WS_TILES.length]
             return (
-
               <li key={workspace.id}>
                 <Link className="workspace-card" to={`/workspaces/${encodeURIComponent(workspace.id)}`}>
                   <span
@@ -138,7 +87,6 @@ function WorkspacesPage() {
           </li>
         </ul>
       )}
-
     </section>
   )
 }
