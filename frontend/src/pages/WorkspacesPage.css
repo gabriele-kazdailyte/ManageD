@@ -179,3 +179,23 @@
     flex-direction: column;
   }
 }
+
+.workspace-card--new {
+  width: 100%;
+  background: transparent;
+  border-style: dashed;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.workspace-card--new:hover {
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+
+.workspace-card__icon--new {
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 1.3rem;
+}
