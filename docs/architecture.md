@@ -102,7 +102,7 @@ Data Annotations on REST DTOs (`[Required]`, `[MaxLength]`) for shape validation
 
 **SQLite** — single file, no external DB process to run in dev. Chosen for alpha because the goal is proving the concurrency mechanism works, not production-grade storage; revisit for beta if real concurrent-load behavior needs testing.
 
-**Assets are temporarily held in memory.** `InMemoryAssetStore` (a singleton behind `AssetService`) stores assets and their items instead of SQLite, so they're lost whenever the backend restarts. Users and workspaces are in SQLite as described above. Only `AssetService` uses the store, so moving assets to EF Core later changes that service's internals and nothing else. Until then, the revision check described under Concurrency is done by hand under the store's lock rather than by EF.
+**Assets are temporarily held in memory.** `InMemoryAssetStore` (a singleton behind `AssetService`) stores assets and their items instead of SQLite, so they're lost whenever the backend restarts. Users and workspaces are in SQLite as described above. Only `AssetService` uses the store, so moving assets to EF Core later changes that service's internals and nothing else. Until then, the revision check described under Concurrency, which arrives with the hub, will be done by hand under the store's lock rather than by EF.
 
 `Workspace`-`User` membership uses EF Core's skip navigations (`Workspace.Users`, `User.Workspaces`, both `ICollection<T>`) rather than an explicit join entity — EF generates and manages the bridge table itself. No membership class to write or maintain; add one back only if membership ever needs its own data (a role, a joined-at timestamp exposed to the API, etc.) beyond the plain yes/no it is now.
 
