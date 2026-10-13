@@ -1,12 +1,15 @@
+import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar'
 
 function Layout() {
+  const [collapsed, setCollapsed] = useState(false)
+
   return (
     <div id="app">
-      <Sidebar />
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       <main className="main-content">
-        <Outlet />
+        <Outlet context={{ setCollapsed }} />
       </main>
     </div>
   )
