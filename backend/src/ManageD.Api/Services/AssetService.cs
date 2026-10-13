@@ -43,6 +43,9 @@ public class AssetService
             Items = templateType switch
             {
                 TemplateType.Todo => new List<TodoItem>(),
+
+                // TODO: if a template type is added to the enum before its setup is written, reject it with a 400
+                // in request validation instead of reaching this throw (500).
                 _ => throw new NotSupportedException($"Template type '{templateType}' is not supported yet."),
             },
         };

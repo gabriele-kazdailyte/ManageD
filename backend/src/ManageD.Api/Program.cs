@@ -9,9 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-// The API contract sends enums (e.g. templateType) as their names ("Todo"), not their numbers.
+// The API contract sends enums (e.g. templateType) as their names ("Todo"), never their numbers,
+// so numeric values are rejected with a 400 instead of being accepted.
 builder.Services.AddControllers()
-    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(allowIntegerValues: false)));
 
 builder.Services.AddDbContext<ManageDDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
