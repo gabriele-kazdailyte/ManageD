@@ -9,7 +9,7 @@ See `architecture.md` for design, `alpha.md` for scope, `api-contract.md` for ex
 3. **CORS** — allow the frontend's dev origin on both the REST API and the hub.
 4. **`UsersController`** — `POST /api/users`, `GET /api/users/{id}`. Data Annotations on the request DTO.
 5. **`WorkspacesController`** — `POST /api/workspaces` (creates the workspace, adds the creator as first member), `GET /api/workspaces?userId=`, `POST /api/workspaces/{id}/members`, `DELETE /api/workspaces/{id}`.
-6. **`AssetsController`** — `POST /api/assets`, `GET /api/assets?workspaceId=`, `GET /api/assets/{id}`, `DELETE /api/assets/{id}`. No item mutation here.
+6. **`AssetsController`** — `POST /api/assets`, `GET /api/assets?workspaceId=`, `GET /api/assets/{id}`, `DELETE /api/assets/{id}`. No item mutation here. Currently built against an in-memory store (see the sequencing notes below and `architecture.md` → Data Access); swap it for EF Core once assets are persisted.
 7. **`WorkspaceService`** — thin: create, list, add-member. No concurrency concerns, nothing here is collaboratively edited.
 8. **`AssetService`** — one `ApplyOperation(assetId, baseRevision, operation)` method taking an internal discriminated-union operation type, asserting `baseRevision` via the concurrency token, catching `DbUpdateConcurrencyException` and returning `Applied`/`Conflict`. Each hub method (step 10) constructs the matching operation and calls this — the type never crosses the wire, so it's fine for it to be polymorphic even though the hub methods themselves aren't.
 9. **`PresenceService`** — in-memory, keyed by connection id, not just user id (one user can have multiple tabs open).
