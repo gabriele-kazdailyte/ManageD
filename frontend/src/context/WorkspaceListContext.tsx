@@ -15,8 +15,6 @@ type WorkspaceListContextValue = {
 
 const WorkspaceListContext = createContext<WorkspaceListContextValue | undefined>(undefined)
 
-// Owns the user's list of workspaces (REST, no reducer); distinct from the planned singular
-// WorkspaceProvider that holds a single canvas's real-time state.
 export function WorkspaceListProvider({ children }: { children: ReactNode }) {
   const { identity } = useUser()
   const [workspaces, setWorkspaces] = useState<Workspace[]>([])
