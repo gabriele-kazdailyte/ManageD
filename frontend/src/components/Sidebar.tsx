@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useMatch, useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
-import { useWorkspaces } from '../context/WorkspacesContext'
+import { useWorkspaceList } from '../context/WorkspaceListContext'
 import { WS_TILES, iconLetter } from '../workspaceStyle'
 import './Sidebar.css'
 
@@ -10,7 +10,7 @@ function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCollapsed
   const [isCreating, setIsCreating] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
   const { identity } = useUser()
-  const { workspaces, reload } = useWorkspaces()
+  const { workspaces, reload } = useWorkspaceList()
   const navigate = useNavigate()
   const workspaceMatch = useMatch('/workspaces/:workspaceId')
   const activeId = workspaceMatch?.params.workspaceId

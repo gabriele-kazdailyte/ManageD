@@ -4,7 +4,7 @@ import Layout from './components/Layout'
 import { UserContext, createIdentity, persistIdentity, readStoredIdentity, type UserIdentity } from './context/UserContext'
 import WorkspacePage from './pages/WorkspacePage'
 import WorkspacesPage from './pages/WorkspacesPage'
-import { WorkspacesProvider } from './context/WorkspacesContext'
+import { WorkspaceListProvider } from './context/WorkspaceListContext'
 import './App.css'
 
 function App() {
@@ -73,14 +73,14 @@ function App() {
 
   return (
     <UserContext.Provider value={{ identity, setIdentity }}>
-      <WorkspacesProvider key={identity.userId}>
+      <WorkspaceListProvider key={identity.userId}>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<WorkspacesPage />} />
             <Route path="/workspaces/:workspaceId" element={<WorkspacePage />} />
           </Route>
         </Routes>
-      </WorkspacesProvider>
+      </WorkspaceListProvider>
     </UserContext.Provider>
 
   )

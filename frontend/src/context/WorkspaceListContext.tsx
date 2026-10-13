@@ -6,16 +6,18 @@ export type Workspace = {
   name: string
 }
 
-type WorkspacesContextValue = {
+type WorkspaceListContextValue = {
   workspaces: Workspace[]
   isLoading: boolean
   error: string | null
   reload: () => void
 }
 
-const WorkspacesContext = createContext<WorkspacesContextValue | undefined>(undefined)
+const WorkspaceListContext = createContext<WorkspaceListContextValue | undefined>(undefined)
 
-export function WorkspacesProvider({ children }: { children: ReactNode }) {
+// Owns the user's list of workspaces (REST, no reducer); distinct from the planned singular
+// WorkspaceProvider that holds a single canvas's real-time state.
+export function WorkspaceListProvider({ children }: { children: ReactNode }) {
   const { identity } = useUser()
   const [workspaces, setWorkspaces] = useState<Workspace[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -60,17 +62,17 @@ export function WorkspacesProvider({ children }: { children: ReactNode }) {
   }, [startLoad])
 
   return (
-    <WorkspacesContext.Provider value={{ workspaces, isLoading, error, reload }}>
+    <WorkspaceListContext.Provider value={{ workspaces, isLoading, error, reload }}>
       {children}
-    </WorkspacesContext.Provider>
+    </WorkspaceListContext.Provider>
   )
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function useWorkspaces() {
-  const context = useContext(WorkspacesContext)
+export function useWorkspaceList() {
+  const context = useContext(WorkspaceListContext)
   if (!context) {
-    throw new Error('useWorkspaces must be used within a WorkspacesProvider.')
+    throw new Error('useWorkspaceList must be used within a WorkspaceListProvider.')
   }
   return context
 }

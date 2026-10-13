@@ -1,12 +1,12 @@
 import { Link, useOutletContext } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
-import { useWorkspaces } from '../context/WorkspacesContext'
+import { useWorkspaceList } from '../context/WorkspaceListContext'
 import { WS_TILES, iconLetter } from '../workspaceStyle'
 import './WorkspacesPage.css'
 
 function WorkspacesPage() {
   const { identity } = useUser()
-  const { workspaces, isLoading, error, reload } = useWorkspaces()
+  const { workspaces, isLoading, error, reload } = useWorkspaceList()
   const { setCollapsed } = useOutletContext<{ setCollapsed: (collapsed: boolean) => void }>()
 
   const openNewWorkspace = () => {
