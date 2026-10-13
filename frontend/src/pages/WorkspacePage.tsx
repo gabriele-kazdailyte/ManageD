@@ -1,27 +1,99 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { createAsset, deleteAsset, loadWorkspaceAssets, type AssetSnapshot } from '../api/assets'
 import Toolbar from '../components/Toolbar'
 import Canvas from '../components/Canvas'
 
-function WorkspacePage() {
-  const [droppedBlocks, setDroppedBlocks] = useState<string[]>([])
+type WorkspaceCanvasProps = {
+  workspaceId: string
+}
 
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
+  const [assets, setAssets] = useState<AssetSnapshot[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [deletingIds, setDeletingIds] = useState<ReadonlySet<string>>(new Set())
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    loadWorkspaceAssets(workspaceId, controller.signal)
+      .then(setAssets)
+      .catch((loadError: unknown) => {
+        if (!controller.signal.aborted) {
+          setError(loadError instanceof Error ? loadError.message : 'Could not load assets.')
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setIsLoading(false)
+        }
+      })
+
+    return () => controller.abort()
+  }, [workspaceId])
+
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
 
-    const item = event.dataTransfer.getData('application/todo-list')
-    if (!item) {
+    // dataTransfer can only be read while the drop event is being handled, so before any await.
+    const label = event.dataTransfer.getData('application/todo-list')
+    if (!label) {
       return
     }
 
-    setDroppedBlocks((current) => [...current, item])
+    try {
+      const createdAsset = await createAsset(workspaceId, label, 'Todo')
+      setAssets((current) => [...current, createdAsset])
+      setError(null)
+    } catch (createError) {
+      setError(createError instanceof Error ? createError.message : 'Could not create the asset.')
+    }
+  }
+
+  const handleDelete = async (assetId: string) => {
+    setDeletingIds((current) => new Set(current).add(assetId))
+
+    try {
+      await deleteAsset(assetId)
+      setAssets((current) => current.filter((asset) => asset.id !== assetId))
+      setError(null)
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : 'Could not delete the asset.')
+    } finally {
+      setDeletingIds((current) => {
+        const next = new Set(current)
+        next.delete(assetId)
+        return next
+      })
+    }
   }
 
   return (
     <>
       <Toolbar />
-      <Canvas droppedBlocks={droppedBlocks} onDrop={handleDrop} />
+      <Canvas
+        assets={assets}
+        isLoading={isLoading}
+        error={error}
+        deletingIds={deletingIds}
+        onDrop={handleDrop}
+        onDelete={handleDelete}
+      />
     </>
   )
+}
+
+function WorkspacePage() {
+  const { workspaceId } = useParams()
+
+  if (!workspaceId) {
+    return null
+  }
+
+  // Keyed by workspace so switching workspaces starts from fresh state instead of briefly
+  // showing the previous workspace's assets.
+  return <WorkspaceCanvas key={workspaceId} workspaceId={workspaceId} />
 }
 
 export default WorkspacePage
