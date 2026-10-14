@@ -125,7 +125,7 @@ React Router, two routes. There is no per-asset route: a workspace is a canvas, 
 
 ## Frontend State
 
-Context + `useReducer`, scoped to the workspace canvas (the one screen with real-time state). Each hub event maps to a reducer action (`ITEM_ADDED`, `ITEM_UPDATED`, `ITEM_DELETED`, `ITEM_REORDERED`, `EDIT_REJECTED`, `USER_JOINED`, `USER_LEFT`), plus a `LOCAL_EDIT` action for the optimistic apply. A `WorkspaceProvider` owns the reducer, seeded from the REST snapshot; child components read state and dispatch via context instead of prop drilling. The workspaces list on `/` is plain REST data, no reducer needed — it's not edited in real time.
+Context + `useReducer`, scoped to the workspace canvas (the one screen with real-time state). Each hub event maps to a reducer action (`ITEM_ADDED`, `ITEM_UPDATED`, `ITEM_DELETED`, `ITEM_REORDERED`, `EDIT_REJECTED`, `USER_JOINED`, `USER_LEFT`), plus a `LOCAL_EDIT` action for the optimistic apply. A `WorkspaceProvider` (singular) owns the reducer, seeded from the REST snapshot; child components read state and dispatch via context instead of prop drilling. The workspaces list is plain REST data, no reducer needed — it's not edited in real time. A separate `WorkspaceListProvider` (plural, read with `useWorkspaceList()`) loads it once per user and shares it between the overview and the sidebar, reloading after a workspace is created.
 
 Canvas-specific actions (placing, moving, resizing assets) aren't listed here yet — they depend on the hub and entity changes planned in a separate PR.
 

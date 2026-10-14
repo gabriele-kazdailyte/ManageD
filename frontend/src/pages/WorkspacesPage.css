@@ -5,6 +5,20 @@
   box-sizing: border-box;
 }
 
+.workspaces-page__avatar {
+  position: absolute;
+  top: 20px;
+  right: 28px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--avatar-bg);
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
 .workspaces-page__header {
   margin-bottom: 32px;
 }
@@ -20,10 +34,14 @@
 
 .workspaces-page__header h1 {
   margin: 0;
+  font-size: 36px;
+  font-weight: 700;
 }
 
 .workspaces-page__welcome {
   margin-top: 8px;
+  font-size: 15px;
+  font-weight: 400;
 }
 
 .workspaces-page__error button {
@@ -94,7 +112,7 @@
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: 12px;
-  background: var(--bg);
+  background: var(--surface);
   color: var(--text-h);
   text-decoration: none;
   transition: border-color 120ms ease, transform 120ms ease;
@@ -174,4 +192,24 @@
     align-items: stretch;
     flex-direction: column;
   }
+}
+
+.workspace-card--new {
+  width: 100%;
+  background: transparent;
+  border-style: dashed;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.workspace-card--new:hover {
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+
+.workspace-card__icon--new {
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 1.3rem;
 }
