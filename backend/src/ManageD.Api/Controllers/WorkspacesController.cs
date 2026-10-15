@@ -91,8 +91,19 @@ public class WorkspacesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public IActionResult DeleteWorkspace(Guid id)
+    public async Task<IActionResult> DeleteWorkspaceAsync(Guid id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var workspace = await _dbContext.Workspaces
+            .FirstOrDefaultAsync(w => w.Id == id, cancellationToken);
+
+        if (workspace is null)
+        {
+            return NotFound();
+        }
+
+        _dbContext.Workspaces.Remove(workspace);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return NoContent();
     }
 }
