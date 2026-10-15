@@ -46,4 +46,18 @@ public class EfAssetStore : IAssetStore
         await _dbContext.SaveChangesAsync(cancellationToken);
         return true;
     }
+
+    public async Task<AssetSnapshot?> GetAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var asset = await _dbContext.Assets
+            .Include(a => a.Items)
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+
+        if (asset == null)
+        {
+            return null;
+        }
+
+        return ToSnapshot(asset);
+    }
 }
