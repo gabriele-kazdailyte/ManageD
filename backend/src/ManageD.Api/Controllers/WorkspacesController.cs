@@ -85,9 +85,32 @@ public class WorkspacesController : ControllerBase
     }
 
     [HttpPost("{id}/members")]
-    public IActionResult AddMember(Guid id, AddMemberRequest request)
+    public async Task<IActionResult> AddMemberAsync(Guid id, AddMemberRequest request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var workspace = await _dbContext.Workspaces
+            .Include(w => w.Users)
+            .FirstOrDefaultAsync(w => w.Id == id, cancellationToken);
+
+        if (workspace is null)
+        {
+            return NotFound();
+        }
+
+        var user = await _dbContext.Users
+            .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+
+        if (user is null)
+        {
+            return NotFound();
+        }
+
+        if (!workspace.Users.Any(member => member.Id == user.Id))
+        {
+            workspace.Users.Add(user);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
