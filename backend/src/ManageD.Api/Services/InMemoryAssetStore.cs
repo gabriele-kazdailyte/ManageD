@@ -3,27 +3,26 @@ using ManageD.Api.Models;
 
 namespace ManageD.Api.Services;
 
-// Temporary storage until assets are persisted with EF Core. Registered as a singleton so every
-// request sees the same assets; every access takes _lock because requests run concurrently.
-public class InMemoryAssetStore
+// In-memory implementation of IAssetStore, used when no database is wanted (for example, in tests)
+public class InMemoryAssetStore : IAssetStore
 {
     private readonly Dictionary<Guid, Asset> _assets = new();
     private readonly Lock _lock = new();
 
-    public AssetSnapshot Add(Asset asset)
+    public Task<AssetSnapshot> AddAsync(Asset asset, CancellationToken cancellationToken)
     {
         lock (_lock)
         {
             _assets.Add(asset.Id, asset);
-            return ToSnapshot(asset);
+            return Task.FromResult(ToSnapshot(asset));
         }
     }
 
-    public IReadOnlyList<AssetSummary> ListByWorkspace(Guid workspaceId)
+    public Task<IReadOnlyList<AssetSummary>> ListByWorkspaceAsync(Guid workspaceId, CancellationToken cancellationToken)
     {
         lock (_lock)
         {
-            return _assets.Values
+            return Task.FromResult<IReadOnlyList<AssetSummary>>(_assets.Values
                 .Where(asset => asset.WorkspaceId == workspaceId)
                 .OrderBy(asset => asset.CreatedAt)
                 .Select(asset => new AssetSummary(
@@ -32,23 +31,23 @@ public class InMemoryAssetStore
                     asset.TemplateType,
                     asset.UpdatedAt,
                     asset.Items.Count))
-                .ToList();
+                .ToList());
         }
     }
 
-    public AssetSnapshot? Get(Guid id)
+    public Task<AssetSnapshot?> GetAsync(Guid id, CancellationToken cancellationToken)
     {
         lock (_lock)
         {
-            return _assets.TryGetValue(id, out var asset) ? ToSnapshot(asset) : null;
+            return Task.FromResult<AssetSnapshot?>(_assets.TryGetValue(id, out var asset) ? ToSnapshot(asset) : null);
         }
     }
 
-    public bool Remove(Guid id)
+    public Task<bool> RemoveAsync(Guid id, CancellationToken cancellationToken)
     {
         lock (_lock)
         {
-            return _assets.Remove(id);
+            return Task.FromResult(_assets.Remove(id));
         }
     }
 

@@ -54,16 +54,16 @@ public class AssetsController : ControllerBase
     }
 
     [HttpGet("{id}", Name = "GetAssetById")]
-    public IActionResult GetAsset(Guid id)
+    public async Task<IActionResult> GetAssetAsync(Guid id, CancellationToken cancellationToken)
     {
-        var asset = _assetService.Get(id);
+        var asset = await _assetService.GetAsync(id, cancellationToken);
 
         return asset is null ? NotFound() : Ok(asset);
     }
 
     [HttpDelete("{id}")]
-    public IActionResult DeleteAsset(Guid id)
+    public async Task<IActionResult> DeleteAssetAsync(Guid id, CancellationToken cancellationToken)
     {
-        return _assetService.Delete(id) ? NoContent() : NotFound();
+        return await _assetService.DeleteAsync(id, cancellationToken) ? NoContent() : NotFound();
     }
 }
