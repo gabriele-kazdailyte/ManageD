@@ -32,4 +32,18 @@ public class EfAssetStore : IAssetStore
                 .Select(item => new TodoItemDto(item.Id, item.Text, item.IsDone, item.Order))
                 .ToList());
     }
+
+    public async Task<bool> RemoveAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var asset = await _dbContext.Assets.FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+
+        if (asset == null)
+        {
+            return false;
+        }
+
+        _dbContext.Assets.Remove(asset);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        return true;
+    }
 }
