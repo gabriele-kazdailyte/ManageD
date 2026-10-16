@@ -107,7 +107,7 @@ function WorkspacesPage() {
                   aria-label={`Delete ${workspace.name}`}
                   title={`Delete ${workspace.name}`}
                 >
-                  ×
+                  <span className="workspace-card__delete-icon" aria-hidden="true" />
                 </button>
               </li>
             )
