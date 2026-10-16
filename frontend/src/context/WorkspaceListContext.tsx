@@ -11,6 +11,7 @@ type WorkspaceListContextValue = {
   isLoading: boolean
   error: string | null
   reload: () => void
+  deleteWorkspace: (workspaceId: string) => Promise<void>
 }
 
 const WorkspaceListContext = createContext<WorkspaceListContextValue | undefined>(undefined)
@@ -54,13 +55,25 @@ export function WorkspaceListProvider({ children }: { children: ReactNode }) {
     startLoad()
   }, [startLoad])
 
+  const deleteWorkspace = useCallback(async (workspaceId: string) => {
+    const response = await fetch(`/api/workspaces/${encodeURIComponent(workspaceId)}`, {
+      method: 'DELETE',
+    })
+
+    if (!response.ok) {
+      throw new Error(`Could not delete the workspace (HTTP ${response.status}).`)
+    }
+
+    setWorkspaces((current) => current.filter((workspace) => workspace.id !== workspaceId))
+  }, [])
+
   useEffect(() => {
     startLoad()
     return () => controllerRef.current?.abort()
   }, [startLoad])
 
   return (
-    <WorkspaceListContext.Provider value={{ workspaces, isLoading, error, reload }}>
+    <WorkspaceListContext.Provider value={{ workspaces, isLoading, error, reload, deleteWorkspace }}>
       {children}
     </WorkspaceListContext.Provider>
   )

@@ -104,12 +104,17 @@
   list-style: none;
 }
 
+.workspace-list__item {
+  position: relative;
+}
+
 .workspace-card {
   display: flex;
+  position: relative;
   min-height: 76px;
   align-items: center;
   gap: 12px;
-  padding: 16px;
+  padding: 16px 48px 16px 16px;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--surface);
@@ -154,6 +159,44 @@
   font-size: 1.2rem;
 }
 
+.workspace-card__delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #d93025;
+  border-radius: 50%;
+  background: #fff;
+  color: #d93025;
+  font: inherit;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.workspace-card__delete:hover:not(:disabled) {
+  background: #fff3f2;
+}
+
+.workspace-card__delete:focus-visible {
+  outline: 2px solid #d93025;
+  outline-offset: 2px;
+}
+
+.workspace-card__delete:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.workspaces-page__delete-error {
+  margin: 0 0 16px;
+  color: #8e211a;
+}
+
 .workspace-list__empty {
   display: flex;
   align-items: center;
@@ -196,6 +239,7 @@
 
 .workspace-card--new {
   width: 100%;
+  padding: 16px;
   background: transparent;
   border-style: dashed;
   color: var(--text);

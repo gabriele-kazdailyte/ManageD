@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { useWorkspaceList } from '../context/WorkspaceListContext'
@@ -6,8 +7,10 @@ import './WorkspacesPage.css'
 
 function WorkspacesPage() {
   const { identity } = useUser()
-  const { workspaces, isLoading, error, reload } = useWorkspaceList()
+  const { workspaces, isLoading, error, reload, deleteWorkspace } = useWorkspaceList()
   const { setCollapsed } = useOutletContext<{ setCollapsed: (collapsed: boolean) => void }>()
+  const [deletingIds, setDeletingIds] = useState<ReadonlySet<string>>(new Set())
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const openNewWorkspace = () => {
     setCollapsed(false)
@@ -27,6 +30,31 @@ function WorkspacesPage() {
     day: 'numeric',
   }).format(now)
 
+  const handleDeleteWorkspace = async (workspaceId: string, workspaceName: string) => {
+    if (!window.confirm(`Delete "${workspaceName}"? This action cannot be undone.`)) {
+      return
+    }
+
+    setDeletingIds((current) => new Set(current).add(workspaceId))
+    setDeleteError(null)
+
+    try {
+      await deleteWorkspace(workspaceId)
+    } catch (deleteRequestError) {
+      setDeleteError(
+        deleteRequestError instanceof Error
+          ? deleteRequestError.message
+          : 'Could not delete the workspace.',
+      )
+    } finally {
+      setDeletingIds((current) => {
+        const next = new Set(current)
+        next.delete(workspaceId)
+        return next
+      })
+    }
+  }
+
   return (
     <section className="workspaces-page">
       <span className="workspaces-page__avatar" aria-hidden="true">
@@ -45,6 +73,7 @@ function WorkspacesPage() {
           <button type="button" onClick={reload}>Retry loading</button>
         </div>
       ) : null}
+      {deleteError ? <p className="workspaces-page__delete-error" role="alert">{deleteError}</p> : null}
 
       <div className="workspace-list__heading">
         <h2>Your workspaces</h2>
@@ -58,7 +87,7 @@ function WorkspacesPage() {
           {workspaces.map((workspace, index) => {
             const tile = WS_TILES[index % WS_TILES.length]
             return (
-              <li key={workspace.id}>
+              <li className="workspace-list__item" key={workspace.id}>
                 <Link className="workspace-card" to={`/workspaces/${encodeURIComponent(workspace.id)}`}>
                   <span
                     className="workspace-card__icon"
@@ -70,6 +99,16 @@ function WorkspacesPage() {
                   <span className="workspace-card__name">{workspace.name}</span>
                   <span className="workspace-card__arrow" aria-hidden="true">→</span>
                 </Link>
+                <button
+                  type="button"
+                  className="workspace-card__delete"
+                  onClick={() => handleDeleteWorkspace(workspace.id, workspace.name)}
+                  disabled={deletingIds.has(workspace.id)}
+                  aria-label={`Delete ${workspace.name}`}
+                  title={`Delete ${workspace.name}`}
+                >
+                  ×
+                </button>
               </li>
             )
           })}
