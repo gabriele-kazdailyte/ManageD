@@ -28,10 +28,7 @@ public class EfAssetStore : IAssetStore
             asset.Title,
             asset.TemplateType,
             asset.Revision,
-            asset.Items
-                .OrderBy(item => item.Order)
-                .Select(item => new TodoItemDto(item.Id, item.Text, item.IsDone, item.Order))
-                .ToList());
+            asset.Items.ToOrderedDtos());
     }
 
     public async Task<bool> RemoveAsync(Guid id, CancellationToken cancellationToken)
