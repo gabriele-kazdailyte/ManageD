@@ -8,9 +8,9 @@ namespace ManageD.Api.Services;
 public class AssetService
 {
     private readonly ManageDDbContext _dbContext;
-    private readonly InMemoryAssetStore _store;
+    private readonly IAssetStore _store;
 
-    public AssetService(ManageDDbContext dbContext, InMemoryAssetStore store)
+    public AssetService(ManageDDbContext dbContext, IAssetStore store)
     {
         _dbContext = dbContext;
         _store = store;
@@ -50,7 +50,7 @@ public class AssetService
             },
         };
 
-        return _store.Add(asset);
+        return await _store.AddAsync(asset, cancellationToken);
     }
 
     // Returns null when the workspace doesn't exist, so callers can tell it apart from an empty workspace.
@@ -61,17 +61,17 @@ public class AssetService
             return null;
         }
 
-        return _store.ListByWorkspace(workspaceId);
+        return await _store.ListByWorkspaceAsync(workspaceId, cancellationToken);
     }
 
-    public AssetSnapshot? Get(Guid id)
+    public Task<AssetSnapshot?> GetAsync(Guid id, CancellationToken cancellationToken)
     {
-        return _store.Get(id);
+        return _store.GetAsync(id, cancellationToken);
     }
 
-    public bool Delete(Guid id)
+    public Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        return _store.Remove(id);
+        return _store.RemoveAsync(id, cancellationToken);
     }
 
     private Task<bool> WorkspaceExistsAsync(Guid workspaceId, CancellationToken cancellationToken)
