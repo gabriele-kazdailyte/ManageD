@@ -11,6 +11,7 @@ function WorkspacesPage() {
   const { setCollapsed } = useOutletContext<{ setCollapsed: (collapsed: boolean) => void }>()
   const [deletingIds, setDeletingIds] = useState<ReadonlySet<string>>(new Set())
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [workspaceToDelete, setWorkspaceToDelete] = useState<{ id: string; name: string } | null>(null)
 
   const openNewWorkspace = () => {
     setCollapsed(false)
@@ -30,16 +31,17 @@ function WorkspacesPage() {
     day: 'numeric',
   }).format(now)
 
-  const handleDeleteWorkspace = async (workspaceId: string, workspaceName: string) => {
-    if (!window.confirm(`Delete "${workspaceName}"? This action cannot be undone.`)) {
+  const handleDeleteWorkspace = async () => {
+    if (!workspaceToDelete) {
       return
     }
-
+    const { id: workspaceId } = workspaceToDelete
     setDeletingIds((current) => new Set(current).add(workspaceId))
     setDeleteError(null)
 
     try {
       await deleteWorkspace(workspaceId)
+      setWorkspaceToDelete(null)
     } catch (deleteRequestError) {
       setDeleteError(
         deleteRequestError instanceof Error
@@ -102,7 +104,10 @@ function WorkspacesPage() {
                 <button
                   type="button"
                   className="workspace-card__delete"
-                  onClick={() => handleDeleteWorkspace(workspace.id, workspace.name)}
+                  onClick={() => {
+                    setDeleteError(null)
+                    setWorkspaceToDelete({ id: workspace.id, name: workspace.name })
+                  }}
                   disabled={deletingIds.has(workspace.id)}
                   aria-label={`Delete ${workspace.name}`}
                   title={`Delete ${workspace.name}`}
@@ -120,6 +125,42 @@ function WorkspacesPage() {
           </li>
         </ul>
       )}
+      {workspaceToDelete ? (
+        <div className="workspace-delete-dialog__backdrop">
+          <section
+            className="workspace-delete-dialog"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="workspace-delete-title"
+            aria-describedby="workspace-delete-description"
+          >
+            <span className="workspace-delete-dialog__icon" aria-hidden="true">!</span>
+            <h2 id="workspace-delete-title">Delete workspace?</h2>
+            <p id="workspace-delete-description">
+              Are you sure you want to delete <strong>{workspaceToDelete.name}</strong>? This action cannot be undone.
+            </p>
+            {deleteError ? <p className="workspace-delete-dialog__error" role="alert">{deleteError}</p> : null}
+            <div className="workspace-delete-dialog__actions">
+              <button
+                type="button"
+                className="workspace-delete-dialog__cancel"
+                onClick={() => setWorkspaceToDelete(null)}
+                disabled={deletingIds.has(workspaceToDelete.id)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="workspace-delete-dialog__confirm"
+                onClick={handleDeleteWorkspace}
+                disabled={deletingIds.has(workspaceToDelete.id)}
+              >
+                {deletingIds.has(workspaceToDelete.id) ? 'Deleting…' : 'Delete workspace'}
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </section>
   )
 }
