@@ -106,6 +106,12 @@
 
 .workspace-list__item {
   position: relative;
+  transition: transform 120ms ease;
+}
+
+.workspace-list__item:hover,
+.workspace-list__item:focus-within {
+  transform: translateY(-2px);
 }
 
 .workspace-card {
@@ -120,11 +126,10 @@
   background: var(--surface);
   color: var(--text-h);
   text-decoration: none;
-  transition: border-color 120ms ease, transform 120ms ease;
+  transition: border-color 120ms ease;
 }
 
 .workspace-card:hover {
-  transform: translateY(-2px);
   border-color: var(--accent-border);
 }
 
@@ -168,10 +173,10 @@
   height: 28px;
   place-items: center;
   padding: 0;
-  border: 1px solid #d93025;
+  border: 1px solid var(--danger);
   border-radius: 50%;
-  background: #fff;
-  color: #d93025;
+  background: var(--surface);
+  color: var(--danger);
   cursor: pointer;
 }
 
@@ -202,22 +207,17 @@
 }
 
 .workspace-card__delete:hover:not(:disabled) {
-  background: #fff3f2;
+  background: var(--danger-bg);
 }
 
 .workspace-card__delete:focus-visible {
-  outline: 2px solid #d93025;
+  outline: 2px solid var(--danger);
   outline-offset: 2px;
 }
 
 .workspace-card__delete:disabled {
   cursor: wait;
   opacity: 0.55;
-}
-
-.workspaces-page__delete-error {
-  margin: 0 0 16px;
-  color: #8e211a;
 }
 
 .workspace-delete-dialog__backdrop {
@@ -248,8 +248,8 @@
   place-items: center;
   margin: 0 auto 16px;
   border-radius: 50%;
-  background: #fff3f2;
-  color: #d93025;
+  background: var(--danger-bg);
+  color: var(--danger);
   font-size: 1.4rem;
   font-weight: 700;
 }
@@ -270,7 +270,7 @@
 
 .workspace-delete-dialog p.workspace-delete-dialog__error {
   margin-top: 12px;
-  color: #8e211a;
+  color: var(--danger-text);
   font-size: 0.9rem;
 }
 
@@ -298,8 +298,8 @@
 }
 
 .workspace-delete-dialog__actions .workspace-delete-dialog__confirm {
-  border-color: #d93025;
-  background: #d93025;
+  border-color: var(--danger);
+  background: var(--danger);
   color: #fff;
 }
 

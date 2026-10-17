@@ -60,7 +60,7 @@ export function WorkspaceListProvider({ children }: { children: ReactNode }) {
       method: 'DELETE',
     })
 
-    if (!response.ok) {
+    if (!response.ok && response.status !== 404) {
       throw new Error(`Could not delete the workspace (HTTP ${response.status}).`)
     }
 

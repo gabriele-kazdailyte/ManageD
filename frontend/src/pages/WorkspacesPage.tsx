@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { useWorkspaceList } from '../context/WorkspaceListContext'
@@ -12,6 +12,67 @@ function WorkspacesPage() {
   const [deletingIds, setDeletingIds] = useState<ReadonlySet<string>>(new Set())
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [workspaceToDelete, setWorkspaceToDelete] = useState<{ id: string; name: string } | null>(null)
+  const dialogRef = useRef<HTMLElement>(null)
+  const cancelButtonRef = useRef<HTMLButtonElement>(null)
+  const confirmButtonRef = useRef<HTMLButtonElement>(null)
+  const deleteTriggerRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (workspaceToDelete) {
+      cancelButtonRef.current?.focus()
+    } else {
+      deleteTriggerRef.current?.focus()
+    }
+  }, [workspaceToDelete])
+
+  useEffect(() => {
+    const workspaceId = workspaceToDelete?.id
+    if (!workspaceId) {
+      return
+    }
+
+    const handleDialogKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (!deletingIds.has(workspaceId)) {
+          event.preventDefault()
+          setWorkspaceToDelete(null)
+        }
+        return
+      }
+
+      if (event.key !== 'Tab') {
+        return
+      }
+
+      const focusableButtons = [cancelButtonRef.current, confirmButtonRef.current].filter(
+        (button): button is HTMLButtonElement => button !== null && !button.disabled,
+      )
+      const dialog = dialogRef.current
+      if (focusableButtons.length === 0) {
+        event.preventDefault()
+        dialog?.focus()
+        return
+      }
+
+      const firstButton = focusableButtons[0]
+      const lastButton = focusableButtons[focusableButtons.length - 1]
+      const activeElement = document.activeElement
+      if (activeElement === dialog || !dialog?.contains(activeElement)) {
+        event.preventDefault()
+        const targetButton = event.shiftKey ? lastButton : firstButton
+        targetButton.focus()
+      } else if (event.shiftKey && activeElement === firstButton) {
+        event.preventDefault()
+        lastButton.focus()
+      } else if (!event.shiftKey && activeElement === lastButton) {
+        event.preventDefault()
+        firstButton.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleDialogKeyDown)
+    return () => document.removeEventListener('keydown', handleDialogKeyDown)
+  }, [workspaceToDelete?.id, deletingIds])
 
   const openNewWorkspace = () => {
     setCollapsed(false)
@@ -75,8 +136,6 @@ function WorkspacesPage() {
           <button type="button" onClick={reload}>Retry loading</button>
         </div>
       ) : null}
-      {deleteError ? <p className="workspaces-page__delete-error" role="alert">{deleteError}</p> : null}
-
       <div className="workspace-list__heading">
         <h2>Your workspaces</h2>
         {!isLoading ? <span>{workspaces.length}</span> : null}
@@ -104,7 +163,8 @@ function WorkspacesPage() {
                 <button
                   type="button"
                   className="workspace-card__delete"
-                  onClick={() => {
+                  onClick={(event) => {
+                    deleteTriggerRef.current = event.currentTarget
                     setDeleteError(null)
                     setWorkspaceToDelete({ id: workspace.id, name: workspace.name })
                   }}
@@ -129,7 +189,9 @@ function WorkspacesPage() {
         <div className="workspace-delete-dialog__backdrop">
           <section
             className="workspace-delete-dialog"
+            ref={dialogRef}
             role="alertdialog"
+            tabIndex={-1}
             aria-modal="true"
             aria-labelledby="workspace-delete-title"
             aria-describedby="workspace-delete-description"
@@ -144,6 +206,7 @@ function WorkspacesPage() {
               <button
                 type="button"
                 className="workspace-delete-dialog__cancel"
+                ref={cancelButtonRef}
                 onClick={() => setWorkspaceToDelete(null)}
                 disabled={deletingIds.has(workspaceToDelete.id)}
               >
@@ -152,6 +215,7 @@ function WorkspacesPage() {
               <button
                 type="button"
                 className="workspace-delete-dialog__confirm"
+                ref={confirmButtonRef}
                 onClick={handleDeleteWorkspace}
                 disabled={deletingIds.has(workspaceToDelete.id)}
               >
