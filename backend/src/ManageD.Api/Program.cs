@@ -20,6 +20,7 @@ builder.Services.AddDbContext<ManageDDbContext>(options =>
 
 builder.Services.AddScoped<IAssetStore, EfAssetStore>();
 builder.Services.AddScoped<AssetService>();
+builder.Services.AddSingleton<TemplateCatalog>();
 
 var app = builder.Build();
 
