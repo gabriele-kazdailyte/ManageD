@@ -31,6 +31,8 @@ body,
   --ws-blue-bg: #badfe7;  --ws-blue-text: #1d5f7a;
 
   --danger: #dc2626;
+  --danger-bg: #fff3f2;
+  --danger-text: #8e211a;
 
   --shadow:
     rgba(20, 20, 15, 0.05) 0 10px 15px -3px, rgba(20, 20, 15, 0.04) 0 4px 6px -2px;
