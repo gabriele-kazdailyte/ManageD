@@ -9,6 +9,8 @@ public record TodoItemDto(Guid Id, string Text, bool IsDone, int Order) : ICompa
             return 1;
         }
 
-        return Order.CompareTo(other.Order);
+        var byOrder = Order.CompareTo(other.Order);
+
+        return byOrder != 0 ? byOrder : Id.CompareTo(other.Id);
     }
 }
