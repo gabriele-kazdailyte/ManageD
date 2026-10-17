@@ -3,6 +3,7 @@ import { Link, useOutletContext } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { useWorkspaceList } from '../context/WorkspaceListContext'
 import { WS_TILES, iconLetter } from '../workspaceStyle'
+import '../components/DeleteConfirmation.css'
 import './WorkspacesPage.css'
 
 function WorkspacesPage() {

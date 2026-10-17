@@ -4,15 +4,13 @@ import './TodoAsset.css'
 type TodoAssetProps = {
   asset: AssetSnapshot
   isDeleting: boolean
-  onDelete: (assetId: string) => void
+  onDelete: (asset: AssetSnapshot) => void
 }
 
 // Read-only for now: items are added and edited through the hub, which doesn't exist yet.
 function TodoAsset({ asset, isDeleting, onDelete }: TodoAssetProps) {
   const handleDelete = () => {
-    if (window.confirm(`Delete "${asset.title}"?`)) {
-      onDelete(asset.id)
-    }
+    onDelete(asset)
   }
 
   return (

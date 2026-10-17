@@ -8,7 +8,7 @@ type CanvasProps = {
   error: string | null
   deletingIds: ReadonlySet<string>
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void
-  onDelete: (assetId: string) => void
+  onDelete: (asset: AssetSnapshot) => void
 }
 
 function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete }: CanvasProps) {
