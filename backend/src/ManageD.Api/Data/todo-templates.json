@@ -1,0 +1,91 @@
+[
+  {
+    "name": "Daily standup",
+    "itemTexts": [
+      "What I did yesterday",
+      "What I'm doing today",
+      "Blockers",
+      "Needs help from"
+    ]
+  },
+  {
+    "name": "Sprint planning",
+    "itemTexts": [
+      "Review the sprint goal",
+      "Check team capacity",
+      "Pick items from the backlog",
+      "Break items into tasks",
+      "Estimate tasks",
+      "Assign owners",
+      "Confirm the definition of done"
+    ]
+  },
+  {
+    "name": "Sprint retrospective",
+    "itemTexts": [
+      "What went well",
+      "What didn't go well",
+      "What we learned",
+      "Pick improvements for next sprint",
+      "Assign an owner to each action"
+    ]
+  },
+  {
+    "name": "Bug triage",
+    "itemTexts": [
+      "Reproduce the bug",
+      "Set severity",
+      "Set priority",
+      "Identify affected users",
+      "Assign an owner",
+      "Add a regression test"
+    ]
+  },
+  {
+    "name": "Release checklist",
+    "itemTexts": [
+      "All pull requests merged",
+      "Tests passing",
+      "Code formatted",
+      "Database migration reviewed",
+      "Docs and contract updated",
+      "Smoke test the release build",
+      "Tag the release",
+      "Announce to the team"
+    ]
+  },
+  {
+    "name": "Code review checklist",
+    "itemTexts": [
+      "Read the PR description",
+      "Check it does what it says",
+      "Look for edge cases",
+      "Check naming and style",
+      "Check tests",
+      "Leave specific comments",
+      "Approve or request changes"
+    ]
+  },
+  {
+    "name": "Project kickoff",
+    "itemTexts": [
+      "Define goals and scope",
+      "List stakeholders",
+      "Assign roles",
+      "Set milestones and deadlines",
+      "Identify risks",
+      "Choose communication channels",
+      "Schedule the first review"
+    ]
+  },
+  {
+    "name": "Meeting agenda",
+    "itemTexts": [
+      "Goal of the meeting",
+      "Updates",
+      "Decisions needed",
+      "Action items",
+      "Next meeting"
+    ]
+  }
+]
