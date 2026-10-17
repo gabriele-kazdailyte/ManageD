@@ -2,7 +2,7 @@
 
 ## Team Members
 
-- Daugirdas Pelanis (TL):
+- Daugirdas Pelanis (TL): `VidilistGames`
 - Gabrielė Každailytė: `gabriele-kazdailyte`
 - Armantas Stanevičius: `Quuacks`
 - Joris Unikas: `jorisunikas`
