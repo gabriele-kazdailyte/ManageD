@@ -23,10 +23,12 @@ public class CreateAssetRequest
 public class AssetsController : ControllerBase
 {
     private readonly AssetService _assetService;
+    private readonly TemplateCatalog _templateCatalog;
 
-    public AssetsController(AssetService assetService)
+    public AssetsController(AssetService assetService, TemplateCatalog templateCatalog)
     {
         _assetService = assetService;
+        _templateCatalog = templateCatalog;
     }
 
     [HttpPost]
@@ -65,5 +67,13 @@ public class AssetsController : ControllerBase
     public async Task<IActionResult> DeleteAssetAsync(Guid id, CancellationToken cancellationToken)
     {
         return await _assetService.DeleteAsync(id, cancellationToken) ? NoContent() : NotFound();
+    }
+
+    [HttpGet("templates")]
+    public async Task<IActionResult> GetTemplatesAsync(CancellationToken cancellationToken)
+    {
+        var templates = await _templateCatalog.GetInfosAsync(cancellationToken);
+
+        return Ok(templates);
     }
 }

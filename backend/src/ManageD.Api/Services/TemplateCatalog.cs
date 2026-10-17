@@ -1,4 +1,5 @@
 using System.Text.Json;
+using ManageD.Api.Dtos;
 using ManageD.Api.Models;
 
 namespace ManageD.Api.Services;
@@ -51,5 +52,15 @@ public class TemplateCatalog
         }
 
         return valid;
+    }
+
+    public async Task<List<TemplateInfo>> GetInfosAsync(CancellationToken cancellationToken)
+    {
+        var templates = await LoadAsync(cancellationToken);
+
+        return templates
+            .Select(t => new TemplateInfo(t.Name, t.ItemTexts.Count))
+            .Where(info => !info.IsEmpty)
+            .ToList();
     }
 }
