@@ -24,6 +24,18 @@
   overflow-wrap: anywhere;
 }
 
+.todo-asset__template {
+  flex-shrink: 0;
+  max-width: 120px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  padding: 2px 4px;
+  cursor: pointer;
+}
+
 .todo-asset__delete {
   border: none;
   background: none;
