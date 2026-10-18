@@ -16,6 +16,8 @@ public class CreateAssetRequest
 
     [EnumDataType(typeof(TemplateType))]
     public TemplateType? TemplateType { get; set; }
+
+    public string? TemplateName { get; set; }
 }
 
 [ApiController]
@@ -34,12 +36,28 @@ public class AssetsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateAssetAsync(CreateAssetRequest request, CancellationToken cancellationToken)
     {
+        IReadOnlyList<string>? initialItems = null;
+
+        if (request.TemplateName is not null)
+        {
+            var template = await _templateCatalog.FindAsync(request.TemplateName, cancellationToken);
+
+            if (template is null)
+            {
+                ModelState.AddModelError(nameof(request.TemplateName), "Unknown template.");
+                return ValidationProblem(ModelState);
+            }
+
+            initialItems = template.ItemTexts;
+        }
+
         // [Required] rejects a missing WorkspaceId with a 400 before this runs, so it can't be null here.
         var asset = await _assetService.CreateAsync(
             request.Title,
             request.WorkspaceId!.Value,
             request.TemplateType ?? TemplateType.Todo,
-            cancellationToken);
+            initialItems: initialItems,
+            cancellationToken: cancellationToken);
 
         return asset is null
             ? NotFound()

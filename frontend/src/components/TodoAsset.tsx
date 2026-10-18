@@ -1,14 +1,16 @@
-import type { AssetSnapshot } from '../api/assets'
+import type { AssetSnapshot, TemplateInfo } from '../api/assets'
 import './TodoAsset.css'
 
 type TodoAssetProps = {
   asset: AssetSnapshot
   isDeleting: boolean
+  templates: TemplateInfo[]
   onDelete: (assetId: string) => void
+  onSelectTemplate: (asset: AssetSnapshot, templateName: string | null) => void
 }
 
 // Read-only for now: items are added and edited through the hub, which doesn't exist yet.
-function TodoAsset({ asset, isDeleting, onDelete }: TodoAssetProps) {
+function TodoAsset({ asset, isDeleting, templates, onDelete, onSelectTemplate }: TodoAssetProps) {
   const handleDelete = () => {
     if (window.confirm(`Delete "${asset.title}"?`)) {
       onDelete(asset.id)
@@ -19,6 +21,21 @@ function TodoAsset({ asset, isDeleting, onDelete }: TodoAssetProps) {
     <article className="todo-asset">
       <header className="todo-asset__header">
         <h2 className="todo-asset__title">{asset.title}</h2>
+        <select
+          className="todo-asset__template"
+          defaultValue="custom"
+          onChange={(event) =>
+            onSelectTemplate(asset, event.target.value === 'custom' ? null : event.target.value)
+          }
+          aria-label="Fill from template"
+        >
+          <option value="custom">Templates</option>
+          {templates.map((template) => (
+            <option key={template.name} value={template.name}>
+              {template.name}
+            </option>
+          ))}
+        </select>
         <button
           type="button"
           className="todo-asset__delete"

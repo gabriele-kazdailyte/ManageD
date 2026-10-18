@@ -63,4 +63,11 @@ public class TemplateCatalog
             .Where(info => !info.IsEmpty)
             .ToList();
     }
+
+    public async Task<TodoTemplate?> FindAsync(string name, CancellationToken cancellationToken)
+    {
+        var templates = await LoadAsync(cancellationToken);
+
+        return templates.FirstOrDefault(template => string.Equals(template.Name, name, StringComparison.OrdinalIgnoreCase));
+    }
 }

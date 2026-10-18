@@ -62,9 +62,11 @@ Response: `204`, empty body.
 
 Request:
 ```json
-{ "title": "string", "workspaceId": "uuid", "templateType": "templateType | null" }
+{ "title": "string", "workspaceId": "uuid", "templateType": "templateType | null", "templateName": "string | null" }
 ```
-Response `201`:
+`templateName` is optional. When it names a known starter template (see `GET /api/assets/templates`), the new asset is seeded with that template's items at creation; the client sends only the name, never item content. An unknown name is a validation failure (`400`). When omitted, the asset is created empty.
+
+Response `201` (`items` holds the seeded items, or is empty when no template was given):
 ```json
 { "id": "uuid", "title": "string", "templateType": "templateType", "revision": 0, "items": [] }
 ```
@@ -99,9 +101,20 @@ Response `200`:
 
 Response: `204`, empty body.
 
+### `GET /api/assets/templates`
+
+Lists the server-defined starter templates a new asset can be seeded from (via `templateName` on `POST /api/assets`). `itemCount` is how many items the template would add.
+
+Response `200`:
+```json
+[
+  { "name": "string", "itemCount": 0 }
+]
+```
+
 ### Errors
 
-- Validation failure (e.g. empty `title`/`name`, or a `templateType` that isn't a known template name): `400`, framework-default `application/problem+json` body.
+- Validation failure (e.g. empty `title`/`name`, a `templateType` that isn't a known template name, or a `templateName` that doesn't match a known starter template): `400`, framework-default `application/problem+json` body.
 - Missing workspace/asset/user: `404`, empty body.
 
 ## Hub — `/hubs/asset`
