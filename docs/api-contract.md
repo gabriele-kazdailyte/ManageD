@@ -46,13 +46,31 @@ Response `200`:
 ]
 ```
 
+### `GET /api/workspaces/{id}/members`
+
+Lists the workspace's members, sorted by display name.
+
+Response `200`:
+```json
+[
+  { "id": "uuid", "displayName": "string" }
+]
+```
+
 ### `POST /api/workspaces/{id}/members`
+
+Adds a user to the workspace by id. Adding someone who is already a member is not an error, so the same request can safely be sent twice.
 
 Request:
 ```json
 { "userId": "uuid" }
 ```
-Response: `204`, empty body.
+Response `201` (the user was added) or `200` (the user was already a member):
+```json
+{ "id": "uuid", "displayName": "string" }
+```
+
+A missing workspace or user is a `404` with a `detail` message saying which one (`"Workspace not found."` / `"No user with that ID exists."`), see Errors.
 
 ### `DELETE /api/workspaces/{id}`
 
@@ -115,7 +133,7 @@ Response `200`:
 ### Errors
 
 - Validation failure (e.g. empty `title`/`name`, a `templateType` that isn't a known template name, or a `templateName` that doesn't match a known starter template): `400`, framework-default `application/problem+json` body.
-- Missing workspace/asset/user: `404`, empty body.
+- Missing workspace/asset/user: `404`, empty body. The exception is `POST /api/workspaces/{id}/members`, where either the workspace or the user can be missing: its `404` has an `application/problem+json` body whose `detail` says which one.
 
 ## Hub — `/hubs/asset`
 

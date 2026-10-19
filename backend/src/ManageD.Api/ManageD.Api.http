@@ -1,5 +1,7 @@
 @ManageD_Api_HostAddress = http://localhost:5093
 @userId = 00000000-0000-0000-0000-000000000000
+# A second user (create one with "Create user"), to add to the workspace that @userId created.
+@memberUserId = 00000000-0000-0000-0000-000000000000
 @workspaceId = 00000000-0000-0000-0000-000000000000
 @assetId = 00000000-0000-0000-0000-000000000000
 
@@ -26,12 +28,31 @@ Content-Type: application/json
 ### List a user's workspaces
 GET {{ManageD_Api_HostAddress}}/api/workspaces?userId={{userId}}
 
-### Add member to workspace
+### List workspace members
+GET {{ManageD_Api_HostAddress}}/api/workspaces/{{workspaceId}}/members
+
+### Add member to workspace (201 when added, 200 when already a member)
 POST {{ManageD_Api_HostAddress}}/api/workspaces/{{workspaceId}}/members
 Content-Type: application/json
 
 {
-  "userId": "{{userId}}"
+  "userId": "{{memberUserId}}"
+}
+
+### Add unknown user to workspace (expect 404 with "No user with that ID exists.")
+POST {{ManageD_Api_HostAddress}}/api/workspaces/{{workspaceId}}/members
+Content-Type: application/json
+
+{
+  "userId": "00000000-0000-0000-0000-000000000000"
+}
+
+### Add member to unknown workspace (expect 404 with "Workspace not found.")
+POST {{ManageD_Api_HostAddress}}/api/workspaces/00000000-0000-0000-0000-000000000000/members
+Content-Type: application/json
+
+{
+  "userId": "{{memberUserId}}"
 }
 
 ### Delete workspace
