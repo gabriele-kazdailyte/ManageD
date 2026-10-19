@@ -187,9 +187,9 @@ function WorkspacesPage() {
         </ul>
       )}
       {workspaceToDelete ? (
-        <div className="workspace-delete-dialog__backdrop">
+        <div className="delete-dialog__backdrop">
           <section
-            className="workspace-delete-dialog"
+            className="delete-dialog"
             ref={dialogRef}
             role="alertdialog"
             tabIndex={-1}
@@ -197,16 +197,16 @@ function WorkspacesPage() {
             aria-labelledby="workspace-delete-title"
             aria-describedby="workspace-delete-description"
           >
-            <span className="workspace-delete-dialog__icon" aria-hidden="true">!</span>
+            <span className="delete-dialog__icon" aria-hidden="true">!</span>
             <h2 id="workspace-delete-title">Delete workspace?</h2>
             <p id="workspace-delete-description">
               Are you sure you want to delete <strong>{workspaceToDelete.name}</strong>? This action cannot be undone.
             </p>
-            {deleteError ? <p className="workspace-delete-dialog__error" role="alert">{deleteError}</p> : null}
-            <div className="workspace-delete-dialog__actions">
+            {deleteError ? <p className="delete-dialog__error" role="alert">{deleteError}</p> : null}
+            <div className="delete-dialog__actions">
               <button
                 type="button"
-                className="workspace-delete-dialog__cancel"
+                className="delete-dialog__cancel"
                 ref={cancelButtonRef}
                 onClick={() => setWorkspaceToDelete(null)}
                 disabled={deletingIds.has(workspaceToDelete.id)}
@@ -215,7 +215,7 @@ function WorkspacesPage() {
               </button>
               <button
                 type="button"
-                className="workspace-delete-dialog__confirm"
+                className="delete-dialog__confirm"
                 ref={confirmButtonRef}
                 onClick={handleDeleteWorkspace}
                 disabled={deletingIds.has(workspaceToDelete.id)}

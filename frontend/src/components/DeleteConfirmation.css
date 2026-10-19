@@ -1,4 +1,4 @@
-.workspace-delete-dialog__backdrop {
+.delete-dialog__backdrop {
   position: fixed;
   z-index: 10;
   inset: 0;
@@ -8,7 +8,7 @@
   background: rgba(28, 43, 43, 0.38);
 }
 
-.workspace-delete-dialog {
+.delete-dialog {
   width: min(100%, 420px);
   box-sizing: border-box;
   padding: 28px;
@@ -19,7 +19,7 @@
   text-align: center;
 }
 
-.workspace-delete-dialog__icon {
+.delete-dialog__icon {
   display: grid;
   width: 44px;
   height: 44px;
@@ -32,27 +32,27 @@
   font-weight: 700;
 }
 
-.workspace-delete-dialog h2 {
+.delete-dialog h2 {
   margin: 0 0 8px;
   font-size: 1.35rem;
 }
 
-.workspace-delete-dialog p {
+.delete-dialog p {
   color: var(--text);
   overflow-wrap: anywhere;
 }
 
-.workspace-delete-dialog strong {
+.delete-dialog strong {
   color: var(--text-h);
 }
 
-.workspace-delete-dialog p.workspace-delete-dialog__error {
+.delete-dialog p.delete-dialog__error {
   margin-top: 12px;
   color: var(--danger-text);
   font-size: 0.9rem;
 }
 
-.workspace-delete-dialog__option {
+.delete-dialog__option {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -62,18 +62,18 @@
   text-align: left;
 }
 
-.workspace-delete-dialog__option input {
+.delete-dialog__option input {
   accent-color: var(--accent);
 }
 
-.workspace-delete-dialog__actions {
+.delete-dialog__actions {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 24px;
 }
 
-.workspace-delete-dialog__actions button {
+.delete-dialog__actions button {
   min-height: 42px;
   padding: 9px 16px;
   border: 1px solid var(--border);
@@ -84,23 +84,23 @@
   cursor: pointer;
 }
 
-.workspace-delete-dialog__cancel {
+.delete-dialog__cancel {
   background: var(--surface);
   color: var(--text-h);
 }
 
-.workspace-delete-dialog__actions .workspace-delete-dialog__confirm {
+.delete-dialog__actions .delete-dialog__confirm {
   border-color: var(--danger);
   background: var(--danger);
   color: #fff;
 }
 
-.workspace-delete-dialog__actions button:focus-visible {
+.delete-dialog__actions button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-.workspace-delete-dialog__actions button:disabled {
+.delete-dialog__actions button:disabled {
   cursor: wait;
   opacity: 0.65;
 }

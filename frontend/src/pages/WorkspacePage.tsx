@@ -187,9 +187,9 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
         onDelete={handleRequestDelete}
       />
       {assetToDelete ? (
-        <div className="workspace-delete-dialog__backdrop">
+        <div className="delete-dialog__backdrop">
           <section
-            className="workspace-delete-dialog"
+            className="delete-dialog"
             ref={dialogRef}
             role="alertdialog"
             tabIndex={-1}
@@ -197,13 +197,13 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
             aria-labelledby="asset-delete-title"
             aria-describedby="asset-delete-description"
           >
-            <span className="workspace-delete-dialog__icon" aria-hidden="true">!</span>
+            <span className="delete-dialog__icon" aria-hidden="true">!</span>
             <h2 id="asset-delete-title">Delete item?</h2>
             <p id="asset-delete-description">
               Are you sure you want to delete <strong>{assetToDelete.title}</strong>? This action cannot be undone.
             </p>
-            {deleteError ? <p className="workspace-delete-dialog__error" role="alert">{deleteError}</p> : null}
-            <label className="workspace-delete-dialog__option">
+            {deleteError ? <p className="delete-dialog__error" role="alert">{deleteError}</p> : null}
+            <label className="delete-dialog__option">
               <input
                 ref={checkboxRef}
                 type="checkbox"
@@ -211,12 +211,12 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
                 onChange={(event) => setConfirmFutureDeletes(event.target.checked)}
                 disabled={deletingIds.has(assetToDelete.id)}
               />
-              Don’t ask again in this workspace
+              Don’t ask again for now
             </label>
-            <div className="workspace-delete-dialog__actions">
+            <div className="delete-dialog__actions">
               <button
                 type="button"
-                className="workspace-delete-dialog__cancel"
+                className="delete-dialog__cancel"
                 ref={cancelButtonRef}
                 onClick={() => {
                   setAssetToDelete(null)
@@ -228,7 +228,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
               </button>
               <button
                 type="button"
-                className="workspace-delete-dialog__confirm"
+                className="delete-dialog__confirm"
                 ref={confirmButtonRef}
                 onClick={handleConfirmDelete}
                 disabled={deletingIds.has(assetToDelete.id)}
