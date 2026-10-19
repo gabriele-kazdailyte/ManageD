@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using ManageD.Api.Data;
 using ManageD.Api.Models;
+using ManageD.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ManageD.Api.Controllers;
 
@@ -26,11 +25,11 @@ public class AddMemberRequest
 [Route("api/workspaces")]
 public class WorkspacesController : ControllerBase
 {
-    private readonly ManageDDbContext _dbContext;
+    private readonly WorkspaceService _workspaceService;
 
-    public WorkspacesController(ManageDDbContext dbContext)
+    public WorkspacesController(WorkspaceService workspaceService)
     {
-        _dbContext = dbContext;
+        _workspaceService = workspaceService;
     }
 
     [HttpPost]
@@ -38,28 +37,10 @@ public class WorkspacesController : ControllerBase
         CreateWorkspaceRequest request,
         CancellationToken cancellationToken)
     {
-        var creator = await _dbContext.Users
-            .FirstOrDefaultAsync(user => user.Id == request.CreatorUserId, cancellationToken);
+        // [Required] rejects a missing CreatorUserId with a 400 before this runs, so it can't be null here.
+        var workspace = await _workspaceService.CreateAsync(request.Name, request.CreatorUserId!.Value, cancellationToken);
 
-        if (creator is null)
-        {
-            return NotFound();
-        }
-
-        var workspace = new Workspace
-        {
-            Id = Guid.NewGuid(),
-            Name = request.Name.Trim(),
-            CreatedAt = DateTime.UtcNow,
-        };
-        workspace.Users.Add(creator);
-
-        _dbContext.Workspaces.Add(workspace);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return StatusCode(
-            StatusCodes.Status201Created,
-            new { id = workspace.Id, name = workspace.Name });
+        return workspace is null ? NotFound() : StatusCode(StatusCodes.Status201Created, workspace);
     }
 
     [HttpGet]
@@ -67,66 +48,39 @@ public class WorkspacesController : ControllerBase
         [Required] Guid? userId,
         CancellationToken cancellationToken)
     {
-        var userExists = await _dbContext.Users
-            .AnyAsync(user => user.Id == userId, cancellationToken);
+        // [Required] rejects a missing userId with a 400 before this runs, so it can't be null here.
+        var workspaces = await _workspaceService.ListForUserAsync(userId!.Value, cancellationToken);
 
-        if (!userExists)
-        {
-            return NotFound();
-        }
+        return workspaces is null ? NotFound() : Ok(workspaces);
+    }
 
-        var workspaces = await _dbContext.Workspaces
-            .AsNoTracking()
-            .Where(workspace => workspace.Users.Any(user => user.Id == userId))
-            .Select(workspace => new { workspace.Id, workspace.Name })
-            .ToListAsync(cancellationToken);
+    [HttpGet("{id}/members")]
+    public async Task<IActionResult> GetMembersAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var members = await _workspaceService.ListMembersAsync(id, cancellationToken: cancellationToken);
 
-        return Ok(workspaces);
+        return members is null ? NotFound() : Ok(members);
     }
 
     [HttpPost("{id}/members")]
     public async Task<IActionResult> AddMemberAsync(Guid id, AddMemberRequest request, CancellationToken cancellationToken)
     {
-        var workspace = await _dbContext.Workspaces
-            .Include(w => w.Users)
-            .FirstOrDefaultAsync(w => w.Id == id, cancellationToken);
+        // [Required] rejects a missing UserId with a 400 before this runs, so it can't be null here.
+        var (result, member) = await _workspaceService.AddMemberAsync(id, request.UserId!.Value, cancellationToken);
 
-        if (workspace is null)
+        return result switch
         {
-            return NotFound();
-        }
-
-        var user = await _dbContext.Users
-            .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
-
-        if (user is null)
-        {
-            return NotFound();
-        }
-
-        if (!workspace.Users.Any(member => member.Id == user.Id))
-        {
-            workspace.Users.Add(user);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-        }
-
-        return NoContent();
+            AddMemberResult.Added => StatusCode(StatusCodes.Status201Created, member),
+            AddMemberResult.AlreadyMember => Ok(member),
+            AddMemberResult.WorkspaceNotFound => Problem(detail: "Workspace not found.", statusCode: StatusCodes.Status404NotFound),
+            AddMemberResult.UserNotFound => Problem(detail: "No user with that ID exists.", statusCode: StatusCodes.Status404NotFound),
+            _ => throw new NotSupportedException($"Unexpected result '{result}'."),
+        };
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteWorkspaceAsync(Guid id, CancellationToken cancellationToken)
     {
-        var workspace = await _dbContext.Workspaces
-            .FirstOrDefaultAsync(w => w.Id == id, cancellationToken);
-
-        if (workspace is null)
-        {
-            return NotFound();
-        }
-
-        _dbContext.Workspaces.Remove(workspace);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return NoContent();
+        return await _workspaceService.DeleteAsync(id, cancellationToken) ? NoContent() : NotFound();
     }
 }
