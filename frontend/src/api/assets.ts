@@ -24,6 +24,11 @@ type AssetSummary = {
   itemCount: number
 }
 
+export type TemplateInfo = {
+  name: string
+  itemCount: number
+}
+
 async function readJson<T>(response: Response, action: string): Promise<T> {
   if (!response.ok) {
     throw new Error(`Could not ${action} (HTTP ${response.status}).`)
@@ -32,11 +37,16 @@ async function readJson<T>(response: Response, action: string): Promise<T> {
   return (await response.json()) as T
 }
 
-export async function createAsset(workspaceId: string, title: string, templateType: TemplateType) {
+export async function createAsset(
+  workspaceId: string,
+  title: string,
+  templateType: TemplateType,
+  templateName?: string,
+) {
   const response = await fetch('/api/assets', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, workspaceId, templateType }),
+    body: JSON.stringify({ title, workspaceId, templateType, templateName }),
   })
 
   return readJson<AssetSnapshot>(response, 'create the asset')
@@ -53,6 +63,12 @@ export async function loadWorkspaceAssets(workspaceId: string, signal?: AbortSig
       return readJson<AssetSnapshot>(assetResponse, 'load an asset')
     }),
   )
+}
+
+export async function loadTemplates(signal?: AbortSignal) {
+  const response = await fetch('/api/assets/templates', { signal })
+
+  return readJson<TemplateInfo[]>(response, 'load templates')
 }
 
 export async function deleteAsset(assetId: string) {

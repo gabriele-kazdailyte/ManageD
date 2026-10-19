@@ -16,6 +16,8 @@ public class CreateAssetRequest
 
     [EnumDataType(typeof(TemplateType))]
     public TemplateType? TemplateType { get; set; }
+
+    public string? TemplateName { get; set; }
 }
 
 [ApiController]
@@ -23,21 +25,39 @@ public class CreateAssetRequest
 public class AssetsController : ControllerBase
 {
     private readonly AssetService _assetService;
+    private readonly TemplateCatalog _templateCatalog;
 
-    public AssetsController(AssetService assetService)
+    public AssetsController(AssetService assetService, TemplateCatalog templateCatalog)
     {
         _assetService = assetService;
+        _templateCatalog = templateCatalog;
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateAssetAsync(CreateAssetRequest request, CancellationToken cancellationToken)
     {
+        IReadOnlyList<string>? initialItems = null;
+
+        if (request.TemplateName is not null)
+        {
+            var template = await _templateCatalog.FindAsync(request.TemplateName, cancellationToken);
+
+            if (template is null)
+            {
+                ModelState.AddModelError(nameof(request.TemplateName), "Unknown template.");
+                return ValidationProblem(ModelState);
+            }
+
+            initialItems = template.ItemTexts;
+        }
+
         // [Required] rejects a missing WorkspaceId with a 400 before this runs, so it can't be null here.
         var asset = await _assetService.CreateAsync(
             request.Title,
             request.WorkspaceId!.Value,
             request.TemplateType ?? TemplateType.Todo,
-            cancellationToken);
+            initialItems: initialItems,
+            cancellationToken: cancellationToken);
 
         return asset is null
             ? NotFound()
@@ -65,5 +85,13 @@ public class AssetsController : ControllerBase
     public async Task<IActionResult> DeleteAssetAsync(Guid id, CancellationToken cancellationToken)
     {
         return await _assetService.DeleteAsync(id, cancellationToken) ? NoContent() : NotFound();
+    }
+
+    [HttpGet("templates")]
+    public async Task<IActionResult> GetTemplatesAsync(CancellationToken cancellationToken)
+    {
+        var templates = await _templateCatalog.GetInfosAsync(cancellationToken);
+
+        return Ok(templates);
     }
 }

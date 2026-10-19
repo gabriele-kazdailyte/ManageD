@@ -21,6 +21,7 @@ public class AssetService
         string title,
         Guid workspaceId,
         TemplateType templateType = TemplateType.Todo,
+        IReadOnlyList<string>? initialItems = null, // Only used by TemplateType.Todo
         CancellationToken cancellationToken = default)
     {
         if (!await WorkspaceExistsAsync(workspaceId, cancellationToken))
@@ -38,11 +39,11 @@ public class AssetService
             CreatedAt = now,
             UpdatedAt = now,
 
-            // Each template sets up its own empty content, so a new enum value fails loudly here
+            // Each template sets up its own initial content, so a new enum value fails loudly here
             // until its setup is written instead of quietly producing a broken asset.
             Items = templateType switch
             {
-                TemplateType.Todo => new List<TodoItem>(),
+                TemplateType.Todo => BuildItems(initialItems),
 
                 // TODO: if a template type is added to the enum before its setup is written, reject it with a 400
                 // in request validation instead of reaching this throw (500).
@@ -77,5 +78,22 @@ public class AssetService
     private Task<bool> WorkspaceExistsAsync(Guid workspaceId, CancellationToken cancellationToken)
     {
         return _dbContext.Workspaces.AnyAsync(workspace => workspace.Id == workspaceId, cancellationToken);
+    }
+
+    private static List<TodoItem> BuildItems(IReadOnlyList<string>? texts)
+    {
+        if (texts is null)
+        {
+            return [];
+        }
+
+        var items = new List<TodoItem>();
+
+        for (var i = 0; i < texts.Count; i++)
+        {
+            items.Add(new TodoItem { Id = Guid.NewGuid(), Text = texts[i], Order = i });
+        }
+
+        return items;
     }
 }

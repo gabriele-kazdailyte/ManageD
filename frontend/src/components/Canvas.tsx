@@ -1,4 +1,4 @@
-import type { AssetSnapshot } from '../api/assets'
+import type { AssetSnapshot, TemplateInfo } from '../api/assets'
 import TodoAsset from './TodoAsset'
 import './Canvas.css'
 
@@ -7,11 +7,23 @@ type CanvasProps = {
   isLoading: boolean
   error: string | null
   deletingIds: ReadonlySet<string>
+  templates: TemplateInfo[]
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void
   onDelete: (asset: AssetSnapshot) => void
+  onDelete: (assetId: string) => void
+  onSelectTemplate: (asset: AssetSnapshot, templateName: string | null) => void
 }
 
-function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete }: CanvasProps) {
+function Canvas({
+  assets,
+  isLoading,
+  error,
+  deletingIds,
+  templates,
+  onDrop,
+  onDelete,
+  onSelectTemplate,
+}: CanvasProps) {
   // Each template type gets its own component; Todo is the only one so far.
   const renderAsset = (asset: AssetSnapshot) => {
     switch (asset.templateType) {
@@ -21,7 +33,9 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete }: Can
             key={asset.id}
             asset={asset}
             isDeleting={deletingIds.has(asset.id)}
+            templates={templates}
             onDelete={onDelete}
+            onSelectTemplate={onSelectTemplate}
           />
         )
     }

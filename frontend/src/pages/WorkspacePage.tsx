@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { createAsset, deleteAsset, loadWorkspaceAssets, type AssetSnapshot } from '../api/assets'
+import {
+  createAsset,
+  deleteAsset,
+  loadTemplates,
+  loadWorkspaceAssets,
+  type AssetSnapshot,
+  type TemplateInfo,
+} from '../api/assets'
 import Toolbar from '../components/Toolbar'
 import Canvas from '../components/Canvas'
 import '../components/DeleteConfirmation.css'
@@ -23,6 +30,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
   const confirmButtonRef = useRef<HTMLButtonElement>(null)
   const checkboxRef = useRef<HTMLInputElement>(null)
   const deleteTriggerRef = useRef<HTMLElement | null>(null)
+  const [templates, setTemplates] = useState<TemplateInfo[]>([])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -104,6 +112,18 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     document.addEventListener('keydown', handleDialogKeyDown)
     return () => document.removeEventListener('keydown', handleDialogKeyDown)
   }, [assetToDelete, deletingIds])
+    const controller = new AbortController()
+
+    loadTemplates(controller.signal)
+      .then(setTemplates)
+      .catch(() => {
+        if (!controller.signal.aborted) {
+          setTemplates([])
+        }
+      })
+
+    return () => controller.abort()
+  }, [])
 
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
@@ -172,6 +192,14 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
         setSkipDeleteConfirmation(true)
       }
       setAssetToDelete(null)
+  const handleSelectTemplate = async (asset: AssetSnapshot, templateName: string | null) => {
+    try {
+      const created = await createAsset(workspaceId, asset.title, 'Todo', templateName ?? undefined)
+      await deleteAsset(asset.id)
+      setAssets((current) => current.map((item) => (item.id === asset.id ? created : item)))
+      setError(null)
+    } catch (selectError) {
+      setError(selectError instanceof Error ? selectError.message : 'Could not apply the template.')
     }
   }
 
@@ -183,8 +211,11 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
         isLoading={isLoading}
         error={error}
         deletingIds={deletingIds}
+        templates={templates}
         onDrop={handleDrop}
         onDelete={handleRequestDelete}
+        onDelete={handleDelete}
+        onSelectTemplate={handleSelectTemplate}
       />
       {assetToDelete ? (
         <div className="delete-dialog__backdrop">

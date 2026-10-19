@@ -39,12 +39,13 @@ Exact request/response/payload shapes are in `api-contract.md` — this doc cove
 
 | Endpoint | Description |
 |---|---|
-| `POST /api/assets` | Creates an empty asset of the requested `templateType` inside the given workspace. `templateType` is optional and defaults to `Todo`. |
+| `POST /api/assets` | Creates an asset of the requested `templateType` inside the given workspace. `templateType` is optional and defaults to `Todo`. Optional `templateName` seeds the asset's initial items from a server-defined starter template; omitted means an empty asset. |
 | `GET /api/assets?workspaceId=` | Lists assets inside the given workspace, each with its `templateType`. `workspaceId` is required. |
 | `GET /api/assets/{id}` | Returns an asset's full snapshot: title, template type, revision, items. |
+| `GET /api/assets/templates` | Lists the server-defined starter templates (name + item count) that `POST /api/assets` can seed an asset from. |
 | `DELETE /api/assets/{id}` | Deletes an asset. |
 
-Content is never created or edited via REST — only through the hub.
+Content is never *edited* via REST — only through the hub. The one exception is seeding at creation: `POST /api/assets` may pre-fill a new asset's items from a server-defined starter template (`templateName`), set once when the asset is created. The client sends only the template name, never item content; all editing after creation stays hub-only.
 
 Validation failures return the framework-default 400 `application/problem+json` body. A missing workspace/asset/user returns an empty 404.
 
@@ -102,7 +103,7 @@ Data Annotations on REST DTOs (`[Required]`, `[MaxLength]`) for shape validation
 
 **SQLite** — single file, no external DB process to run in dev. Chosen for alpha because the goal is proving the concurrency mechanism works, not production-grade storage; revisit for beta if real concurrent-load behavior needs testing.
 
-**Assets are temporarily held in memory.** `InMemoryAssetStore` (a singleton behind `AssetService`) stores assets and their items instead of SQLite, so they're lost whenever the backend restarts. Users and workspaces are in SQLite as described above. Only `AssetService` uses the store, so moving assets to EF Core later changes that service's internals and nothing else. Until then, the revision check described under Concurrency, which arrives with the hub, will be done by hand under the store's lock rather than by EF.
+**Assets are persisted in SQLite through EF Core**, alongside users and workspaces. `AssetService` depends on an `IAssetStore` abstraction rather than a concrete store (Dependency Inversion): `EfAssetStore` reads and writes the `Asset` and `TodoItem` tables so assets survive a restart, while `InMemoryAssetStore` implements the same interface as an alternate, non-persistent store. Only `AssetService` uses the store.
 
 `Workspace`-`User` membership uses EF Core's skip navigations (`Workspace.Users`, `User.Workspaces`, both `ICollection<T>`) rather than an explicit join entity — EF generates and manages the bridge table itself. No membership class to write or maintain; add one back only if membership ever needs its own data (a role, a joined-at timestamp exposed to the API, etc.) beyond the plain yes/no it is now.
 
