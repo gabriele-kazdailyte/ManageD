@@ -6,7 +6,6 @@ type TodoAssetProps = {
   isDeleting: boolean
   onDelete: (asset: AssetSnapshot) => void
   templates: TemplateInfo[]
-  onDelete: (assetId: string) => void
   onSelectTemplate: (asset: AssetSnapshot, templateName: string | null) => void
 }
 

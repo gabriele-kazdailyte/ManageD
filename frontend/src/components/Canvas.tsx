@@ -10,7 +10,6 @@ type CanvasProps = {
   templates: TemplateInfo[]
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void
   onDelete: (asset: AssetSnapshot) => void
-  onDelete: (assetId: string) => void
   onSelectTemplate: (asset: AssetSnapshot, templateName: string | null) => void
 }
 

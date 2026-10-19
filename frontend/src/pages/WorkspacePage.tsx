@@ -112,6 +112,8 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     document.addEventListener('keydown', handleDialogKeyDown)
     return () => document.removeEventListener('keydown', handleDialogKeyDown)
   }, [assetToDelete, deletingIds])
+
+  useEffect(() => {
     const controller = new AbortController()
 
     loadTemplates(controller.signal)
@@ -192,6 +194,9 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
         setSkipDeleteConfirmation(true)
       }
       setAssetToDelete(null)
+    }
+  }
+
   const handleSelectTemplate = async (asset: AssetSnapshot, templateName: string | null) => {
     try {
       const created = await createAsset(workspaceId, asset.title, 'Todo', templateName ?? undefined)
@@ -214,7 +219,6 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
         templates={templates}
         onDrop={handleDrop}
         onDelete={handleRequestDelete}
-        onDelete={handleDelete}
         onSelectTemplate={handleSelectTemplate}
       />
       {assetToDelete ? (
