@@ -10,6 +10,7 @@ import {
 } from '../api/assets'
 import Toolbar from '../components/Toolbar'
 import Canvas from '../components/Canvas'
+import MembersPanel from '../components/MembersPanel'
 import '../components/DeleteConfirmation.css'
 
 type WorkspaceCanvasProps = {
@@ -210,6 +211,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
 
   return (
     <>
+      <MembersPanel workspaceId={workspaceId} />
       <Toolbar />
       <Canvas
         assets={assets}

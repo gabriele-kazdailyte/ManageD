@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useMatch, useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { useWorkspaceList } from '../context/WorkspaceListContext'
@@ -9,11 +9,33 @@ function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCollapsed
   const [workspaceName, setWorkspaceName] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
+  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle')
   const { identity } = useUser()
   const { workspaces, reload } = useWorkspaceList()
   const navigate = useNavigate()
   const workspaceMatch = useMatch('/workspaces/:workspaceId')
   const activeId = workspaceMatch?.params.workspaceId
+
+  // "Copied!" only needs to show briefly; the cleanup stops the reset from firing after the sidebar unmounts.
+  useEffect(() => {
+    if (copyState !== 'copied') {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => setCopyState('idle'), 2000)
+    return () => window.clearTimeout(timeoutId)
+  }, [copyState])
+
+  // The clipboard API only exists on secure origins (https or localhost), so opening the app over the
+  // network falls back to showing the id for copying by hand.
+  const handleCopyId = async () => {
+    try {
+      await navigator.clipboard.writeText(identity.userId)
+      setCopyState('copied')
+    } catch {
+      setCopyState('failed')
+    }
+  }
 
   const handleCreateWorkspace = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -117,6 +139,19 @@ function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean; setCollapsed
               )
             })}
           </ul>
+        </div>
+      ) : null}
+      {!collapsed ? (
+        <div className="sidebar__footer">
+          <span className="sidebar__signed-in">
+            Signed in as <strong>{identity.displayName}</strong>
+          </span>
+          <button type="button" className="sidebar__copy-id" onClick={handleCopyId}>
+            {copyState === 'copied' ? 'Copied!' : 'Copy my ID'}
+          </button>
+          {copyState === 'failed' ? (
+            <code className="sidebar__user-id" aria-label="Your user ID">{identity.userId}</code>
+          ) : null}
         </div>
       ) : null}
     </aside>

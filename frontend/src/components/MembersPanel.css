@@ -1,0 +1,150 @@
+.members-panel {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  padding: 8px 16px;
+  box-sizing: border-box;
+}
+
+.members-panel__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 14px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.members-panel__toggle:hover {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.members-panel__toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.members-panel__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 0 4px;
+  max-width: 520px;
+}
+
+.members-panel__status {
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.members-panel__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.members-panel__member {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 10px 3px 3px;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.members-panel__avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--avatar-bg);
+  color: var(--accent-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.members-panel__you {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.members-panel__form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.members-panel__form label {
+  color: var(--text-h);
+  font-size: 14px;
+}
+
+.members-panel__row {
+  display: flex;
+  gap: 8px;
+}
+
+.members-panel__row input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 8px 10px;
+}
+
+.members-panel__row input:focus {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 1px;
+}
+
+.members-panel__row button {
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 14px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.members-panel__row button:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.members-panel__row button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.members-panel__message {
+  margin: 0;
+  font-size: 14px;
+}
+
+.members-panel__message--success {
+  color: var(--accent-text);
+}
+
+.members-panel__message--info {
+  color: var(--text);
+}
+
+.members-panel__message--error {
+  color: var(--danger-text);
+}
