@@ -11,6 +11,12 @@ public class Asset
     [ConcurrencyCheck]
     public int Revision { get; set; }
 
+    public float X { get; set; }
+    public float Y { get; set; }
+    public float SizeX { get; set; }
+    public float SizeY { get; set; }
+    public int ZPos { get; set; }
+
     public Guid WorkspaceId { get; set; }
     public Workspace? Workspace { get; set; }
     public DateTime CreatedAt { get; set; }

@@ -14,7 +14,7 @@ Exact request/response/payload shapes are in `api-contract.md` — this doc cove
 
 - **User** — `Id (uuid), DisplayName (string), CreatedAt (datetime, UTC)`
 - **Workspace** — `Id (uuid), Name (string), CreatedAt (datetime, UTC)`. Has a many-to-many `Users` navigation (membership) and a one-to-many `Assets` navigation.
-- **Asset** — `Id (uuid), Title (string), TemplateType (enum, Todo only), Revision (int, concurrency token), WorkspaceId (uuid, ForeignKey→Workspace), CreatedAt (datetime, UTC), UpdatedAt (datetime, UTC)`
+- **Asset** — `Id (uuid), Title (string), TemplateType (enum, Todo only), Revision (int, concurrency token), X (float), Y (float), SizeX (float), SizeY (float), ZPos (int), WorkspaceId (uuid, ForeignKey→Workspace), CreatedAt (datetime, UTC), UpdatedAt (datetime, UTC)`. `X`, `Y`, `SizeX`, `SizeY` and `ZPos` are the asset's canvas placement. They exist in the schema now so beta doesn't need a second migration, but nothing reads or writes them in alpha; how layout changes interact with `Revision` is open, see `tbd.md`.
 - **TodoItem** — `Id (uuid), AssetId (uuid, ForeignKey→Asset), Text (string), IsDone (bool), Order (int)`
 
 ## REST API
@@ -147,3 +147,4 @@ Not part of alpha, decided later:
 - **CI** — no GitHub Actions gate on PRs yet.
 - **Deployment/hosting** — no target environment chosen yet.
 - **RBAC** — per-asset owner/editor/viewer roles. Workspace membership (this doc) is a flat yes/no gate, not a replacement for this.
+- **Canvas layout revisions** — how moving and resizing assets interacts with `Revision`. Open decision, see `tbd.md`.

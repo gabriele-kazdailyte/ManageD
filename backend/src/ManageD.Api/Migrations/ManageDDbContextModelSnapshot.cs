@@ -30,6 +30,12 @@ namespace ManageD.Api.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("INTEGER");
 
+                    b.Property<float>("SizeX")
+                        .HasColumnType("REAL");
+
+                    b.Property<float>("SizeY")
+                        .HasColumnType("REAL");
+
                     b.Property<int>("TemplateType")
                         .HasColumnType("INTEGER");
 
@@ -42,6 +48,15 @@ namespace ManageD.Api.Migrations
 
                     b.Property<Guid>("WorkspaceId")
                         .HasColumnType("TEXT");
+
+                    b.Property<float>("X")
+                        .HasColumnType("REAL");
+
+                    b.Property<float>("Y")
+                        .HasColumnType("REAL");
+
+                    b.Property<int>("ZPos")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
