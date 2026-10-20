@@ -23,12 +23,22 @@ Project manager Marius is looking for a simple way to create a task allocation p
 ## Features
 
 ### Alpha Version
-The core skeleton: a working shared sheet with real people editing it concurrently.
+The working skeleton: real profiles, shared workspaces, and persisted to-do lists on a canvas.
 
-- **Analytics dashboard**: completion rates, burndown-style charts, team workload distribution. Templates for common sheet types (To Do list, project tracker, etc.).
-- **Live conflict resolution**: concurrent edits to the same task are versioned and reconciled (last-write-wins with conflict tracking).
-- **Subtasks & dependencies**: tasks can be broken into subtasks, and one task can depend on another being completed first.
-- **Custom views**: filter, sort, and group tasks by assignee, tag, priority, or due date.
+**Identity & workspaces**
+- **Profiles (no auth yet)**: create a profile from a display name and the identity is remembered on the device. Share your user ID with the sidebar's *Copy my ID* so teammates can add you.
+- **Workspaces**: create a workspace, see the ones you belong to, open one as a canvas, and delete it (with a confirmation dialog).
+- **Members**: view a workspace's members and add people by their user ID.
+
+**Canvas & to-do lists**
+- **Drag-to-create**: drag a *Todo* block from the toolbar onto a workspace canvas to create a to-do list.
+- **Starter templates**: create a list pre-filled from a server-defined template (loaded from a bundled file).
+- **Delete**: remove a list through an accessible confirmation dialog.
+
+**Persistence**
+- Users, workspaces, members, and to-do lists (with their items) are stored in SQLite via EF Core, so everything survives a backend restart.
+
+**Not in the alpha yet** (planned for Beta): live multi-user editing and presence via the SignalR hub, editing list items (add / check off / reorder), and conflict resolution. For now, a list's items are seeded at creation and shown read-only.
 
 ### Beta Version
 Building on the stable core: presence, automation, and history.
