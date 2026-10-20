@@ -4,17 +4,15 @@ import './TodoAsset.css'
 type TodoAssetProps = {
   asset: AssetSnapshot
   isDeleting: boolean
+  onDelete: (asset: AssetSnapshot) => void
   templates: TemplateInfo[]
-  onDelete: (assetId: string) => void
   onSelectTemplate: (asset: AssetSnapshot, templateName: string | null) => void
 }
 
 // Read-only for now: items are added and edited through the hub, which doesn't exist yet.
 function TodoAsset({ asset, isDeleting, templates, onDelete, onSelectTemplate }: TodoAssetProps) {
   const handleDelete = () => {
-    if (window.confirm(`Delete "${asset.title}"?`)) {
-      onDelete(asset.id)
-    }
+    onDelete(asset)
   }
 
   return (

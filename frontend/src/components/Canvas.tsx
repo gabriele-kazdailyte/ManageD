@@ -9,7 +9,7 @@ type CanvasProps = {
   deletingIds: ReadonlySet<string>
   templates: TemplateInfo[]
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void
-  onDelete: (assetId: string) => void
+  onDelete: (asset: AssetSnapshot) => void
   onSelectTemplate: (asset: AssetSnapshot, templateName: string | null) => void
 }
 

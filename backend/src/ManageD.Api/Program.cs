@@ -21,6 +21,7 @@ builder.Services.AddDbContext<ManageDDbContext>(options =>
 builder.Services.AddScoped<IAssetStore, EfAssetStore>();
 builder.Services.AddScoped<AssetService>();
 builder.Services.AddScoped<WorkspaceService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<TemplateCatalog>();
 
 var app = builder.Build();

@@ -1,8 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using ManageD.Api.Data;
-using ManageD.Api.Models;
+using ManageD.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ManageD.Api.Controllers;
 
@@ -17,40 +15,25 @@ public class CreateUserRequest
 [Route("api/users")]
 public class UsersController : ControllerBase
 {
-    private readonly ManageDDbContext _dbContext;
+    private readonly UserService _userService;
 
-    public UsersController(ManageDDbContext dbContext)
+    public UsersController(UserService userService)
     {
-        _dbContext = dbContext;
+        _userService = userService;
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateUserAsync(CreateUserRequest request, CancellationToken cancellationToken)
     {
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            DisplayName = request.DisplayName.Trim(),
-            CreatedAt = DateTime.UtcNow,
-        };
+        var user = await _userService.CreateAsync(request.DisplayName, cancellationToken);
 
-        _dbContext.Users.Add(user);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
-        return CreatedAtRoute(
-            "GetUserById",
-            new { id = user.Id },
-            new { id = user.Id, displayName = user.DisplayName });
+        return CreatedAtRoute("GetUserById", new { id = user.Id }, user);
     }
 
     [HttpGet("{id}", Name = "GetUserById")]
     public async Task<IActionResult> GetUserAsync(Guid id, CancellationToken cancellationToken)
     {
-        var user = await _dbContext.Users
-            .AsNoTracking()
-            .Where(user => user.Id == id)
-            .Select(user => new { user.Id, user.DisplayName })
-            .FirstOrDefaultAsync(cancellationToken);
+        var user = await _userService.GetAsync(id, cancellationToken);
 
         return user is null ? NotFound() : Ok(user);
     }
