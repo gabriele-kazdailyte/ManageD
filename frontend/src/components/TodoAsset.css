@@ -75,6 +75,11 @@
   color: var(--text-h);
 }
 
+.todo-asset__item input[type='checkbox'] {
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
 .todo-asset__text--done {
   color: var(--text);
   text-decoration: line-through;
