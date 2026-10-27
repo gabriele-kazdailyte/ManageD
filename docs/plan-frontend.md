@@ -4,16 +4,17 @@ See `architecture.md` for design, `alpha.md` for scope, `api-contract.md` for ex
 
 ## Tasks
 
-1. **Routing** — **Done.** React Router installed, two routes: `/` and `/workspaces/:workspaceId`. No per-asset route; assets live on the workspace canvas.
-2. **Identity** — on boot, load `{userId, displayName}` from localStorage; if absent, prompt for a display name and `POST /api/users`.
-3. **Workspaces list (`/`)** — **Done.** List the current user's workspaces (`GET /api/workspaces?userId=`), create (`POST /api/workspaces`, navigate into it).
-4. **Workspace canvas (`/workspaces/:workspaceId`)** — on mount and on every reconnect: fetch the workspace's assets (`GET /api/assets?workspaceId=`) first, replace state entirely, then connect to the hub and join the workspace. Render the assets on the canvas; create and delete them there, not on a separate page.
-5. **`WorkspaceProvider`** — Context + `useReducer`, scoped to the workspace canvas. Actions: `ITEM_ADDED`, `ITEM_UPDATED`, `ITEM_DELETED`, `ITEM_REORDERED`, `EDIT_REJECTED`, `USER_JOINED`, `USER_LEFT`, `LOCAL_EDIT`. Seeded from the REST snapshot on mount.
-6. **Editing UI** — add/edit/toggle/delete/reorder todo items. Each action dispatches `LOCAL_EDIT` immediately (optimistic), then calls the matching hub method (`AddItem`/`UpdateItem`/`DeleteItem`/`ReorderItem`). `ITEM_REORDERED` applies a list of `{itemId, order}` changes, not a single item — a reorder can shift more than the one dragged.
-7. **Reconciliation** — the matching broadcast event confirms an edit; `EditRejected` discards the optimistic change and replaces state with `currentSnapshot`.
-8. **Presence UI** — render the live list of viewers from `UserJoined`/`UserLeft`.
-9. **Connection status** — surface reconnecting/disconnected state from the SignalR client so users know when their edits aren't going through.
-10. **Add-member UI** — in the workspace view, a way to enter a `userId` and call `POST /api/workspaces/{id}/members`. No lookup-by-name yet (see caveat below).
+1. [x] **Routing** — React Router installed, two routes: `/` and `/workspaces/:workspaceId`. No per-asset route; assets live on the workspace canvas.
+2. [x] **Identity** — on boot, load `{userId, displayName}` from localStorage; if absent, prompt for a display name and `POST /api/users`.
+3. [x] **Workspaces list (`/`)** — List the current user's workspaces (`GET /api/workspaces?userId=`), create (`POST /api/workspaces`, navigate into it).
+4. [ ] **Workspace canvas (`/workspaces/:workspaceId`)** — on mount and on every reconnect: connect to the hub (add the `@microsoft/signalr` package; in dev, proxy `/hubs` in `vite.config.ts` with `ws: true`, in production connect to the configured backend origin) and call `JoinWorkspace`, then replace state entirely with its response (every asset with its items, plus current viewers). Render the assets on the canvas; create (optionally from a preset) and delete them there through the hub (`CreateAsset`, `DeleteAsset`), not on a separate page. The preset picker's list comes from `GET /api/assets/presets`; the chosen name is passed as `presetName` to `CreateAsset` when the asset is created, replacing the current create-then-delete-then-swap on an existing asset. *Status: a REST-based canvas exists; the hub is not wired.*
+5. [ ] **`WorkspaceProvider`** — Context + `useReducer`, scoped to the workspace canvas. Actions: `ASSET_CREATED`, `ASSET_UPDATED`, `ASSET_DELETED`, `USER_JOINED`, `USER_LEFT`, `LOCAL_EDIT`. `ASSET_UPDATED` and `LOCAL_EDIT` share one function that applies a delta. Seeded from the `JoinWorkspace` response.
+6. [ ] **Editing UI** — add/edit/toggle/delete/reorder todo items. Each action builds a delta, dispatches `LOCAL_EDIT` immediately (optimistic), then calls `UpdateAsset(assetId, delta)`. Send on commit (enter, blur, toggle, end of a drag), not per keystroke. New items get a client-generated uuid; a reorder sends the new `order` only for the items that moved.
+7. [ ] **Reconciliation** — the `AssetUpdated` broadcast is applied idempotently (items have ids), so the sender's own echo changes nothing. If `UpdateAsset` is rejected with a `HubException`, discard the optimistic change and call `JoinWorkspace` again to resync.
+8. [ ] **Presence UI** — render the live list of viewers from `UserJoined`/`UserLeft`.
+9. [ ] **Connection status** — surface reconnecting/disconnected state from the SignalR client so users know when their edits aren't going through. If `JoinWorkspace` is rejected because the user isn't a member, show that and send them back to `/` instead of retrying.
+10. [x] **Add-member UI** — in the workspace view, a way to enter a `userId` and call `POST /api/workspaces/{id}/members`. No lookup-by-name yet (see caveat below).
+11. [ ] **Rename templates to presets** — after the backend rename lands: `loadTemplates` → `loadPresets` and its endpoint, `TemplateInfo` → `PresetInfo`, the `templates` state and props, `handleSelectTemplate` / `onSelectTemplate` → preset names, and the `templateName` field sent to `POST /api/assets` (until the hub replaces it). `TemplateType` stays.
 
 ## Sequencing notes
 

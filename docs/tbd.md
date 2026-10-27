@@ -1,17 +1,11 @@
-# To be decided
+# Decisions
 
-Open decisions that block no alpha work.
+## Concurrent edits — decided: delta merge, no revision
 
-## Revision system for canvas layout
+Edits are sent as deltas (only what changed), so concurrent changes merge: two additions both survive, edits to different items or fields both apply, edits to the same field are last-write-wins. There is no revision and no rejected edit. Details are in `architecture.md`, Concurrency.
 
-`Asset` stores its canvas placement (`X`, `Y`, `SizeX`, `SizeY`, `ZPos`), but nothing reads or writes these in alpha. Once layout can change live, we need to decide how layout edits interact with `Revision`, which today guards item edits only (see `architecture.md`, Concurrency).
+The cost: two people editing the same field of the same item silently lose one edit. Accepted for alpha.
 
-| Option | How it works | Trade-off |
-|---|---|---|
-| Single revision | Layout edits bump the same `Asset.Revision` as item edits. | Simplest, but dragging an asset rejects a concurrent item edit, and the reverse. |
-| Separate revisions | A second counter for layout, so item edits and layout edits never conflict with each other. | Two counters to maintain; two moves of the same asset can still conflict. |
-| Layout last-write-wins | Layout edits skip the revision check; the latest write wins. | No rejected drags, but one user's move can silently overwrite another's. |
-| Per-property merge | Merge changes field by field (one user moves, another resizes). | Fewer lost edits; more logic to write and test. |
-| OT / CRDT | A real-time merge algorithm. | Handles concurrent edits best; far more complex than the project needs. |
+## Canvas layout — decided: last-write-wins
 
-No decision yet. Needed before layout operations are added to the hub (beta).
+Moving and resizing assets (`X`, `Y`, `SizeX`, `SizeY`, `ZPos`) is last-write-wins. The client sends a move on drop, the server saves it, and everyone shows the coordinates the server broadcasts. Dragging a card another user is working on is accepted. Details are in `architecture.md`, Layout (beta).
