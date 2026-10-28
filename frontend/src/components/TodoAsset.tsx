@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { AssetSnapshot, TemplateInfo } from '../api/assets'
 import './TodoAsset.css'
 
@@ -11,6 +12,22 @@ type TodoAssetProps = {
 
 // Read-only for now: items are added and edited through the hub, which doesn't exist yet.
 function TodoAsset({ asset, isDeleting, templates, onDelete, onSelectTemplate }: TodoAssetProps) {
+  const [doneIds, setDoneIds] = useState<ReadonlySet<string>>(
+    () => new Set(asset.items.filter((item) => item.isDone).map((item) => item.id)),
+  )
+
+  const toggleItem = (itemId: string) => {
+    setDoneIds((current) => {
+      const next = new Set(current)
+      if (next.has(itemId)) {
+        next.delete(itemId)
+      } else {
+        next.add(itemId)
+      }
+      return next
+    })
+  }
+
   const handleDelete = () => {
     onDelete(asset)
   }
@@ -51,8 +68,13 @@ function TodoAsset({ asset, isDeleting, templates, onDelete, onSelectTemplate }:
         <ul className="todo-asset__items">
           {asset.items.map((item) => (
             <li key={item.id} className="todo-asset__item">
-              <input type="checkbox" checked={item.isDone} disabled aria-label={item.text} />
-              <span className={item.isDone ? 'todo-asset__text todo-asset__text--done' : 'todo-asset__text'}>
+              <input
+                type="checkbox"
+                checked={doneIds.has(item.id)}
+                onChange={() => toggleItem(item.id)}
+                aria-label={item.text}
+              />
+              <span className={doneIds.has(item.id) ? 'todo-asset__text todo-asset__text--done' : 'todo-asset__text'}>
                 {item.text}
               </span>
             </li>
