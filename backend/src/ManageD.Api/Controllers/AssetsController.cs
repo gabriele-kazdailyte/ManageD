@@ -17,7 +17,7 @@ public class CreateAssetRequest
     [EnumDataType(typeof(TemplateType))]
     public TemplateType? TemplateType { get; set; }
 
-    public string? TemplateName { get; set; }
+    public string? PresetName { get; set; }
 }
 
 [ApiController]
@@ -25,12 +25,12 @@ public class CreateAssetRequest
 public class AssetsController : ControllerBase
 {
     private readonly AssetService _assetService;
-    private readonly TemplateCatalog _templateCatalog;
+    private readonly PresetCatalog _presetCatalog;
 
-    public AssetsController(AssetService assetService, TemplateCatalog templateCatalog)
+    public AssetsController(AssetService assetService, PresetCatalog presetCatalog)
     {
         _assetService = assetService;
-        _templateCatalog = templateCatalog;
+        _presetCatalog = presetCatalog;
     }
 
     [HttpPost]
@@ -38,17 +38,17 @@ public class AssetsController : ControllerBase
     {
         IReadOnlyList<string>? initialItems = null;
 
-        if (request.TemplateName is not null)
+        if (request.PresetName is not null)
         {
-            var template = await _templateCatalog.FindAsync(request.TemplateName, cancellationToken);
+            var preset = await _presetCatalog.FindAsync(request.PresetName, cancellationToken);
 
-            if (template is null)
+            if (preset is null)
             {
-                ModelState.AddModelError(nameof(request.TemplateName), "Unknown template.");
+                ModelState.AddModelError(nameof(request.PresetName), "Unknown preset.");
                 return ValidationProblem(ModelState);
             }
 
-            initialItems = template.ItemTexts;
+            initialItems = preset.ItemTexts;
         }
 
         // [Required] rejects a missing WorkspaceId with a 400 before this runs, so it can't be null here.
@@ -87,11 +87,11 @@ public class AssetsController : ControllerBase
         return await _assetService.DeleteAsync(id, cancellationToken) ? NoContent() : NotFound();
     }
 
-    [HttpGet("templates")]
-    public async Task<IActionResult> GetTemplatesAsync(CancellationToken cancellationToken)
+    [HttpGet("presets")]
+    public async Task<IActionResult> GetPresetsAsync(CancellationToken cancellationToken)
     {
-        var templates = await _templateCatalog.GetInfosAsync(cancellationToken);
+        var presets = await _presetCatalog.GetInfosAsync(cancellationToken);
 
-        return Ok(templates);
+        return Ok(presets);
     }
 }

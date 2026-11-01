@@ -1,16 +1,16 @@
-import type { AssetSnapshot, TemplateInfo } from '../api/assets'
+import type { AssetSnapshot, PresetInfo } from '../api/assets'
 import './TodoAsset.css'
 
 type TodoAssetProps = {
   asset: AssetSnapshot
   isDeleting: boolean
   onDelete: (asset: AssetSnapshot) => void
-  templates: TemplateInfo[]
-  onSelectTemplate: (asset: AssetSnapshot, templateName: string | null) => void
+  presets: PresetInfo[]
+  onSelectPreset: (asset: AssetSnapshot, presetName: string | null) => void
 }
 
 // Read-only for now: items are added and edited through the hub, which doesn't exist yet.
-function TodoAsset({ asset, isDeleting, templates, onDelete, onSelectTemplate }: TodoAssetProps) {
+function TodoAsset({ asset, isDeleting, presets, onDelete, onSelectPreset }: TodoAssetProps) {
   const handleDelete = () => {
     onDelete(asset)
   }
@@ -20,17 +20,17 @@ function TodoAsset({ asset, isDeleting, templates, onDelete, onSelectTemplate }:
       <header className="todo-asset__header">
         <h2 className="todo-asset__title">{asset.title}</h2>
         <select
-          className="todo-asset__template"
+          className="todo-asset__preset"
           defaultValue="custom"
           onChange={(event) =>
-            onSelectTemplate(asset, event.target.value === 'custom' ? null : event.target.value)
+            onSelectPreset(asset, event.target.value === 'custom' ? null : event.target.value)
           }
-          aria-label="Fill from template"
+          aria-label="Fill from preset"
         >
-          <option value="custom">Templates</option>
-          {templates.map((template) => (
-            <option key={template.name} value={template.name}>
-              {template.name}
+          <option value="custom">Presets</option>
+          {presets.map((preset) => (
+            <option key={preset.name} value={preset.name}>
+              {preset.name}
             </option>
           ))}
         </select>

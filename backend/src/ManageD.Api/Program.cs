@@ -22,7 +22,7 @@ builder.Services.AddScoped<IAssetStore, EfAssetStore>();
 builder.Services.AddScoped<AssetService>();
 builder.Services.AddScoped<WorkspaceService>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddSingleton<TemplateCatalog>();
+builder.Services.AddSingleton<PresetCatalog>();
 
 var app = builder.Build();
 

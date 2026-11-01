@@ -3,10 +3,10 @@ import { useParams } from 'react-router-dom'
 import {
   createAsset,
   deleteAsset,
-  loadTemplates,
+  loadPresets,
   loadWorkspaceAssets,
   type AssetSnapshot,
-  type TemplateInfo,
+  type PresetInfo,
 } from '../api/assets'
 import Toolbar from '../components/Toolbar'
 import Canvas from '../components/Canvas'
@@ -31,7 +31,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
   const confirmButtonRef = useRef<HTMLButtonElement>(null)
   const checkboxRef = useRef<HTMLInputElement>(null)
   const deleteTriggerRef = useRef<HTMLElement | null>(null)
-  const [templates, setTemplates] = useState<TemplateInfo[]>([])
+  const [presets, setPresets] = useState<PresetInfo[]>([])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -117,11 +117,11 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
   useEffect(() => {
     const controller = new AbortController()
 
-    loadTemplates(controller.signal)
-      .then(setTemplates)
+    loadPresets(controller.signal)
+      .then(setPresets)
       .catch(() => {
         if (!controller.signal.aborted) {
-          setTemplates([])
+          setPresets([])
         }
       })
 
@@ -198,14 +198,14 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     }
   }
 
-  const handleSelectTemplate = async (asset: AssetSnapshot, templateName: string | null) => {
+  const handleSelectPreset = async (asset: AssetSnapshot, presetName: string | null) => {
     try {
-      const created = await createAsset(workspaceId, asset.title, 'Todo', templateName ?? undefined)
+      const created = await createAsset(workspaceId, asset.title, 'Todo', presetName ?? undefined)
       await deleteAsset(asset.id)
       setAssets((current) => current.map((item) => (item.id === asset.id ? created : item)))
       setError(null)
     } catch (selectError) {
-      setError(selectError instanceof Error ? selectError.message : 'Could not apply the template.')
+      setError(selectError instanceof Error ? selectError.message : 'Could not apply the preset.')
     }
   }
 
@@ -218,10 +218,10 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
         isLoading={isLoading}
         error={error}
         deletingIds={deletingIds}
-        templates={templates}
+        presets={presets}
         onDrop={handleDrop}
         onDelete={handleRequestDelete}
-        onSelectTemplate={handleSelectTemplate}
+        onSelectPreset={handleSelectPreset}
       />
       {assetToDelete ? (
         <div className="delete-dialog__backdrop">
