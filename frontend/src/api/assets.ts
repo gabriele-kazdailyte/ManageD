@@ -12,7 +12,6 @@ export type AssetSnapshot = {
   id: string
   title: string
   templateType: TemplateType
-  revision: number
   items: TodoItem[]
 }
 
