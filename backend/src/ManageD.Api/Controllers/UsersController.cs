@@ -13,7 +13,7 @@ public class CreateUserRequest
 
 [ApiController]
 [Route("api/users")]
-public class UsersController : ControllerBase
+public class UsersController : ApiControllerBase
 {
     private readonly UserService _userService;
 
@@ -33,8 +33,6 @@ public class UsersController : ControllerBase
     [HttpGet("{id}", Name = "GetUserById")]
     public async Task<IActionResult> GetUserAsync(Guid id, CancellationToken cancellationToken)
     {
-        var user = await _userService.GetAsync(id, cancellationToken);
-
-        return user is null ? NotFound() : Ok(user);
+        return ToActionResult(await _userService.GetAsync(id, cancellationToken));
     }
 }
