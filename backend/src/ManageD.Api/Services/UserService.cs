@@ -1,3 +1,4 @@
+using ManageD.Api.Common;
 using ManageD.Api.Data;
 using ManageD.Api.Dtos;
 using ManageD.Api.Models;
@@ -29,13 +30,17 @@ public class UserService
         return new UserSummary(user.Id, user.DisplayName);
     }
 
-    // Returns null when the user doesn't exist.
-    public async Task<UserSummary?> GetAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Result<UserSummary>> GetAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await _dbContext.Users
-            .AsNoTracking()
-            .Where(u => u.Id == id)
-            .Select(u => new UserSummary(u.Id, u.DisplayName))
-            .FirstOrDefaultAsync(cancellationToken);
+        var user = await FindAsync(id, cancellationToken);
+
+        return user.Map(found => new UserSummary(found.Id, found.DisplayName));
+    }
+
+    private async Task<Result<User>> FindAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var user = await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+        return user is null ? Result<User>.NotFound() : Result<User>.Ok(user);
     }
 }
