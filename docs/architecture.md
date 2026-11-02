@@ -154,21 +154,21 @@ Not built in alpha; the columns exist (see Entities). Layout operations — `Mov
 | Service | Responsibility |
 |---|---|
 | `WorkspaceService` | Creates a workspace (adding the creator as its first member), adds members, lists a user's workspaces. |
-| `AssetService` | Creates an asset (choosing initial content by `TemplateType`, seeding items from `PresetCatalog` when a `presetName` is given), loads a workspace's assets for `JoinWorkspace`, applies a delta (`ApplyDeltaAsync`), deletes an asset. |
+| `AssetService` | Creates an asset (choosing initial content by `TemplateType`, seeding items from `PresetCatalog` when a `presetName` is given), loads a workspace's assets for `JoinWorkspace`, applies a delta (`ApplyDeltaAsync`, merging via the pure `DeltaApplier`), deletes an asset. |
 | `PresenceService` | Tracks which connections are viewing which workspace, in memory, keyed by connection id. |
 | `UserService` | Creates and reads users. |
 
-`UpdateAsset` calls `ApplyDeltaAsync`, which validates the delta, applies it in one transaction and returns the delta that was actually applied for the hub to broadcast.
+`UpdateAsset` calls `ApplyDeltaAsync`, which applies the delta via `DeltaApplier` in one transaction and returns the delta that was actually applied; the hub broadcasts that result under the per-asset lock (see Concurrency).
 
 ## Validation
 
-Data Annotations on REST DTOs (`[Required]`, `[MaxLength]`) for shape validation — display name, workspace/asset name/title, item text non-empty and within length limits. The framework rejects malformed requests with a 400 before a handler runs. Rules that need DB access (e.g. an `itemId` belongs to the given `assetId`) aren't shape validation and live in the relevant service, not on a DTO. SignalR doesn't run Data Annotations on hub arguments, so hub payloads are validated explicitly in `AssetService`: every part of a delta, including that item `text` is non-empty and within the length limit.
+Data Annotations on REST DTOs (`[Required]`, `[MaxLength]`) for shape validation — display name, workspace/asset name/title, item text non-empty and within length limits. The framework rejects malformed requests with a 400 before a handler runs. Rules that need DB access (e.g. an `itemId` belongs to the given `assetId`) aren't shape validation and live in the relevant service, not on a DTO. SignalR doesn't run Data Annotations on hub arguments, so hub payloads are validated explicitly in `DeltaApplier` (which `AssetService` calls): every part of a delta, including that item `text` is non-empty and within the length limit.
 
 ## Data Access
 
 **SQLite** — single file, no external DB process to run in dev. Chosen for alpha because the goal is proving real-time sync and merging work, not production-grade storage; revisit for beta if real concurrent-load behavior needs testing.
 
-**Assets are persisted in SQLite through EF Core**, alongside users and workspaces. `AssetService` depends on an `IAssetStore` abstraction rather than a concrete store (Dependency Inversion): `EfAssetStore` reads and writes the `Asset` and `TodoItem` tables so assets survive a restart, while `InMemoryAssetStore` implements the same interface as an alternate, non-persistent store. Only `AssetService` uses the store.
+**Assets are persisted in SQLite through EF Core**, alongside users and workspaces. `AssetService` depends on an `IAssetStore` abstraction rather than a concrete store (Dependency Inversion): `EfAssetStore` is the only implementation — it reads and writes the `Asset` and `TodoItem` tables so assets survive a restart, exposing `GetForUpdateAsync` (load an asset with its items for editing) and `SaveAsync` (commit, translating EF's `DbUpdateConcurrencyException` into a domain `ConcurrencyConflictException`) alongside the plain reads. The store stays a load/save seam: the merge rules live in `DeltaApplier`, a pure class with no EF dependency that `AssetService` calls between load and save, so they can be unit-tested on their own. Only `AssetService` uses the store; tests substitute their own `IAssetStore` fake.
 
 `Workspace`-`User` membership uses EF Core's skip navigations (`Workspace.Users`, `User.Workspaces`, both `ICollection<T>`) rather than an explicit join entity — EF generates and manages the bridge table itself. No membership class to write or maintain; add one back only if membership ever needs its own data (a role, a joined-at timestamp exposed to the API, etc.) beyond the plain yes/no it is now.
 
@@ -187,9 +187,9 @@ There is no revision. Edits are deltas, and a delta only names what it changes, 
 | Edit and delete of the same item | The item is gone; the edit is skipped. |
 | Two reorders | Each moves only the items it names; equal `order` values tie-break by `Id`. |
 
-A delta is applied in a single `SaveChangesAsync()`, so it is all-or-nothing. If an item is deleted between loading and saving, EF reports zero rows affected and throws `DbUpdateConcurrencyException`; `AssetService` reloads and reapplies the delta once, now skipping the deleted item. Because every item has its own id, applying the same delta twice is harmless on the client (an `added` item whose id it already has is ignored), which is what lets the sender safely apply its own change optimistically and again when the broadcast returns.
+A delta is applied in a single `SaveChangesAsync()`, so it is all-or-nothing. If an item is deleted between loading and saving, EF reports zero rows affected and throws `DbUpdateConcurrencyException`; the store (`EfAssetStore.SaveAsync`) surfaces this as a domain `ConcurrencyConflictException`, and `AssetService` reloads and reapplies the delta once, now skipping the deleted item. Because every item has its own id, applying the same delta twice is harmless on the client (an `added` item whose id it already has is ignored), which is what lets the sender safely apply its own change optimistically and again when the broadcast returns.
 
-For one asset, applying a delta and broadcasting it happen under a per-asset lock, so the order clients receive deltas is the order they were saved. Without it, two concurrent deltas could save as A then B but broadcast as B then A, leaving clients showing A's value while the database holds B's. A single backend instance is assumed for alpha.
+For one asset, applying a delta and broadcasting the result happen under a per-asset lock, so the order clients receive deltas is the order they were saved. Because the broadcast is the hub's responsibility, this lock lives in the hub (or a small coordinator it calls), wrapping the `AssetService` apply **and** the broadcast as one critical section — not inside `AssetService`, which returns before anything is sent. Without it, two concurrent deltas could save as A then B but broadcast as B then A, leaving clients showing A's value while the database holds B's. A single backend instance is assumed for alpha.
 
 Layout edits (beta) are last-write-wins, saved with a direct `UPDATE` (`ExecuteUpdateAsync`) that doesn't load the entity. See Layout (beta) in the hub section.
 
