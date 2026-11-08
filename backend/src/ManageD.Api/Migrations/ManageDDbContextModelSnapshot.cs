@@ -26,10 +26,6 @@ namespace ManageD.Api.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Revision")
-                        .IsConcurrencyToken()
-                        .HasColumnType("INTEGER");
-
                     b.Property<float>("SizeX")
                         .HasColumnType("REAL");
 
