@@ -120,4 +120,11 @@ public class WorkspaceService
         await _dbContext.SaveChangesAsync(cancellationToken);
         return true;
     }
+
+    public Task<bool> IsMemberAsync(Guid workspaceId, Guid userId, CancellationToken cancellationToken)
+    {
+        return _dbContext.Workspaces.AnyAsync(
+            workspace => workspace.Id == workspaceId && workspace.Users.Any(user => user.Id == userId),
+            cancellationToken);
+    }
 }
