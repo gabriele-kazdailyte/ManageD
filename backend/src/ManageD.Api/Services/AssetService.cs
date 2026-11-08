@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ManageD.Api.Services;
 
-public class AssetService
+public class AssetService : IAssetService
 {
     private const int MaxSaveAttempts = 2;
 

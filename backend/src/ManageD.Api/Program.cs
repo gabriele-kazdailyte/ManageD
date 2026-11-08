@@ -20,9 +20,9 @@ builder.Services.AddDbContext<ManageDDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IAssetStore, EfAssetStore>();
-builder.Services.AddScoped<AssetService>();
-builder.Services.AddScoped<WorkspaceService>();
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IAssetService, AssetService>();
+builder.Services.AddScoped<IWorkspaceService, WorkspaceService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<PresetCatalog>();
 // SignalR has its own JSON settings, separate from the REST ones: enums must also be sent as names.
 builder.Services.AddSignalR()

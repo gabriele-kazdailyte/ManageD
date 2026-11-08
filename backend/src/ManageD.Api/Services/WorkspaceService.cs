@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ManageD.Api.Services;
 
-public class WorkspaceService
+public class WorkspaceService : IWorkspaceService
 {
     private readonly ManageDDbContext _dbContext;
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ManageD.Api.Services;
 
-public class UserService
+public class UserService : IUserService
 {
     private readonly ManageDDbContext _dbContext;
 
