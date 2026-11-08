@@ -41,7 +41,7 @@ builder.Services.AddSingleton<IPresenceService, PresenceService>();
 
 var app = builder.Build();
 
-// Configure tFhe HTTP request pipeline.
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
