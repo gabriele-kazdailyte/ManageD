@@ -27,7 +27,6 @@ public class EfAssetStore : IAssetStore
             asset.Id,
             asset.Title,
             asset.TemplateType,
-            asset.Revision,
             asset.Items.ToOrderedDtos());
     }
 
