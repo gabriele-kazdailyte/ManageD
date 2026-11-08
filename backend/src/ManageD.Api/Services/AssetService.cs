@@ -1,3 +1,4 @@
+using ManageD.Api.Common;
 using ManageD.Api.Data;
 using ManageD.Api.Dtos;
 using ManageD.Api.Models;
@@ -5,8 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ManageD.Api.Services;
 
-public class AssetService
+public class AssetService : IAssetService
 {
+    private const int MaxSaveAttempts = 2;
+
     private readonly ManageDDbContext _dbContext;
     private readonly IAssetStore _store;
 
@@ -75,6 +78,37 @@ public class AssetService
         return _store.RemoveAsync(id, cancellationToken);
     }
 
+    public Task<IReadOnlyList<AssetSnapshot>> GetWorkspaceAssetsAsync(Guid workspaceId, CancellationToken cancellationToken)
+    {
+        return _store.GetWorkspaceAssetsAsync(workspaceId, cancellationToken);
+    }
+
+    /// <summary>Applies a delta and returns what was actually applied (skipped entries removed)</summary>
+    public async Task<AssetDelta> ApplyDeltaAsync(Guid assetId, AssetDelta delta, CancellationToken cancellationToken)
+    {
+        for (var attempt = 1; ; attempt++)
+        {
+            var asset = await _store.GetForUpdateAsync(assetId, cancellationToken)
+                ?? throw new AssetNotFoundException(assetId);
+
+            var applied = DeltaApplier.Apply(asset, delta);
+            if (applied.IsEmpty)
+            {
+                return applied;
+            }
+
+            try
+            {
+                await _store.SaveAsync(asset, cancellationToken);
+                return applied;
+            }
+            catch (ConcurrencyConflictException) when (attempt < MaxSaveAttempts)
+            {
+                // The store dropped its stale copy, the next loop iteration reloads fresh data and re-applies.
+            }
+        }
+    }
+
     private Task<bool> WorkspaceExistsAsync(Guid workspaceId, CancellationToken cancellationToken)
     {
         return _dbContext.Workspaces.AnyAsync(workspace => workspace.Id == workspaceId, cancellationToken);
@@ -95,10 +129,5 @@ public class AssetService
         }
 
         return items;
-    }
-
-    public Task<IReadOnlyList<AssetSnapshot>> GetWorkspaceAssetsAsync(Guid workspaceId, CancellationToken cancellationToken)
-    {
-        return _store.GetWorkspaceAssetsAsync(workspaceId, cancellationToken);
     }
 }

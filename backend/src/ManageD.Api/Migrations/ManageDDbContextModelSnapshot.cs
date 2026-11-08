@@ -64,7 +64,6 @@ namespace ManageD.Api.Migrations
             modelBuilder.Entity("ManageD.Api.Models.TodoItem", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("AssetId")
