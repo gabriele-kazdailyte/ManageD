@@ -23,7 +23,7 @@ type AssetSummary = {
   itemCount: number
 }
 
-export type TemplateInfo = {
+export type PresetInfo = {
   name: string
   itemCount: number
 }
@@ -40,12 +40,12 @@ export async function createAsset(
   workspaceId: string,
   title: string,
   templateType: TemplateType,
-  templateName?: string,
+  presetName?: string,
 ) {
   const response = await fetch('/api/assets', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title, workspaceId, templateType, templateName }),
+    body: JSON.stringify({ title, workspaceId, templateType, presetName }),
   })
 
   return readJson<AssetSnapshot>(response, 'create the asset')
@@ -64,10 +64,10 @@ export async function loadWorkspaceAssets(workspaceId: string, signal?: AbortSig
   )
 }
 
-export async function loadTemplates(signal?: AbortSignal) {
-  const response = await fetch('/api/assets/templates', { signal })
+export async function loadPresets(signal?: AbortSignal) {
+  const response = await fetch('/api/assets/presets', { signal })
 
-  return readJson<TemplateInfo[]>(response, 'load templates')
+  return readJson<PresetInfo[]>(response, 'load presets')
 }
 
 export async function deleteAsset(assetId: string) {
