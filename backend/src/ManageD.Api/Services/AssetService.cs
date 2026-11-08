@@ -130,4 +130,9 @@ public class AssetService : IAssetService
 
         return items;
     }
+
+    public Task<Guid?> GetWorkspaceIdAsync(Guid assetId, CancellationToken cancellationToken)
+    {
+       return _store.GetWorkspaceIdAsync(assetId, cancellationToken);
+    }
 }

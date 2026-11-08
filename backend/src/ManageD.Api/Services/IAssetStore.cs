@@ -18,4 +18,6 @@ public interface IAssetStore
     /// <summary>Saves the changes made to an asset loaded with GetForUpdateAsync</summary>
     /// <exception cref="ConcurrencyConflictException">The row changed since it was loaded</exception>
     Task SaveAsync(Asset asset, CancellationToken cancellationToken);
+
+    Task<Guid?> GetWorkspaceIdAsync(Guid assetId, CancellationToken cancellationToken);
 }

@@ -71,4 +71,18 @@ public class EfAssetStoreTests : IDisposable
 
         await Assert.ThrowsAsync<ConcurrencyConflictException>(() => myStore.SaveAsync(myAsset, CancellationToken.None));
     }
+
+    [Fact]
+    public async Task GetWorkspaceId_returns_the_owning_workspace_or_null()
+    {
+        var assetId = await SeedAssetAsync("x");
+        await using var context = _db.CreateContext();
+        var store = new EfAssetStore(context);
+
+        var workspaceId = await store.GetWorkspaceIdAsync(assetId, CancellationToken.None);
+        var missing = await store.GetWorkspaceIdAsync(Guid.NewGuid(), CancellationToken.None);
+
+        Assert.NotNull(workspaceId);
+        Assert.Null(missing);
+    }
 }
