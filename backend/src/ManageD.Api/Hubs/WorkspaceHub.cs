@@ -1,4 +1,6 @@
+using ManageD.Api.Common;
 using ManageD.Api.Dtos;
+using ManageD.Api.Models;
 using ManageD.Api.Services;
 using Microsoft.AspNetCore.SignalR;
 
@@ -6,21 +8,27 @@ namespace ManageD.Api.Hubs;
 
 public class WorkspaceHub : Hub
 {
-    private readonly WorkspaceService _workspaceService;
-    private readonly UserService _userService;
-    private readonly AssetService _assetService;
+    private readonly IWorkspaceService _workspaceService;
+    private readonly IUserService _userService;
+    private readonly IAssetService _assetService;
     private readonly IPresenceService _presenceService;
+    private readonly IAssetLocks _locks;
+    private readonly PresetCatalog _presets;
 
     public WorkspaceHub(
-        WorkspaceService workspaceService,
-        UserService userService,
-        AssetService assetService,
-        IPresenceService presenceService)
+        IWorkspaceService workspaceService,
+        IUserService userService,
+        IAssetService assetService,
+        IPresenceService presenceService,
+        IAssetLocks locks,
+        PresetCatalog presets)
     {
         _workspaceService = workspaceService;
         _userService = userService;
         _assetService = assetService;
         _presenceService = presenceService;
+        _locks = locks;
+        _presets = presets;
     }
 
     public async Task<WorkspaceState> JoinWorkspace(Guid workspaceId, Guid userId)
@@ -60,6 +68,70 @@ public class WorkspaceHub : Hub
         }
     }
 
+    public async Task CreateAsset(Guid workspaceId, string title, TemplateType? templateType, string? presetName)
+    {
+        EnsureJoined(workspaceId);
+
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            throw new InvalidRequestException("Title can't be empty.");
+        }
+
+        IReadOnlyList<string>? initialItems = null;
+        if (presetName is not null)
+        {
+            var preset = await _presets.FindAsync(presetName, Context.ConnectionAborted)
+                ?? throw new UnknownPresetException(presetName);
+            initialItems = preset.ItemTexts;
+        }
+
+        var asset = await _assetService.CreateAsync(
+            title,
+            workspaceId,
+            templateType ?? TemplateType.Todo,
+            initialItems,
+            Context.ConnectionAborted)
+            ?? throw new WorkspaceNotFoundException(workspaceId);
+
+        await Clients.Group(GroupName(workspaceId)).SendAsync("AssetCreated", new AssetCreatedEvent(asset));
+    }
+
+    public async Task UpdateAsset(Guid assetId, AssetDelta delta)
+    {
+        var workspaceId = await _assetService.GetWorkspaceIdAsync(assetId, Context.ConnectionAborted)
+            ?? throw new AssetNotFoundException(assetId);
+        EnsureJoined(workspaceId);
+
+        await _locks.RunAsync(assetId, async () =>
+        {
+            // Not cancellable once started: a half-finished save-and-broadcast would leave clients out of sync
+            var applied = await _assetService.ApplyDeltaAsync(assetId, delta, CancellationToken.None);
+
+            if (!applied.IsEmpty)
+            {
+                await Clients.Group(GroupName(workspaceId)).SendAsync("AssetUpdated", new AssetUpdatedEvent(assetId, applied));
+            }
+        }, Context.ConnectionAborted);
+    }
+
+    public async Task DeleteAsset(Guid assetId)
+    {
+        var workspaceId = await _assetService.GetWorkspaceIdAsync(assetId, Context.ConnectionAborted)
+            ?? throw new AssetNotFoundException(assetId);
+        EnsureJoined(workspaceId);
+
+        await _locks.RunAndForgetAsync(assetId, async () =>
+        {
+            // The existence check is inside the lock: if a concurrent delete won, this one finds nothing
+            if (!await _assetService.DeleteAsync(assetId, CancellationToken.None))
+            {
+                throw new AssetNotFoundException(assetId);
+            }
+
+            await Clients.Group(GroupName(workspaceId)).SendAsync("AssetDeleted", new AssetDeletedEvent(assetId));
+        }, Context.ConnectionAborted);
+    }
+
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var leftWorkspaces = await _presenceService.LeaveAllAsync(Context.ConnectionId);
@@ -70,6 +142,14 @@ public class WorkspaceHub : Hub
         }
 
         await base.OnDisconnectedAsync(exception);
+    }
+
+    private void EnsureJoined(Guid workspaceId)
+    {
+        if (!_presenceService.HasJoined(Context.ConnectionId, workspaceId))
+        {
+            throw new HubException("You have not joined this workspace.");
+        }
     }
 
     private static string GroupName(Guid workspaceId)
