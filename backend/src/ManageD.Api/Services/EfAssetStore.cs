@@ -89,7 +89,7 @@ public class EfAssetStore : IAssetStore
         return assets.Select(ToSnapshot).ToList();
     }
 
-        public Task<Asset?> GetForUpdateAsync(Guid id, CancellationToken cancellationToken)
+    public Task<Asset?> GetForUpdateAsync(Guid id, CancellationToken cancellationToken)
     {
         return _dbContext.Assets
             .Include(a => a.Items)
