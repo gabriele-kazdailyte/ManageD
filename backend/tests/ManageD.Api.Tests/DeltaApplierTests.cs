@@ -165,4 +165,14 @@ public class DeltaApplierTests
         Assert.Throws<InvalidDeltaException>(() =>
             DeltaApplier.Apply(asset, new AssetDelta(null, null, null, "  ")));
     }
+
+    [Fact]
+    public void Too_long_title_is_rejected()
+    {
+        var asset = AssetWith();
+        var title = new string('x', DeltaApplier.MaxTitleLength + 1);
+
+        Assert.Throws<InvalidDeltaException>(() =>
+            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, title)));
+    }
 }

@@ -77,6 +77,11 @@ public class WorkspaceHub : Hub
             throw new InvalidRequestException("Title can't be empty.");
         }
 
+        if (title.Trim().Length > DeltaApplier.MaxTitleLength)
+        {
+            throw new InvalidRequestException($"Title can't be longer than {DeltaApplier.MaxTitleLength} characters.");
+        }
+
         IReadOnlyList<string>? initialItems = null;
         if (presetName is not null)
         {
