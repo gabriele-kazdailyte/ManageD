@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using ManageD.Api.Models;
 using ManageD.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +22,7 @@ public class AddMemberRequest
 
 [ApiController]
 [Route("api/workspaces")]
-public class WorkspacesController : ControllerBase
+public class WorkspacesController : ApiControllerBase
 {
     private readonly WorkspaceService _workspaceService;
 
@@ -38,9 +37,7 @@ public class WorkspacesController : ControllerBase
         CancellationToken cancellationToken)
     {
         // [Required] rejects a missing CreatorUserId with a 400 before this runs, so it can't be null here.
-        var workspace = await _workspaceService.CreateAsync(request.Name, request.CreatorUserId!.Value, cancellationToken);
-
-        return workspace is null ? NotFound() : StatusCode(StatusCodes.Status201Created, workspace);
+        return ToActionResult(await _workspaceService.CreateAsync(request.Name, request.CreatorUserId!.Value, cancellationToken));
     }
 
     [HttpGet]
@@ -49,33 +46,20 @@ public class WorkspacesController : ControllerBase
         CancellationToken cancellationToken)
     {
         // [Required] rejects a missing userId with a 400 before this runs, so it can't be null here.
-        var workspaces = await _workspaceService.ListForUserAsync(userId!.Value, cancellationToken);
-
-        return workspaces is null ? NotFound() : Ok(workspaces);
+        return ToActionResult(await _workspaceService.ListForUserAsync(userId!.Value, cancellationToken));
     }
 
     [HttpGet("{id}/members")]
     public async Task<IActionResult> GetMembersAsync(Guid id, CancellationToken cancellationToken)
     {
-        var members = await _workspaceService.ListMembersAsync(id, cancellationToken: cancellationToken);
-
-        return members is null ? NotFound() : Ok(members);
+        return ToActionResult(await _workspaceService.ListMembersAsync(id, cancellationToken: cancellationToken));
     }
 
     [HttpPost("{id}/members")]
     public async Task<IActionResult> AddMemberAsync(Guid id, AddMemberRequest request, CancellationToken cancellationToken)
     {
         // [Required] rejects a missing UserId with a 400 before this runs, so it can't be null here.
-        var (result, member) = await _workspaceService.AddMemberAsync(id, request.UserId!.Value, cancellationToken);
-
-        return result switch
-        {
-            AddMemberResult.Added => StatusCode(StatusCodes.Status201Created, member),
-            AddMemberResult.AlreadyMember => Ok(member),
-            AddMemberResult.WorkspaceNotFound => Problem(detail: "Workspace not found.", statusCode: StatusCodes.Status404NotFound),
-            AddMemberResult.UserNotFound => Problem(detail: "No user with that ID exists.", statusCode: StatusCodes.Status404NotFound),
-            _ => throw new NotSupportedException($"Unexpected result '{result}'."),
-        };
+        return ToActionResult(await _workspaceService.AddMemberAsync(id, request.UserId!.Value, cancellationToken));
     }
 
     [HttpDelete("{id}")]
