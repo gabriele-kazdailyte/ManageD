@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using ManageD.Api.Data;
+using ManageD.Api.Hubs;
 using ManageD.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,17 +24,33 @@ builder.Services.AddScoped<AssetService>();
 builder.Services.AddScoped<WorkspaceService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<PresetCatalog>();
+// SignalR has its own JSON settings, separate from the REST ones: enums must also be sent as names.
+builder.Services.AddSignalR()
+    .AddJsonProtocol(options => options.PayloadSerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(allowIntegerValues: false)));
+
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+
+builder.Services.AddCors(options => options.AddPolicy("Frontend", policy => policy
+    .WithOrigins(allowedOrigins)
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()));
+
+builder.Services.AddSingleton<IPresenceService, PresenceService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure tFhe HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
+app.UseCors("Frontend");
 
 app.MapControllers();
+app.MapHub<WorkspaceHub>("/hubs/workspace");
 
 app.Run();
