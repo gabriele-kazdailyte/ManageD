@@ -143,4 +143,26 @@ public class DeltaApplierTests
 
         Assert.Single(asset.Items);
     }
+
+    [Fact]
+    public void Title_change_is_applied_and_reported()
+    {
+        var asset = AssetWith();
+        asset.Title = "old";
+
+        var applied = DeltaApplier.Apply(asset, new AssetDelta(null, null, null, "  new  "));
+
+        Assert.Equal("new", asset.Title);
+        Assert.Equal("new", applied.Title);
+        Assert.False(applied.IsEmpty);
+    }
+
+    [Fact]
+    public void Empty_title_is_rejected()
+    {
+        var asset = AssetWith();
+
+        Assert.Throws<InvalidDeltaException>(() =>
+            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, "  ")));
+    }
 }

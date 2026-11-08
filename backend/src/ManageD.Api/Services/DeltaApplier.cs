@@ -19,7 +19,7 @@ public static class DeltaApplier
         var updated = delta.Updated ?? [];
         var deleted = delta.Deleted ?? [];
 
-        Validate(asset, added, updated);
+        Validate(asset, added, updated, delta.Title);
 
         // 1. Deletes first: an edit of an item deleted in the same delta is skipped
         var appliedDeleted = new List<Guid>();
@@ -77,14 +77,27 @@ public static class DeltaApplier
             appliedAdded.Add(dto with { Text = dto.Text.Trim() });
         }
 
-        return new AssetDelta(appliedAdded, appliedUpdated, appliedDeleted);
+        string? appliedTitle = null;
+        if (delta.Title is not null)
+        {
+            asset.Title = delta.Title.Trim();
+            appliedTitle = asset.Title;
+        }
+
+        return new AssetDelta(appliedAdded, appliedUpdated, appliedDeleted, appliedTitle);
     }
 
     private static void Validate(
         Asset asset,
         IReadOnlyList<TodoItemDto> added,
-        IReadOnlyList<TodoItemChange> updated)
+        IReadOnlyList<TodoItemChange> updated,
+        string? title)
     {
+        if (title is not null && title.Trim().Length == 0)
+        {
+            throw new InvalidDeltaException("Title can't be empty.");
+        }
+
         var seen = new HashSet<Guid>();
         foreach (var dto in added)
         {
