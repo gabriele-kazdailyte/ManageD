@@ -7,6 +7,7 @@ namespace ManageD.Api.Services;
 public static class DeltaApplier
 {
     public const int MaxTextLength = 200;
+    public const int MaxTitleLength = 200;
 
     /// <summary>
     /// Applies the delta to the asset and returns what was really applied
@@ -93,9 +94,18 @@ public static class DeltaApplier
         IReadOnlyList<TodoItemChange> updated,
         string? title)
     {
-        if (title is not null && title.Trim().Length == 0)
+        if (title is not null)
         {
-            throw new InvalidDeltaException("Title can't be empty.");
+            var trimmedTitle = title.Trim();
+            if (trimmedTitle.Length == 0)
+            {
+                throw new InvalidDeltaException("Title can't be empty.");
+            }
+
+            if (trimmedTitle.Length > MaxTitleLength)
+            {
+                throw new InvalidDeltaException($"Title can't be longer than {MaxTitleLength} characters.");
+            }
         }
 
         var seen = new HashSet<Guid>();

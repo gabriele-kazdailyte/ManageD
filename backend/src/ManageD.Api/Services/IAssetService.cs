@@ -21,4 +21,6 @@ public interface IAssetService
     Task<IReadOnlyList<AssetSnapshot>> GetWorkspaceAssetsAsync(Guid workspaceId, CancellationToken cancellationToken);
 
     Task<AssetDelta> ApplyDeltaAsync(Guid assetId, AssetDelta delta, CancellationToken cancellationToken);
+
+    Task<Guid?> GetWorkspaceIdAsync(Guid assetId, CancellationToken cancellationToken);
 }

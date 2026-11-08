@@ -33,6 +33,7 @@ public class AssetServiceTests : IDisposable
         public Task<AssetSnapshot?> GetAsync(Guid id, CancellationToken ct) => _inner.GetAsync(id, ct);
         public Task<bool> RemoveAsync(Guid id, CancellationToken ct) => _inner.RemoveAsync(id, ct);
         public Task<Asset?> GetForUpdateAsync(Guid id, CancellationToken ct) => _inner.GetForUpdateAsync(id, ct);
+        public Task<Guid?> GetWorkspaceIdAsync(Guid id, CancellationToken ct) => _inner.GetWorkspaceIdAsync(id, ct);
 
         public Task SaveAsync(Asset asset, CancellationToken ct)
         {
