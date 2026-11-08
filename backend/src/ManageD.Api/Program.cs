@@ -25,6 +25,7 @@ builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<IWorkspaceService, WorkspaceService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<PresetCatalog>();
+builder.Services.AddSingleton<IAssetLocks, AssetLocks>();
 
 builder.Services.AddSignalR(options => options.AddFilter<DomainExceptionHubFilter>())
     .AddJsonProtocol(options => options.PayloadSerializerOptions.Converters.Add(
