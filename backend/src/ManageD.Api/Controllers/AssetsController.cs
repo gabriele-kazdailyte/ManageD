@@ -24,10 +24,10 @@ public class CreateAssetRequest
 [Route("api/assets")]
 public class AssetsController : ControllerBase
 {
-    private readonly AssetService _assetService;
+    private readonly IAssetService _assetService;
     private readonly PresetCatalog _presetCatalog;
 
-    public AssetsController(AssetService assetService, PresetCatalog presetCatalog)
+    public AssetsController(IAssetService assetService, PresetCatalog presetCatalog)
     {
         _assetService = assetService;
         _presetCatalog = presetCatalog;

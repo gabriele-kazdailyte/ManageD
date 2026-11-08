@@ -24,9 +24,9 @@ public class AddMemberRequest
 [Route("api/workspaces")]
 public class WorkspacesController : ApiControllerBase
 {
-    private readonly WorkspaceService _workspaceService;
+    private readonly IWorkspaceService _workspaceService;
 
-    public WorkspacesController(WorkspaceService workspaceService)
+    public WorkspacesController(IWorkspaceService workspaceService)
     {
         _workspaceService = workspaceService;
     }

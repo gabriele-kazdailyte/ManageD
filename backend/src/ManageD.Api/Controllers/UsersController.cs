@@ -15,9 +15,9 @@ public class CreateUserRequest
 [Route("api/users")]
 public class UsersController : ApiControllerBase
 {
-    private readonly UserService _userService;
+    private readonly IUserService _userService;
 
-    public UsersController(UserService userService)
+    public UsersController(IUserService userService)
     {
         _userService = userService;
     }
