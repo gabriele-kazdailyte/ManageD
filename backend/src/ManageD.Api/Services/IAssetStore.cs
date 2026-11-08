@@ -9,4 +9,5 @@ public interface IAssetStore
     Task<IReadOnlyList<AssetSummary>> ListByWorkspaceAsync(Guid workspaceId, CancellationToken cancellationToken);
     Task<AssetSnapshot?> GetAsync(Guid id, CancellationToken cancellationToken);
     Task<bool> RemoveAsync(Guid id, CancellationToken cancellationToken);
+    Task<IReadOnlyList<AssetSnapshot>> GetWorkspaceAssetsAsync(Guid workspaceId, CancellationToken cancellationToken);
 }

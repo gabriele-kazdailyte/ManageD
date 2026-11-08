@@ -96,4 +96,9 @@ public class AssetService
 
         return items;
     }
+
+    public Task<IReadOnlyList<AssetSnapshot>> GetWorkspaceAssetsAsync(Guid workspaceId, CancellationToken cancellationToken)
+    {
+        return _store.GetWorkspaceAssetsAsync(workspaceId, cancellationToken);
+    }
 }
