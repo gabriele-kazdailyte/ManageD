@@ -1,3 +1,4 @@
+using ManageD.Api.Common;
 using ManageD.Api.Data;
 using ManageD.Api.Dtos;
 using ManageD.Api.Models;
@@ -86,5 +87,27 @@ public class EfAssetStore : IAssetStore
             .ToListAsync(cancellationToken);
 
         return assets.Select(ToSnapshot).ToList();
+    }
+
+        public Task<Asset?> GetForUpdateAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return _dbContext.Assets
+            .Include(a => a.Items)
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+    }
+
+    public async Task SaveAsync(Asset asset, CancellationToken cancellationToken)
+    {
+        asset.UpdatedAt = DateTime.UtcNow;
+
+        try
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            _dbContext.ChangeTracker.Clear();
+            throw new ConcurrencyConflictException();
+        }
     }
 }

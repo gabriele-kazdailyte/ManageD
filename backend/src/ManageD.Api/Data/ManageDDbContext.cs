@@ -14,4 +14,9 @@ public class ManageDDbContext : DbContext
     public DbSet<Workspace> Workspaces { get; set; } = null!;
     public DbSet<Asset> Assets { get; set; } = null!;
     public DbSet<TodoItem> TodoItems { get; set; } = null!;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<TodoItem>().Property(i => i.Id).ValueGeneratedNever();
+    }
 }
