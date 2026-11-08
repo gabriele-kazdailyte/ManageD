@@ -133,6 +133,6 @@ public class AssetService : IAssetService
 
     public Task<Guid?> GetWorkspaceIdAsync(Guid assetId, CancellationToken cancellationToken)
     {
-       return _store.GetWorkspaceIdAsync(assetId, cancellationToken);
+        return _store.GetWorkspaceIdAsync(assetId, cancellationToken);
     }
 }

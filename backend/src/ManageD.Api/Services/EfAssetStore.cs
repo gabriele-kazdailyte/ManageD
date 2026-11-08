@@ -113,10 +113,10 @@ public class EfAssetStore : IAssetStore
 
     public Task<Guid?> GetWorkspaceIdAsync(Guid assetId, CancellationToken cancellationToken)
     {
-       return _dbContext.Assets
-           .AsNoTracking()
-           .Where(a => a.Id == assetId)
-           .Select(a => (Guid?)a.WorkspaceId)
-           .FirstOrDefaultAsync(cancellationToken);
+        return _dbContext.Assets
+            .AsNoTracking()
+            .Where(a => a.Id == assetId)
+            .Select(a => (Guid?)a.WorkspaceId)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }
