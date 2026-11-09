@@ -85,6 +85,11 @@ public class WorkspaceHub : Hub
         IReadOnlyList<string>? initialItems = null;
         if (presetName is not null)
         {
+            if (templateType == TemplateType.Note)
+            {
+                throw new InvalidRequestException("Sticky notes can't be filled from a to-do preset.");
+            }
+
             var preset = await _presets.FindAsync(presetName, Context.ConnectionAborted)
                 ?? throw new UnknownPresetException(presetName);
             initialItems = preset.ItemTexts;

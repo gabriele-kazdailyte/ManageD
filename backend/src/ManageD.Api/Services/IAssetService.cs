@@ -16,6 +16,8 @@ public interface IAssetService
 
     Task<AssetSnapshot?> GetAsync(Guid id, CancellationToken cancellationToken);
 
+    Task<AssetSnapshot?> UpdateNoteContentAsync(Guid assetId, string noteContent, CancellationToken cancellationToken);
+
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken);
 
     Task<IReadOnlyList<AssetSnapshot>> GetWorkspaceAssetsAsync(Guid workspaceId, CancellationToken cancellationToken);

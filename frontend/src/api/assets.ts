@@ -1,5 +1,5 @@
 // Mirrors the backend's response records (see docs/api-contract.md).
-export type TemplateType = 'Todo'
+export type TemplateType = 'Todo' | 'Note'
 
 export type TodoItem = {
   id: string
@@ -13,6 +13,7 @@ export type AssetSnapshot = {
   title: string
   templateType: TemplateType
   items: TodoItem[]
+  noteContent: string
 }
 
 type AssetSummary = {
@@ -77,4 +78,14 @@ export async function deleteAsset(assetId: string) {
   if (!response.ok && response.status !== 404) {
     throw new Error(`Could not delete the asset (HTTP ${response.status}).`)
   }
+}
+
+export async function updateNoteContent(assetId: string, noteContent: string) {
+  const response = await fetch(`/api/assets/${encodeURIComponent(assetId)}/note-content`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ noteContent }),
+  })
+
+  return readJson<AssetSnapshot>(response, 'save the sticky note')
 }

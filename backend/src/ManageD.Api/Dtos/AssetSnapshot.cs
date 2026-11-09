@@ -7,4 +7,5 @@ public record AssetSnapshot(
     Guid Id,
     string Title,
     TemplateType TemplateType,
-    IReadOnlyList<TodoItemDto> Items);
+    IReadOnlyList<TodoItemDto> Items,
+    string NoteContent);

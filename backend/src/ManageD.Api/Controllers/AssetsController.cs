@@ -20,6 +20,13 @@ public class CreateAssetRequest
     public string? PresetName { get; set; }
 }
 
+public class UpdateNoteContentRequest
+{
+    [Required(AllowEmptyStrings = true)]
+    [StringLength(5000)]
+    public string NoteContent { get; set; } = string.Empty;
+}
+
 [ApiController]
 [Route("api/assets")]
 public class AssetsController : ControllerBase
@@ -37,6 +44,13 @@ public class AssetsController : ControllerBase
     public async Task<IActionResult> CreateAssetAsync(CreateAssetRequest request, CancellationToken cancellationToken)
     {
         IReadOnlyList<string>? initialItems = null;
+        var templateType = request.TemplateType ?? TemplateType.Todo;
+
+        if (request.PresetName is not null && templateType != TemplateType.Todo)
+        {
+            ModelState.AddModelError(nameof(request.PresetName), "Presets are only available for to-do lists.");
+            return ValidationProblem(ModelState);
+        }
 
         if (request.PresetName is not null)
         {
@@ -55,7 +69,7 @@ public class AssetsController : ControllerBase
         var asset = await _assetService.CreateAsync(
             request.Title,
             request.WorkspaceId!.Value,
-            request.TemplateType ?? TemplateType.Todo,
+            templateType,
             initialItems: initialItems,
             cancellationToken: cancellationToken);
 
@@ -79,6 +93,27 @@ public class AssetsController : ControllerBase
         var asset = await _assetService.GetAsync(id, cancellationToken);
 
         return asset is null ? NotFound() : Ok(asset);
+    }
+
+    [HttpPut("{id}/note-content")]
+    public async Task<IActionResult> UpdateNoteContentAsync(
+        Guid id,
+        UpdateNoteContentRequest request,
+        CancellationToken cancellationToken)
+    {
+        var asset = await _assetService.GetAsync(id, cancellationToken);
+        if (asset is null)
+        {
+            return NotFound();
+        }
+
+        if (asset.TemplateType != TemplateType.Note)
+        {
+            return BadRequest("Only sticky notes have editable note content.");
+        }
+
+        var updatedAsset = await _assetService.UpdateNoteContentAsync(id, request.NoteContent, cancellationToken);
+        return updatedAsset is null ? NotFound() : Ok(updatedAsset);
     }
 
     [HttpDelete("{id}")]

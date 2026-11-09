@@ -92,4 +92,40 @@ public class AssetServiceTests : IDisposable
         await Assert.ThrowsAsync<AssetNotFoundException>(() =>
             service.ApplyDeltaAsync(Guid.NewGuid(), new AssetDelta(null, null, null), CancellationToken.None));
     }
+
+    [Fact]
+    public async Task Sticky_note_content_is_created_and_persisted()
+    {
+        await using var context = _db.CreateContext();
+        var workspace = new Workspace { Id = Guid.NewGuid(), Name = "w", CreatedAt = DateTime.UtcNow };
+        context.Workspaces.Add(workspace);
+        await context.SaveChangesAsync();
+
+        var service = new AssetService(context, new EfAssetStore(context));
+        var created = await service.CreateAsync(
+            "Sticky Note",
+            workspace.Id,
+            TemplateType.Note,
+            cancellationToken: CancellationToken.None);
+
+        Assert.NotNull(created);
+        Assert.Empty(created.Items);
+        Assert.Empty(created.NoteContent);
+
+        var updated = await service.UpdateNoteContentAsync(
+            created.Id,
+            "Remember this",
+            CancellationToken.None);
+
+        Assert.Equal("Remember this", updated!.NoteContent);
+    }
+
+    [Fact]
+    public async Task Todo_asset_cannot_be_updated_as_a_sticky_note()
+    {
+        var (service, _, assetId) = await ArrangeAsync(failures: 0);
+
+        await Assert.ThrowsAsync<InvalidRequestException>(() =>
+            service.UpdateNoteContentAsync(assetId, "text", CancellationToken.None));
+    }
 }

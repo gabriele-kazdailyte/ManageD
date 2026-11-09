@@ -1,5 +1,6 @@
 import type { AssetSnapshot, PresetInfo } from '../api/assets'
 import TodoAsset from './TodoAsset'
+import StickyNoteAsset from './StickyNoteAsset'
 import './Canvas.css'
 
 type CanvasProps = {
@@ -11,6 +12,7 @@ type CanvasProps = {
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void
   onDelete: (asset: AssetSnapshot) => void
   onSelectPreset: (asset: AssetSnapshot, presetName: string | null) => void
+  onSaveNote: (assetId: string, content: string) => Promise<void>
 }
 
 function Canvas({
@@ -22,8 +24,8 @@ function Canvas({
   onDrop,
   onDelete,
   onSelectPreset,
+  onSaveNote,
 }: CanvasProps) {
-  // Each template type gets its own component; Todo is the only one so far.
   const renderAsset = (asset: AssetSnapshot) => {
     switch (asset.templateType) {
       case 'Todo':
@@ -35,6 +37,16 @@ function Canvas({
             presets={presets}
             onDelete={onDelete}
             onSelectPreset={onSelectPreset}
+          />
+        )
+      case 'Note':
+        return (
+          <StickyNoteAsset
+            key={asset.id}
+            asset={asset}
+            isDeleting={deletingIds.has(asset.id)}
+            onDelete={onDelete}
+            onSave={onSaveNote}
           />
         )
     }

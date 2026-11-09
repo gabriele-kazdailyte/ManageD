@@ -47,6 +47,7 @@ public class AssetService : IAssetService
             Items = templateType switch
             {
                 TemplateType.Todo => BuildItems(initialItems),
+                TemplateType.Note => [],
 
                 // TODO: if a template type is added to the enum before its setup is written, reject it with a 400
                 // in request validation instead of reaching this throw (500).
@@ -71,6 +72,27 @@ public class AssetService : IAssetService
     public Task<AssetSnapshot?> GetAsync(Guid id, CancellationToken cancellationToken)
     {
         return _store.GetAsync(id, cancellationToken);
+    }
+
+    public async Task<AssetSnapshot?> UpdateNoteContentAsync(
+        Guid assetId,
+        string noteContent,
+        CancellationToken cancellationToken)
+    {
+        var asset = await _store.GetForUpdateAsync(assetId, cancellationToken);
+        if (asset is null)
+        {
+            return null;
+        }
+
+        if (asset.TemplateType != TemplateType.Note)
+        {
+            throw new InvalidRequestException("Only sticky notes have editable note content.");
+        }
+
+        asset.NoteContent = noteContent;
+        await _store.SaveAsync(asset, cancellationToken);
+        return await _store.GetAsync(assetId, cancellationToken);
     }
 
     public Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)

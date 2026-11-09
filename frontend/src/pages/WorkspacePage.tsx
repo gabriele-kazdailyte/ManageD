@@ -5,6 +5,7 @@ import {
   deleteAsset,
   loadPresets,
   loadWorkspaceAssets,
+  updateNoteContent,
   type AssetSnapshot,
   type PresetInfo,
 } from '../api/assets'
@@ -132,17 +133,33 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     event.preventDefault()
 
     // dataTransfer can only be read while the drop event is being handled, so before any await.
-    const label = event.dataTransfer.getData('application/todo-list')
+    const todoLabel = event.dataTransfer.getData('application/todo-list')
+    const noteLabel = event.dataTransfer.getData('application/sticky-note')
+    const templateType = noteLabel ? 'Note' : 'Todo'
+    const label = noteLabel || todoLabel
     if (!label) {
       return
     }
 
     try {
-      const createdAsset = await createAsset(workspaceId, label, 'Todo')
+      const createdAsset = await createAsset(workspaceId, label, templateType)
       setAssets((current) => [...current, createdAsset])
       setError(null)
     } catch (createError) {
       setError(createError instanceof Error ? createError.message : 'Could not create the asset.')
+    }
+  }
+
+  const handleSaveNote = async (assetId: string, content: string) => {
+    try {
+      const updatedAsset = await updateNoteContent(assetId, content)
+      setAssets((current) =>
+        current.map((asset) => (asset.id === updatedAsset.id ? updatedAsset : asset)),
+      )
+      setError(null)
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : 'Could not save the sticky note.')
+      throw saveError
     }
   }
 
@@ -222,6 +239,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
         onDrop={handleDrop}
         onDelete={handleRequestDelete}
         onSelectPreset={handleSelectPreset}
+        onSaveNote={handleSaveNote}
       />
       {assetToDelete ? (
         <div className="delete-dialog__backdrop">
