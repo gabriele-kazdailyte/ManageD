@@ -1,16 +1,55 @@
-import type { AssetSnapshot } from '../api/assets'
+import { useState } from 'react'
+import type { AssetDelta, AssetSnapshot } from '../api/assets'
+import {
+  MAX_ITEM_TEXT_LENGTH,
+  addItemDelta,
+  deleteItemDelta,
+  editTextDelta,
+  reorderDelta,
+  setDoneDelta,
+} from '../context/todoDeltas'
+import TodoItemRow from './TodoItemRow'
 import './TodoAsset.css'
 
 type TodoAssetProps = {
   asset: AssetSnapshot
   isDeleting: boolean
   onDelete: (asset: AssetSnapshot) => void
+  onUpdate: (asset: AssetSnapshot, delta: AssetDelta) => void
 }
 
-// Read-only for now: editing items through the hub comes in the next frontend PR.
-function TodoAsset({ asset, isDeleting, onDelete }: TodoAssetProps) {
+function TodoAsset({ asset, isDeleting, onDelete, onUpdate }: TodoAssetProps) {
+  const [newText, setNewText] = useState('')
+  const [draggedId, setDraggedId] = useState<string | null>(null)
+  const [overId, setOverId] = useState<string | null>(null)
+
   const handleDelete = () => {
     onDelete(asset)
+  }
+
+  const handleAdd = () => {
+    const text = newText.trim()
+    setNewText('')
+
+    if (text !== '') {
+      onUpdate(asset, addItemDelta(asset.items, text))
+    }
+  }
+
+  const endDrag = () => {
+    setDraggedId(null)
+    setOverId(null)
+  }
+
+  const handleDropOn = (targetId: string) => {
+    const from = asset.items.findIndex((item) => item.id === draggedId)
+    const to = asset.items.findIndex((item) => item.id === targetId)
+    endDrag()
+
+    const delta = reorderDelta(asset.items, from, to)
+    if (delta) {
+      onUpdate(asset, delta)
+    }
   }
 
   return (
@@ -28,20 +67,41 @@ function TodoAsset({ asset, isDeleting, onDelete }: TodoAssetProps) {
         </button>
       </header>
 
-      {asset.items.length === 0 ? (
-        <p className="todo-asset__empty">No items yet</p>
-      ) : (
-        <ul className="todo-asset__items">
-          {asset.items.map((item) => (
-            <li key={item.id} className="todo-asset__item">
-              <input type="checkbox" checked={item.isDone} disabled aria-label={item.text} />
-              <span className={item.isDone ? 'todo-asset__text todo-asset__text--done' : 'todo-asset__text'}>
-                {item.text}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
+      {asset.items.length === 0 ? <p className="todo-asset__empty">No items yet</p> : null}
+
+      <ul className="todo-asset__items">
+        {asset.items.map((item) => (
+          <TodoItemRow
+            key={item.id}
+            item={item}
+            isDragged={draggedId === item.id}
+            isDropTarget={draggedId !== null && draggedId !== item.id && overId === item.id}
+            onToggle={(isDone) => onUpdate(asset, setDoneDelta(item.id, isDone))}
+            onRename={(text) => onUpdate(asset, editTextDelta(item.id, text))}
+            onRemove={() => onUpdate(asset, deleteItemDelta(item.id))}
+            onDragStart={() => setDraggedId(item.id)}
+            onDragEnd={endDrag}
+            onDragOver={() => setOverId(item.id)}
+            onDrop={() => handleDropOn(item.id)}
+          />
+        ))}
+      </ul>
+
+      <input
+        type="text"
+        className="todo-asset__add"
+        placeholder="Add item…"
+        value={newText}
+        maxLength={MAX_ITEM_TEXT_LENGTH}
+        onChange={(event) => setNewText(event.target.value)}
+        onBlur={handleAdd}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            handleAdd()
+          }
+        }}
+        aria-label="Add item"
+      />
     </article>
   )
 }
