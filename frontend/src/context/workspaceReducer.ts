@@ -1,15 +1,19 @@
-import type { AssetSnapshot } from '../api/assets'
+import type { AssetDelta, AssetSnapshot } from '../api/assets'
 import type { Viewer } from '../api/hub'
+import { applyDelta } from './applyDelta'
 
 // Events pushed by the server. Each one is idempotent: applying it twice changes nothing
 export type WorkspaceEvent =
   | { type: 'ASSET_CREATED'; asset: AssetSnapshot }
+  | { type: 'ASSET_UPDATED'; assetId: string; delta: AssetDelta }
   | { type: 'ASSET_DELETED'; assetId: string }
   | { type: 'USER_JOINED'; viewer: Viewer }
   | { type: 'USER_LEFT'; userId: string }
 
 export type WorkspaceAction =
   | WorkspaceEvent
+  // The user's own edit, shown immediately before the server confirms it. Never buffered
+  | { type: 'LOCAL_EDIT'; assetId: string; delta: AssetDelta }
   | { type: 'SYNC_STARTED' }
   | { type: 'STATE_LOADED'; assets: AssetSnapshot[]; viewers: Viewer[] }
   | { type: 'SYNC_FAILED'; message: string }
@@ -39,6 +43,13 @@ function byDisplayName(a: Viewer, b: Viewer) {
   return a.displayName.localeCompare(b.displayName)
 }
 
+function withDelta(state: WorkspaceState, assetId: string, delta: AssetDelta): WorkspaceState {
+  return {
+    ...state,
+    assets: state.assets.map((asset) => (asset.id === assetId ? applyDelta(asset, delta) : asset)),
+  }
+}
+
 function applyEvent(state: WorkspaceState, event: WorkspaceEvent): WorkspaceState {
   switch (event.type) {
     case 'ASSET_CREATED':
@@ -46,6 +57,9 @@ function applyEvent(state: WorkspaceState, event: WorkspaceEvent): WorkspaceStat
         return state
       }
       return { ...state, assets: [...state.assets, event.asset] }
+
+    case 'ASSET_UPDATED':
+      return withDelta(state, event.assetId, event.delta)
 
     case 'ASSET_DELETED':
       return { ...state, assets: state.assets.filter((asset) => asset.id !== event.assetId) }
@@ -81,6 +95,9 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
 
     case 'SYNC_FAILED':
       return { ...state, isSynced: false, pending: [], error: action.message }
+
+    case 'LOCAL_EDIT':
+      return withDelta(state, action.assetId, action.delta)
 
     default:
       return state.isSynced
