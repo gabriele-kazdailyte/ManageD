@@ -12,7 +12,7 @@ type StickyNoteAssetProps = {
 
 function StickyNoteAsset({ asset, isDeleting, onDelete, onSave }: StickyNoteAssetProps) {
   const [content, setContent] = useState(asset.noteContent)
-  const [isPreview, setIsPreview] = useState(false)
+  const [isPreview, setIsPreview] = useState(true)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
