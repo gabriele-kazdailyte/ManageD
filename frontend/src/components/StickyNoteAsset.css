@@ -3,9 +3,9 @@
   min-height: 220px;
   padding: 14px 16px;
   box-sizing: border-box;
-  background: #fff6bf;
-  border: 1px solid #e8d978;
-  border-radius: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
@@ -63,12 +63,12 @@
 }
 
 .sticky-note__content::placeholder {
-  color: #847d53;
+  color: var(--text);
 }
 
 .sticky-note__status {
   min-height: 18px;
   font-size: 12px;
-  color: #71683a;
+  color: var(--text);
   text-align: right;
 }
