@@ -107,7 +107,7 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
   const createAsset = useCallback(
     async (title: string, presetName: string | null) => {
       const connection = connectionRef.current
-      if (!connection) {
+      if (!connection || connection.state !== HubConnectionState.Connected) {
         throw new Error('Not connected to the server.')
       }
 
@@ -122,7 +122,7 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
 
   const deleteAsset = useCallback(async (assetId: string) => {
     const connection = connectionRef.current
-    if (!connection) {
+    if (!connection || connection.state !== HubConnectionState.Connected) {
       throw new Error('Not connected to the server.')
     }
 

@@ -1,6 +1,7 @@
 import type { AssetDelta, AssetSnapshot, TodoItem } from '../api/assets'
 
-// Same order as the server: by order, ties broken by id
+// By order, with id as a stable tiebreak. The server breaks ties by GUID order,
+// which can differ when two items share an order value (e.g. simultaneous adds).
 export function sortItems(items: TodoItem[]): TodoItem[] {
   return [...items].sort((a, b) => a.order - b.order || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
 }

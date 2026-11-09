@@ -9,6 +9,7 @@ type TodoItemRowProps = {
   onToggle: (isDone: boolean) => void
   onRename: (text: string) => void
   onRemove: () => void
+  onMove: (direction: -1 | 1) => void
   onDragStart: () => void
   onDragEnd: () => void
   onDragOver: () => void
@@ -22,6 +23,7 @@ function TodoItemRow({
   onToggle,
   onRename,
   onRemove,
+  onMove,
   onDragStart,
   onDragEnd,
   onDragOver,
@@ -93,7 +95,18 @@ function TodoItemRow({
       <span
         className="todo-asset__handle"
         draggable
-        aria-hidden="true"
+        role="button"
+        tabIndex={0}
+        aria-label={`Reorder "${item.text}" with the arrow keys`}
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowUp') {
+            event.preventDefault()
+            onMove(-1)
+          } else if (event.key === 'ArrowDown') {
+            event.preventDefault()
+            onMove(1)
+          }
+        }}
         onDragStart={(event) => {
           event.dataTransfer.effectAllowed = 'move'
           event.dataTransfer.setData('application/todo-item', item.id)

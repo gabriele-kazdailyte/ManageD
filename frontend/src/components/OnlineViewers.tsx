@@ -10,9 +10,13 @@ function OnlineViewers({ viewers }: OnlineViewersProps) {
   const { identity } = useUser()
   const others = viewers.filter((viewer) => viewer.userId !== identity.userId)
 
+  if (others.length === 0) {
+    return null
+  }
+
   return (
     <p className="online-viewers">
-      Online: {others.length === 0 ? '—' : others.map((viewer) => viewer.displayName).join(', ')}
+      Online: {others.map((viewer) => viewer.displayName).join(', ')}
     </p>
   )
 }

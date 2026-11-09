@@ -52,6 +52,14 @@ function TodoAsset({ asset, isDeleting, onDelete, onUpdate }: TodoAssetProps) {
     }
   }
 
+  const handleMove = (itemId: string, direction: -1 | 1) => {
+    const from = asset.items.findIndex((item) => item.id === itemId)
+    const delta = reorderDelta(asset.items, from, from + direction)
+    if (delta) {
+      onUpdate(asset, delta)
+    }
+  }
+
   return (
     <article className="todo-asset">
       <header className="todo-asset__header">
@@ -79,6 +87,7 @@ function TodoAsset({ asset, isDeleting, onDelete, onUpdate }: TodoAssetProps) {
             onToggle={(isDone) => onUpdate(asset, setDoneDelta(item.id, isDone))}
             onRename={(text) => onUpdate(asset, editTextDelta(item.id, text))}
             onRemove={() => onUpdate(asset, deleteItemDelta(item.id))}
+            onMove={(direction) => handleMove(item.id, direction)}
             onDragStart={() => setDraggedId(item.id)}
             onDragEnd={endDrag}
             onDragOver={() => setOverId(item.id)}
