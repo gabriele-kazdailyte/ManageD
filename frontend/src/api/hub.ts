@@ -23,14 +23,11 @@ export function createWorkspaceConnection(): HubConnection {
     .build()
 }
 
-const HUB_EXCEPTION_MARKER = 'HubException: '
+const UNEXPECTED_ERROR_PREFIX = 'An unexpected error occurred'
 
 export function hubErrorMessage(error: unknown, fallback: string): string {
-  if (error instanceof Error) {
-    const index = error.message.indexOf(HUB_EXCEPTION_MARKER)
-    if (index >= 0) {
-      return error.message.slice(index + HUB_EXCEPTION_MARKER.length)
-    }
+  if (error instanceof Error && error.message && !error.message.startsWith(UNEXPECTED_ERROR_PREFIX)) {
+    return error.message
   }
 
   return fallback

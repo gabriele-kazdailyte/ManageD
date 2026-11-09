@@ -1,13 +1,18 @@
 import type { Viewer } from '../api/hub'
+import { useUser } from '../context/UserContext'
+import './OnlineViewers.css'
 
 type OnlineViewersProps = {
   viewers: Viewer[]
 }
 
 function OnlineViewers({ viewers }: OnlineViewersProps) {
+  const { identity } = useUser()
+  const others = viewers.filter((viewer) => viewer.userId !== identity.userId)
+
   return (
-    <p className="online-viewers" style={{ margin: 0, padding: '6px 16px', fontSize: 13 }}>
-      Online: {viewers.length === 0 ? '—' : viewers.map((viewer) => viewer.displayName).join(', ')}
+    <p className="online-viewers">
+      Online: {others.length === 0 ? '—' : others.map((viewer) => viewer.displayName).join(', ')}
     </p>
   )
 }
