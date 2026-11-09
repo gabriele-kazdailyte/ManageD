@@ -24,6 +24,46 @@
   align-items: center;
 }
 
-.toolbar__preset {
-  margin-left: 12px;
+.toolbar__block {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.toolbar__block .draggable-block {
+  width: fit-content;
+}
+
+.toolbar__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 10;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  min-width: 190px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.toolbar__menu button {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-h);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+}
+
+.toolbar__menu button:hover,
+.toolbar__menu button[aria-selected='true'] {
+  background: var(--panel);
 }

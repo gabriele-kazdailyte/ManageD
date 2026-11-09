@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import type { PresetInfo } from '../api/assets'
 import TodoList from './TodoList'
 import './Toolbar.css'
@@ -10,23 +11,69 @@ type ToolbarProps = {
 }
 
 function Toolbar({ blockLabel = 'Todo List', presets, selectedPreset, onPresetChange }: ToolbarProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const blockRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!isMenuOpen) {
+      return
+    }
+
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMenuOpen(false)
+      }
+    }
+    const handleMouseDown = (event: MouseEvent) => {
+      if (!blockRef.current?.contains(event.target as Node)) {
+        setIsMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('mousedown', handleMouseDown)
+    }
+  }, [isMenuOpen])
+
+  const choose = (presetName: string | null) => {
+    onPresetChange(presetName)
+    setIsMenuOpen(false)
+  }
+
   return (
     <div className="toolbar" aria-label="Toolbar">
       <div className="toolbar__dropzone" aria-label="Toolbar drop zone">
-        <TodoList label={blockLabel} />
-        <select
-          className="toolbar__preset"
-          value={selectedPreset ?? ''}
-          onChange={(event) => onPresetChange(event.target.value === '' ? null : event.target.value)}
-          aria-label="Start new lists from preset"
-        >
-          <option value="">Empty list</option>
-          {presets.map((preset) => (
-            <option key={preset.name} value={preset.name}>
-              {preset.name} ({preset.itemCount})
-            </option>
-          ))}
-        </select>
+        <div className="toolbar__block" ref={blockRef}>
+          <TodoList
+            label={blockLabel}
+            hint={selectedPreset}
+            onClick={() => setIsMenuOpen((open) => !open)}
+          />
+          {isMenuOpen ? (
+            <ul className="toolbar__menu" role="listbox" aria-label="Start new lists from preset">
+              <li>
+                <button type="button" role="option" aria-selected={selectedPreset === null} onClick={() => choose(null)}>
+                  Empty list
+                </button>
+              </li>
+              {presets.map((preset) => (
+                <li key={preset.name}>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={selectedPreset === preset.name}
+                    onClick={() => choose(preset.name)}
+                  >
+                    {preset.name} ({preset.itemCount})
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
       </div>
     </div>
   )
