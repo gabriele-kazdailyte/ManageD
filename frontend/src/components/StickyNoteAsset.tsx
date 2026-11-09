@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 import type { AssetSnapshot } from '../api/assets'
 import './StickyNoteAsset.css'
 
@@ -11,6 +12,7 @@ type StickyNoteAssetProps = {
 
 function StickyNoteAsset({ asset, isDeleting, onDelete, onSave }: StickyNoteAssetProps) {
   const [content, setContent] = useState(asset.noteContent)
+  const [isPreview, setIsPreview] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
@@ -38,6 +40,14 @@ function StickyNoteAsset({ asset, isDeleting, onDelete, onSave }: StickyNoteAsse
         <h2 className="sticky-note__title">{asset.title}</h2>
         <button
           type="button"
+          className="sticky-note__mode"
+          onClick={() => setIsPreview((current) => !current)}
+          aria-label={isPreview ? 'Edit note' : 'Preview Markdown'}
+        >
+          {isPreview ? 'Edit' : 'Preview'}
+        </button>
+        <button
+          type="button"
           className="sticky-note__delete"
           onClick={() => onDelete(asset)}
           disabled={isDeleting}
@@ -46,14 +56,20 @@ function StickyNoteAsset({ asset, isDeleting, onDelete, onSave }: StickyNoteAsse
           ×
         </button>
       </header>
-      <textarea
-        className="sticky-note__content"
-        value={content}
-        maxLength={5000}
-        placeholder="Write a note…"
-        aria-label="Sticky note content"
-        onChange={(event) => setContent(event.target.value)}
-      />
+      {isPreview ? (
+        <div className="sticky-note__preview">
+          {content ? <ReactMarkdown>{content}</ReactMarkdown> : <p>Nothing to preview yet.</p>}
+        </div>
+      ) : (
+        <textarea
+          className="sticky-note__content"
+          value={content}
+          maxLength={5000}
+          placeholder="Write a note…"
+          aria-label="Sticky note content"
+          onChange={(event) => setContent(event.target.value)}
+        />
+      )}
       <p className="sticky-note__status" aria-live="polite">
         {saveError ?? (isSaving ? 'Saving…' : content !== asset.noteContent ? 'Unsaved changes' : 'Saved')}
       </p>
