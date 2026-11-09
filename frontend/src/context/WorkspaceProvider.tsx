@@ -105,7 +105,7 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
       try {
         await connection.invoke('CreateAsset', workspaceId, title, 'Todo', presetName)
       } catch (invokeError) {
-        throw new Error(hubErrorMessage(invokeError, 'Could not create the asset.'))
+        throw new Error(hubErrorMessage(invokeError, 'Could not create the asset.'), { cause: invokeError })
       }
     },
     [workspaceId],
@@ -120,7 +120,7 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
     try {
       await connection.invoke('DeleteAsset', assetId)
     } catch (invokeError) {
-      throw new Error(hubErrorMessage(invokeError, 'Could not delete the asset.'))
+      throw new Error(hubErrorMessage(invokeError, 'Could not delete the asset.'), { cause: invokeError })
     }
   }, [])
 

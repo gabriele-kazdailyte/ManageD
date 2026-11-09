@@ -1,16 +1,14 @@
-import type { AssetSnapshot, PresetInfo } from '../api/assets'
+import type { AssetSnapshot } from '../api/assets'
 import './TodoAsset.css'
 
 type TodoAssetProps = {
   asset: AssetSnapshot
   isDeleting: boolean
   onDelete: (asset: AssetSnapshot) => void
-  presets: PresetInfo[]
-  onSelectPreset: (asset: AssetSnapshot, presetName: string | null) => void
 }
 
-// Read-only for now: items are added and edited through the hub, which doesn't exist yet.
-function TodoAsset({ asset, isDeleting, presets, onDelete, onSelectPreset }: TodoAssetProps) {
+// Read-only for now: editing items through the hub comes in the next frontend PR.
+function TodoAsset({ asset, isDeleting, onDelete }: TodoAssetProps) {
   const handleDelete = () => {
     onDelete(asset)
   }
@@ -19,21 +17,6 @@ function TodoAsset({ asset, isDeleting, presets, onDelete, onSelectPreset }: Tod
     <article className="todo-asset">
       <header className="todo-asset__header">
         <h2 className="todo-asset__title">{asset.title}</h2>
-        <select
-          className="todo-asset__preset"
-          defaultValue="custom"
-          onChange={(event) =>
-            onSelectPreset(asset, event.target.value === 'custom' ? null : event.target.value)
-          }
-          aria-label="Fill from preset"
-        >
-          <option value="custom">Presets</option>
-          {presets.map((preset) => (
-            <option key={preset.name} value={preset.name}>
-              {preset.name}
-            </option>
-          ))}
-        </select>
         <button
           type="button"
           className="todo-asset__delete"
