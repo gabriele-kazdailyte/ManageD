@@ -144,3 +144,27 @@
   border-style: solid;
   border-color: var(--accent);
 }
+
+.todo-asset__item {
+  align-items: flex-start;
+}
+
+.todo-asset__item input[type='checkbox'] {
+  margin: 6px 3px 0 4px;
+  accent-color: var(--accent);
+}
+
+.todo-asset__handle {
+  margin-top: 7px;
+}
+
+.todo-asset__item-remove {
+  margin-top: 4px;
+}
+
+.todo-asset__text {
+  display: block;
+  resize: none;
+  overflow: hidden;
+  line-height: 1.35;
+}

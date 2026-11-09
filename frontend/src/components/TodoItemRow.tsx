@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import type { TodoItem } from '../api/assets'
 import { MAX_ITEM_TEXT_LENGTH } from '../context/todoDeltas'
 
@@ -29,6 +29,16 @@ function TodoItemRow({
 }: TodoItemRowProps) {
   const [draft, setDraft] = useState<string | null>(null)
   const cancelEditRef = useRef(false)
+  const textRef = useRef<HTMLTextAreaElement>(null)
+  const shownText = draft ?? item.text
+
+  useLayoutEffect(() => {
+    const field = textRef.current
+    if (field) {
+      field.style.height = 'auto'
+      field.style.height = `${field.scrollHeight}px`
+    }
+  }, [shownText])
 
   const commit = () => {
     if (cancelEditRef.current) {
@@ -49,8 +59,9 @@ function TodoItemRow({
     }
   }
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter') {
+      event.preventDefault()
       event.currentTarget.blur()
     } else if (event.key === 'Escape') {
       cancelEditRef.current = true
@@ -96,12 +107,13 @@ function TodoItemRow({
         ⋮⋮
       </span>
       <input type="checkbox" checked={item.isDone} onChange={(event) => onToggle(event.target.checked)} aria-label={`Mark "${item.text}" as done`} />
-      <input
-        type="text"
+      <textarea
+        ref={textRef}
+        rows={1}
         className={item.isDone ? 'todo-asset__text todo-asset__text--done' : 'todo-asset__text'}
-        value={draft ?? item.text}
+        value={shownText}
         maxLength={MAX_ITEM_TEXT_LENGTH}
-        onChange={(event) => setDraft(event.target.value)}
+        onChange={(event) => setDraft(event.target.value.replace(/\r?\n/g, ' '))}
         onBlur={commit}
         onKeyDown={handleKeyDown}
         aria-label="Item text"
