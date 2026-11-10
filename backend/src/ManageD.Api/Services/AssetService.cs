@@ -19,8 +19,8 @@ public class AssetService : IAssetService
         _store = store;
     }
 
-    // Returns null when the workspace doesn't exist.
-    public async Task<AssetSnapshot?> CreateAsync(
+    /// <exception cref="WorkspaceNotFoundException">The workspace does not exist</exception>
+    public async Task<AssetSnapshot> CreateAsync(
         string title,
         Guid workspaceId,
         TemplateType templateType = TemplateType.Todo,
@@ -29,7 +29,7 @@ public class AssetService : IAssetService
     {
         if (!await WorkspaceExistsAsync(workspaceId, cancellationToken))
         {
-            return null;
+            throw new WorkspaceNotFoundException(workspaceId);
         }
 
         var now = DateTime.UtcNow;
@@ -55,22 +55,6 @@ public class AssetService : IAssetService
         };
 
         return await _store.AddAsync(asset, cancellationToken);
-    }
-
-    // Returns null when the workspace doesn't exist, so callers can tell it apart from an empty workspace.
-    public async Task<IReadOnlyList<AssetSummary>?> ListAsync(Guid workspaceId, CancellationToken cancellationToken)
-    {
-        if (!await WorkspaceExistsAsync(workspaceId, cancellationToken))
-        {
-            return null;
-        }
-
-        return await _store.ListByWorkspaceAsync(workspaceId, cancellationToken);
-    }
-
-    public Task<AssetSnapshot?> GetAsync(Guid id, CancellationToken cancellationToken)
-    {
-        return _store.GetAsync(id, cancellationToken);
     }
 
     public Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)

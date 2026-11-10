@@ -2,7 +2,7 @@ using ManageD.Api.Models;
 
 namespace ManageD.Api.Dtos;
 
-// A full asset as returned by POST /api/assets and GET /api/assets/{id}.
+// A full asset as sent over the hub: in JoinWorkspace and AssetCreated
 public record AssetSnapshot(
     Guid Id,
     string Title,

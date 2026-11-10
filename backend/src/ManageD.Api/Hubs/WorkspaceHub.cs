@@ -95,8 +95,7 @@ public class WorkspaceHub : Hub
             workspaceId,
             templateType ?? TemplateType.Todo,
             initialItems,
-            Context.ConnectionAborted)
-            ?? throw new WorkspaceNotFoundException(workspaceId);
+            Context.ConnectionAborted);
 
         await Clients.Group(GroupName(workspaceId)).SendAsync("AssetCreated", new AssetCreatedEvent(asset));
     }

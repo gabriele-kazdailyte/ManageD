@@ -28,7 +28,6 @@ public class AssetServiceTests : IDisposable
         public int SaveCalls { get; private set; }
 
         public Task<AssetSnapshot> AddAsync(Asset asset, CancellationToken ct) => _inner.AddAsync(asset, ct);
-        public Task<IReadOnlyList<AssetSummary>> ListByWorkspaceAsync(Guid id, CancellationToken ct) => _inner.ListByWorkspaceAsync(id, ct);
         public Task<IReadOnlyList<AssetSnapshot>> GetWorkspaceAssetsAsync(Guid id, CancellationToken ct) => _inner.GetWorkspaceAssetsAsync(id, ct);
         public Task<AssetSnapshot?> GetAsync(Guid id, CancellationToken ct) => _inner.GetAsync(id, ct);
         public Task<bool> RemoveAsync(Guid id, CancellationToken ct) => _inner.RemoveAsync(id, ct);
@@ -59,7 +58,7 @@ public class AssetServiceTests : IDisposable
         var store = new FlakyStore(new EfAssetStore(context), context, failures);
         var service = new AssetService(context, store);
         var created = await service.CreateAsync("t", workspace.Id, cancellationToken: CancellationToken.None);
-        return (service, store, created!.Id);
+        return (service, store, created.Id);
     }
 
     [Fact]
@@ -91,5 +90,14 @@ public class AssetServiceTests : IDisposable
 
         await Assert.ThrowsAsync<AssetNotFoundException>(() =>
             service.ApplyDeltaAsync(Guid.NewGuid(), new AssetDelta(null, null, null), CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task Creating_in_an_unknown_workspace_throws_WorkspaceNotFound()
+    {
+        var (service, _, _) = await ArrangeAsync(failures: 0);
+
+        await Assert.ThrowsAsync<WorkspaceNotFoundException>(() =>
+            service.CreateAsync("t", Guid.NewGuid(), cancellationToken: CancellationToken.None));
     }
 }

@@ -59,24 +59,6 @@ public class EfAssetStore : IAssetStore
         return ToSnapshot(asset);
     }
 
-    public async Task<IReadOnlyList<AssetSummary>> ListByWorkspaceAsync(Guid workspaceId, CancellationToken cancellationToken)
-    {
-        var assets = await _dbContext.Assets
-            .Where(a => a.WorkspaceId == workspaceId)
-            .Include(a => a.Items)
-            .OrderBy(a => a.CreatedAt)
-            .ToListAsync(cancellationToken);
-
-        return assets
-            .Select(a => new AssetSummary(
-                a.Id,
-                a.Title,
-                a.TemplateType,
-                a.UpdatedAt,
-                a.Items.Count))
-            .ToList();
-    }
-
     public async Task<IReadOnlyList<AssetSnapshot>> GetWorkspaceAssetsAsync(Guid workspaceId, CancellationToken cancellationToken)
     {
         var assets = await _dbContext.Assets

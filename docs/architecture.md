@@ -87,7 +87,7 @@ There is no revision field. Concurrent changes are merged by delta, see Concurre
 |---|---|
 | `GET /api/assets/presets` | Lists the server-defined presets (name + item count) that `CreateAsset` can seed a new asset from. |
 
-Assets are created (optionally seeded from a preset), read and deleted through the hub, not here. The remaining REST asset endpoints (`POST /api/assets`, `GET /api/assets`, `GET /api/assets/{id}`, `DELETE /api/assets/{id}`) are removed once the hub is in.
+Assets are created (optionally seeded from a preset), updated and deleted through the hub, not here. This controller only serves the preset list.
 
 Validation failures return the framework-default 400 `application/problem+json` body. A missing workspace/user returns an empty 404.
 
