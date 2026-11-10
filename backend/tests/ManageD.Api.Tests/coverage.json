@@ -1,0 +1,3249 @@
+{
+  "ManageD.Api.dll": {
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Program.cs": {
+      "Program": {
+        "System.Void Program::<Main>$(System.String[])": {
+          "Lines": {
+            "8": 1,
+            "12": 1,
+            "16": 1,
+            "17": 2,
+            "18": 2,
+            "20": 1,
+            "21": 44,
+            "23": 1,
+            "24": 1,
+            "25": 1,
+            "26": 1,
+            "27": 1,
+            "28": 1,
+            "30": 2,
+            "31": 2,
+            "32": 2,
+            "34": 1,
+            "36": 3,
+            "37": 3,
+            "38": 3,
+            "39": 3,
+            "40": 3,
+            "42": 1,
+            "44": 1,
+            "47": 1,
+            "48": 1,
+            "49": 1,
+            "50": 1,
+            "52": 1,
+            "53": 1,
+            "55": 1,
+            "56": 1,
+            "58": 1
+          },
+          "Branches": [
+            {
+              "Line": 34,
+              "Offset": 333,
+              "EndOffset": 335,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 34,
+              "Offset": 333,
+              "EndOffset": 341,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            },
+            {
+              "Line": 47,
+              "Offset": 417,
+              "EndOffset": 419,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 1
+            },
+            {
+              "Line": 47,
+              "Offset": 417,
+              "EndOffset": 433,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            },
+            {
+              "Line": 36,
+              "Offset": 13,
+              "EndOffset": 15,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 1
+            },
+            {
+              "Line": 36,
+              "Offset": 13,
+              "EndOffset": 37,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\obj\\Debug\\net10.0\\Microsoft.AspNetCore.OpenApi.SourceGenerators\\Microsoft.AspNetCore.OpenApi.SourceGenerators.XmlCommentGenerator\\OpenApiXmlCommentSupport.generated.cs": {
+      "System.Runtime.CompilerServices.<OpenApiXmlCommentSupport_generated>F79C4AD591ACFA8178923D2B3C7A41030AACEB9B69C35A24637ECAAF989CFB30F__InterceptsLocationAttribute": {
+        "System.Void System.Runtime.CompilerServices.<OpenApiXmlCommentSupport_generated>F79C4AD591ACFA8178923D2B3C7A41030AACEB9B69C35A24637ECAAF989CFB30F__InterceptsLocationAttribute::.ctor(System.Int32,System.String)": {
+          "Lines": {
+            "20": 0,
+            "21": 0,
+            "22": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Services\\AssetLocks.cs": {
+      "ManageD.Api.Services.AssetLocks": {
+        "System.Threading.Tasks.Task ManageD.Api.Services.AssetLocks::RunAsync(System.Guid,System.Func`1<System.Threading.Tasks.Task>,System.Threading.CancellationToken)": {
+          "Lines": {
+            "10": 16,
+            "11": 16,
+            "12": 16
+          },
+          "Branches": []
+        },
+        "System.Threading.Tasks.Task ManageD.Api.Services.AssetLocks::RunAndForgetAsync(System.Guid,System.Func`1<System.Threading.Tasks.Task>,System.Threading.CancellationToken)": {
+          "Lines": {
+            "15": 2,
+            "16": 2,
+            "17": 2
+          },
+          "Branches": []
+        },
+        "System.Void ManageD.Api.Services.AssetLocks::.ctor()": {
+          "Lines": {
+            "7": 5
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.AssetLocks/<>c": {
+        "System.Threading.SemaphoreSlim ManageD.Api.Services.AssetLocks/<>c::<RunCoreAsync>b__3_0(System.Guid)": {
+          "Lines": {
+            "21": 25
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.AssetLocks/<RunCoreAsync>d__3": {
+        "System.Void ManageD.Api.Services.AssetLocks/<RunCoreAsync>d__3::MoveNext()": {
+          "Lines": {
+            "20": 18,
+            "23": 18,
+            "25": 18,
+            "26": 18,
+            "28": 17,
+            "29": 2,
+            "30": 2,
+            "31": 2,
+            "32": 17,
+            "34": 18,
+            "35": 18,
+            "36": 18,
+            "37": 17
+          },
+          "Branches": [
+            {
+              "Line": 28,
+              "Offset": 316,
+              "EndOffset": 318,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 2
+            },
+            {
+              "Line": 28,
+              "Offset": 316,
+              "EndOffset": 354,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 17
+            }
+          ]
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Services\\AssetService.cs": {
+      "ManageD.Api.Services.AssetService": {
+        "System.Threading.Tasks.Task`1<System.Boolean> ManageD.Api.Services.AssetService::DeleteAsync(System.Guid,System.Threading.CancellationToken)": {
+          "Lines": {
+            "61": 1,
+            "62": 1,
+            "63": 1
+          },
+          "Branches": []
+        },
+        "System.Threading.Tasks.Task`1<System.Collections.Generic.IReadOnlyList`1<ManageD.Api.Dtos.AssetSnapshot>> ManageD.Api.Services.AssetService::GetWorkspaceAssetsAsync(System.Guid,System.Threading.CancellationToken)": {
+          "Lines": {
+            "66": 4,
+            "67": 4,
+            "68": 4
+          },
+          "Branches": []
+        },
+        "System.Threading.Tasks.Task`1<System.Boolean> ManageD.Api.Services.AssetService::WorkspaceExistsAsync(System.Guid,System.Threading.CancellationToken)": {
+          "Lines": {
+            "97": 7,
+            "98": 7,
+            "99": 7
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.List`1<ManageD.Api.Models.TodoItem> ManageD.Api.Services.AssetService::BuildItems(System.Collections.Generic.IReadOnlyList`1<System.String>)": {
+          "Lines": {
+            "102": 6,
+            "103": 6,
+            "104": 5,
+            "105": 5,
+            "108": 1,
+            "110": 10,
+            "111": 4,
+            "112": 4,
+            "113": 4,
+            "115": 1,
+            "116": 6
+          },
+          "Branches": [
+            {
+              "Line": 103,
+              "Offset": 7,
+              "EndOffset": 9,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 5
+            },
+            {
+              "Line": 103,
+              "Offset": 7,
+              "EndOffset": 18,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            },
+            {
+              "Line": 110,
+              "Offset": 93,
+              "EndOffset": 28,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 4
+            },
+            {
+              "Line": 110,
+              "Offset": 93,
+              "EndOffset": 95,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 1
+            }
+          ]
+        },
+        "System.Threading.Tasks.Task`1<System.Nullable`1<System.Guid>> ManageD.Api.Services.AssetService::GetWorkspaceIdAsync(System.Guid,System.Threading.CancellationToken)": {
+          "Lines": {
+            "119": 3,
+            "120": 3,
+            "121": 3
+          },
+          "Branches": []
+        },
+        "System.Void ManageD.Api.Services.AssetService::.ctor(ManageD.Api.Data.ManageDDbContext,ManageD.Api.Services.IAssetStore)": {
+          "Lines": {
+            "16": 29,
+            "17": 29,
+            "18": 29,
+            "19": 29,
+            "20": 29
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.AssetService/<ApplyDeltaAsync>d__7": {
+        "System.Void ManageD.Api.Services.AssetService/<ApplyDeltaAsync>d__7::MoveNext()": {
+          "Lines": {
+            "72": 4,
+            "73": 6,
+            "74": 6,
+            "75": 6,
+            "76": 6,
+            "78": 5,
+            "79": 5,
+            "80": 0,
+            "81": 0,
+            "85": 5,
+            "86": 5,
+            "87": 2,
+            "89": 3,
+            "90": 2,
+            "92": 2,
+            "93": 2,
+            "94": 2
+          },
+          "Branches": [
+            {
+              "Line": 75,
+              "Offset": 170,
+              "EndOffset": 172,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 1
+            },
+            {
+              "Line": 75,
+              "Offset": 170,
+              "EndOffset": 185,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 5
+            },
+            {
+              "Line": 79,
+              "Offset": 235,
+              "EndOffset": 237,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 79,
+              "Offset": 235,
+              "EndOffset": 250,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 5
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Services.AssetService/<CreateAsync>d__4": {
+        "System.Void ManageD.Api.Services.AssetService/<CreateAsync>d__4::MoveNext()": {
+          "Lines": {
+            "29": 7,
+            "30": 7,
+            "31": 1,
+            "32": 1,
+            "35": 6,
+            "36": 6,
+            "37": 6,
+            "38": 6,
+            "39": 6,
+            "40": 6,
+            "41": 6,
+            "42": 6,
+            "43": 6,
+            "44": 6,
+            "45": 6,
+            "46": 6,
+            "47": 6,
+            "48": 6,
+            "49": 6,
+            "50": 6,
+            "51": 6,
+            "52": 6,
+            "53": 0,
+            "54": 6,
+            "55": 6,
+            "57": 6,
+            "58": 6
+          },
+          "Branches": [
+            {
+              "Line": 30,
+              "Offset": 156,
+              "EndOffset": 158,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 1
+            },
+            {
+              "Line": 30,
+              "Offset": 156,
+              "EndOffset": 171,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 6
+            },
+            {
+              "Line": 47,
+              "Offset": 327,
+              "EndOffset": 331,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 6
+            },
+            {
+              "Line": 47,
+              "Offset": 327,
+              "EndOffset": 346,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            }
+          ]
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Services\\DeltaApplier.cs": {
+      "ManageD.Api.Services.DeltaApplier": {
+        "ManageD.Api.Dtos.AssetDelta ManageD.Api.Services.DeltaApplier::Apply(ManageD.Api.Models.Asset,ManageD.Api.Dtos.AssetDelta)": {
+          "Lines": {
+            "18": 25,
+            "19": 25,
+            "20": 25,
+            "21": 25,
+            "23": 25,
+            "26": 18,
+            "27": 60,
+            "28": 3,
+            "29": 5,
+            "30": 3,
+            "31": 1,
+            "32": 1,
+            "35": 2,
+            "36": 2,
+            "37": 2,
+            "40": 18,
+            "41": 72,
+            "42": 9,
+            "43": 19,
+            "44": 9,
+            "45": 2,
+            "46": 2,
+            "49": 7,
+            "50": 4,
+            "51": 4,
+            "52": 4,
+            "54": 7,
+            "55": 2,
+            "56": 2,
+            "57": 2,
+            "59": 7,
+            "60": 1,
+            "61": 1,
+            "62": 1,
+            "64": 7,
+            "65": 7,
+            "67": 18,
+            "68": 68,
+            "69": 7,
+            "70": 7,
+            "71": 7,
+            "72": 7,
+            "73": 7,
+            "74": 7,
+            "75": 7,
+            "76": 7,
+            "77": 7,
+            "78": 7,
+            "79": 7,
+            "81": 18,
+            "82": 18,
+            "83": 1,
+            "84": 1,
+            "85": 1,
+            "86": 1,
+            "88": 18,
+            "89": 18
+          },
+          "Branches": [
+            {
+              "Line": 19,
+              "Offset": 8,
+              "EndOffset": 10,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 13
+            },
+            {
+              "Line": 19,
+              "Offset": 8,
+              "EndOffset": 16,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 12
+            },
+            {
+              "Line": 20,
+              "Offset": 24,
+              "EndOffset": 26,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 16
+            },
+            {
+              "Line": 20,
+              "Offset": 24,
+              "EndOffset": 32,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 9
+            },
+            {
+              "Line": 21,
+              "Offset": 40,
+              "EndOffset": 42,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 21
+            },
+            {
+              "Line": 21,
+              "Offset": 40,
+              "EndOffset": 48,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 4
+            },
+            {
+              "Line": 27,
+              "Offset": 184,
+              "EndOffset": 86,
+              "Path": 1,
+              "Ordinal": 9,
+              "Hits": 3
+            },
+            {
+              "Line": 30,
+              "Offset": 143,
+              "EndOffset": 145,
+              "Path": 0,
+              "Ordinal": 6,
+              "Hits": 1
+            },
+            {
+              "Line": 30,
+              "Offset": 143,
+              "EndOffset": 148,
+              "Path": 1,
+              "Ordinal": 7,
+              "Hits": 2
+            },
+            {
+              "Line": 27,
+              "Offset": 184,
+              "EndOffset": 186,
+              "Path": 0,
+              "Ordinal": 8,
+              "Hits": 18
+            },
+            {
+              "Line": 41,
+              "Offset": 489,
+              "EndOffset": 222,
+              "Path": 1,
+              "Ordinal": 19,
+              "Hits": 9
+            },
+            {
+              "Line": 44,
+              "Offset": 279,
+              "EndOffset": 281,
+              "Path": 0,
+              "Ordinal": 10,
+              "Hits": 2
+            },
+            {
+              "Line": 44,
+              "Offset": 279,
+              "EndOffset": 287,
+              "Path": 1,
+              "Ordinal": 11,
+              "Hits": 7
+            },
+            {
+              "Line": 49,
+              "Offset": 309,
+              "EndOffset": 311,
+              "Path": 0,
+              "Ordinal": 12,
+              "Hits": 4
+            },
+            {
+              "Line": 49,
+              "Offset": 309,
+              "EndOffset": 338,
+              "Path": 1,
+              "Ordinal": 13,
+              "Hits": 7
+            },
+            {
+              "Line": 54,
+              "Offset": 369,
+              "EndOffset": 371,
+              "Path": 0,
+              "Ordinal": 14,
+              "Hits": 2
+            },
+            {
+              "Line": 54,
+              "Offset": 369,
+              "EndOffset": 402,
+              "Path": 1,
+              "Ordinal": 15,
+              "Hits": 7
+            },
+            {
+              "Line": 59,
+              "Offset": 433,
+              "EndOffset": 435,
+              "Path": 0,
+              "Ordinal": 16,
+              "Hits": 1
+            },
+            {
+              "Line": 59,
+              "Offset": 433,
+              "EndOffset": 466,
+              "Path": 1,
+              "Ordinal": 17,
+              "Hits": 7
+            },
+            {
+              "Line": 41,
+              "Offset": 489,
+              "EndOffset": 494,
+              "Path": 0,
+              "Ordinal": 18,
+              "Hits": 18
+            },
+            {
+              "Line": 68,
+              "Offset": 673,
+              "EndOffset": 530,
+              "Path": 1,
+              "Ordinal": 21,
+              "Hits": 7
+            },
+            {
+              "Line": 68,
+              "Offset": 673,
+              "EndOffset": 678,
+              "Path": 0,
+              "Ordinal": 20,
+              "Hits": 18
+            },
+            {
+              "Line": 82,
+              "Offset": 712,
+              "EndOffset": 714,
+              "Path": 0,
+              "Ordinal": 22,
+              "Hits": 1
+            },
+            {
+              "Line": 82,
+              "Offset": 712,
+              "EndOffset": 742,
+              "Path": 1,
+              "Ordinal": 23,
+              "Hits": 17
+            }
+          ]
+        },
+        "System.Void ManageD.Api.Services.DeltaApplier::Validate(ManageD.Api.Models.Asset,System.Collections.Generic.IReadOnlyList`1<ManageD.Api.Dtos.TodoItemDto>,System.Collections.Generic.IReadOnlyList`1<ManageD.Api.Dtos.TodoItemChange>,System.String)": {
+          "Lines": {
+            "96": 25,
+            "97": 25,
+            "98": 3,
+            "99": 3,
+            "100": 3,
+            "101": 1,
+            "102": 1,
+            "105": 2,
+            "106": 1,
+            "107": 1,
+            "109": 1,
+            "111": 23,
+            "112": 88,
+            "113": 12,
+            "114": 12,
+            "116": 11,
+            "117": 1,
+            "118": 1,
+            "120": 7,
+            "122": 72,
+            "123": 9,
+            "124": 9,
+            "125": 6,
+            "126": 6,
+            "127": 6,
+            "128": 9,
+            "129": 18
+          },
+          "Branches": [
+            {
+              "Line": 97,
+              "Offset": 7,
+              "EndOffset": 9,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 3
+            },
+            {
+              "Line": 100,
+              "Offset": 28,
+              "EndOffset": 30,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 1
+            },
+            {
+              "Line": 100,
+              "Offset": 28,
+              "EndOffset": 42,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 2
+            },
+            {
+              "Line": 105,
+              "Offset": 59,
+              "EndOffset": 61,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 1
+            },
+            {
+              "Line": 105,
+              "Offset": 59,
+              "EndOffset": 124,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 1
+            },
+            {
+              "Line": 97,
+              "Offset": 7,
+              "EndOffset": 125,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 22
+            },
+            {
+              "Line": 112,
+              "Offset": 316,
+              "EndOffset": 145,
+              "Path": 1,
+              "Ordinal": 11,
+              "Hits": 12
+            },
+            {
+              "Line": 116,
+              "Offset": 203,
+              "EndOffset": 205,
+              "Path": 0,
+              "Ordinal": 6,
+              "Hits": 8
+            },
+            {
+              "Line": 116,
+              "Offset": 203,
+              "EndOffset": 231,
+              "Path": 1,
+              "Ordinal": 7,
+              "Hits": 0
+            },
+            {
+              "Line": 116,
+              "Offset": 236,
+              "EndOffset": 238,
+              "Path": 0,
+              "Ordinal": 8,
+              "Hits": 1
+            },
+            {
+              "Line": 116,
+              "Offset": 236,
+              "EndOffset": 308,
+              "Path": 1,
+              "Ordinal": 9,
+              "Hits": 7
+            },
+            {
+              "Line": 112,
+              "Offset": 316,
+              "EndOffset": 321,
+              "Path": 0,
+              "Ordinal": 10,
+              "Hits": 18
+            },
+            {
+              "Line": 122,
+              "Offset": 399,
+              "EndOffset": 347,
+              "Path": 1,
+              "Ordinal": 15,
+              "Hits": 9
+            },
+            {
+              "Line": 124,
+              "Offset": 374,
+              "EndOffset": 376,
+              "Path": 0,
+              "Ordinal": 12,
+              "Hits": 6
+            },
+            {
+              "Line": 124,
+              "Offset": 374,
+              "EndOffset": 391,
+              "Path": 1,
+              "Ordinal": 13,
+              "Hits": 9
+            },
+            {
+              "Line": 122,
+              "Offset": 399,
+              "EndOffset": 401,
+              "Path": 0,
+              "Ordinal": 14,
+              "Hits": 18
+            }
+          ]
+        },
+        "System.Void ManageD.Api.Services.DeltaApplier::ValidateText(System.String)": {
+          "Lines": {
+            "132": 18,
+            "133": 18,
+            "134": 18,
+            "135": 3,
+            "136": 3,
+            "139": 15,
+            "140": 1,
+            "141": 1,
+            "143": 14
+          },
+          "Branches": [
+            {
+              "Line": 134,
+              "Offset": 19,
+              "EndOffset": 21,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 3
+            },
+            {
+              "Line": 134,
+              "Offset": 19,
+              "EndOffset": 33,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 15
+            },
+            {
+              "Line": 139,
+              "Offset": 48,
+              "EndOffset": 50,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 1
+            },
+            {
+              "Line": 139,
+              "Offset": 48,
+              "EndOffset": 113,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 14
+            }
+          ]
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Services\\EfAssetStore.cs": {
+      "ManageD.Api.Services.EfAssetStore": {
+        "ManageD.Api.Dtos.AssetSnapshot ManageD.Api.Services.EfAssetStore::ToSnapshot(ManageD.Api.Models.Asset)": {
+          "Lines": {
+            "26": 8,
+            "27": 8,
+            "28": 8,
+            "29": 8,
+            "30": 8,
+            "31": 8,
+            "32": 8
+          },
+          "Branches": []
+        },
+        "System.Threading.Tasks.Task`1<ManageD.Api.Models.Asset> ManageD.Api.Services.EfAssetStore::GetForUpdateAsync(System.Guid,System.Threading.CancellationToken)": {
+          "Lines": {
+            "75": 9,
+            "76": 9,
+            "77": 9,
+            "78": 9,
+            "79": 9
+          },
+          "Branches": []
+        },
+        "System.Threading.Tasks.Task`1<System.Nullable`1<System.Guid>> ManageD.Api.Services.EfAssetStore::GetWorkspaceIdAsync(System.Guid,System.Threading.CancellationToken)": {
+          "Lines": {
+            "97": 5,
+            "98": 5,
+            "99": 5,
+            "100": 5,
+            "101": 5,
+            "102": 5,
+            "103": 5
+          },
+          "Branches": []
+        },
+        "System.Void ManageD.Api.Services.EfAssetStore::.ctor(ManageD.Api.Data.ManageDDbContext)": {
+          "Lines": {
+            "13": 34,
+            "14": 34,
+            "15": 34,
+            "16": 34
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.EfAssetStore/<AddAsync>d__2": {
+        "System.Void ManageD.Api.Services.EfAssetStore/<AddAsync>d__2::MoveNext()": {
+          "Lines": {
+            "19": 6,
+            "20": 6,
+            "21": 6,
+            "22": 6,
+            "23": 6
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.EfAssetStore/<GetAsync>d__5": {
+        "System.Void ManageD.Api.Services.EfAssetStore/<GetAsync>d__5::MoveNext()": {
+          "Lines": {
+            "49": 1,
+            "50": 1,
+            "51": 1,
+            "52": 1,
+            "54": 1,
+            "55": 0,
+            "56": 0,
+            "59": 1,
+            "60": 1
+          },
+          "Branches": [
+            {
+              "Line": 54,
+              "Offset": 377,
+              "EndOffset": 379,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 54,
+              "Offset": 377,
+              "EndOffset": 384,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Services.EfAssetStore/<GetWorkspaceAssetsAsync>d__6": {
+        "System.Void ManageD.Api.Services.EfAssetStore/<GetWorkspaceAssetsAsync>d__6::MoveNext()": {
+          "Lines": {
+            "63": 4,
+            "64": 4,
+            "65": 4,
+            "66": 4,
+            "67": 4,
+            "68": 4,
+            "69": 4,
+            "71": 4,
+            "72": 4
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.EfAssetStore/<RemoveAsync>d__4": {
+        "System.Void ManageD.Api.Services.EfAssetStore/<RemoveAsync>d__4::MoveNext()": {
+          "Lines": {
+            "35": 1,
+            "36": 1,
+            "38": 1,
+            "39": 0,
+            "40": 0,
+            "43": 1,
+            "44": 1,
+            "45": 1,
+            "46": 1
+          },
+          "Branches": [
+            {
+              "Line": 38,
+              "Offset": 326,
+              "EndOffset": 328,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 38,
+              "Offset": 326,
+              "EndOffset": 336,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Services.EfAssetStore/<SaveAsync>d__8": {
+        "System.Void ManageD.Api.Services.EfAssetStore/<SaveAsync>d__8::MoveNext()": {
+          "Lines": {
+            "82": 5,
+            "83": 5,
+            "86": 5,
+            "87": 5,
+            "88": 4,
+            "89": 1,
+            "90": 1,
+            "91": 1,
+            "92": 1,
+            "94": 4
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Services\\PresenceJoinResult.cs": {
+      "ManageD.Api.Services.PresenceJoinResult": {
+        "System.Boolean ManageD.Api.Services.PresenceJoinResult::get_IsFirstConnectionForUser()": {
+          "Lines": {
+            "5": 428
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Services\\PresenceLeaveResult.cs": {
+      "ManageD.Api.Services.PresenceLeaveResult": {
+        "System.Guid ManageD.Api.Services.PresenceLeaveResult::get_WorkspaceId()": {
+          "Lines": {
+            "3": 824
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Services\\PresenceService.cs": {
+      "ManageD.Api.Services.PresenceService": {
+        "System.Boolean ManageD.Api.Services.PresenceService::HasJoined(System.String,System.Guid)": {
+          "Lines": {
+            "78": 10,
+            "79": 10,
+            "80": 10
+          },
+          "Branches": []
+        },
+        "System.Threading.SemaphoreSlim ManageD.Api.Services.PresenceService::GetGate(System.Guid)": {
+          "Lines": {
+            "83": 825,
+            "84": 1036,
+            "85": 825
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.List`1<ManageD.Api.Dtos.ViewerSummary> ManageD.Api.Services.PresenceService::ViewersOf(System.Guid)": {
+          "Lines": {
+            "89": 415,
+            "90": 415,
+            "91": 621,
+            "92": 620,
+            "93": 620,
+            "94": 6,
+            "95": 415,
+            "96": 415
+          },
+          "Branches": []
+        },
+        "System.Void ManageD.Api.Services.PresenceService::.ctor()": {
+          "Lines": {
+            "9": 209,
+            "13": 209
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.PresenceService/PresenceEntry": {
+        "System.Guid ManageD.Api.Services.PresenceService/PresenceEntry::get_UserId()": {
+          "Lines": {
+            "98": 2675
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.PresenceService/<>c": {
+        "System.Guid ManageD.Api.Services.PresenceService/<>c::<LeaveAllAsync>b__4_1(System.ValueTuple`2<System.String,System.Guid>)": {
+          "Lines": {
+            "59": 406
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.PresenceService/<>c__DisplayClass2_0": {
+        "System.Boolean ManageD.Api.Services.PresenceService/<>c__DisplayClass2_0::<JoinAsync>b__0(System.Collections.Generic.KeyValuePair`2<System.ValueTuple`2<System.String,System.Guid>,ManageD.Api.Services.PresenceService/PresenceEntry>)": {
+          "Lines": {
+            "22": 621
+          },
+          "Branches": [
+            {
+              "Line": 22,
+              "Offset": 23,
+              "EndOffset": 25,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 205
+            },
+            {
+              "Line": 22,
+              "Offset": 23,
+              "EndOffset": 50,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Services.PresenceService/<>c__DisplayClass3_1": {
+        "System.Boolean ManageD.Api.Services.PresenceService/<>c__DisplayClass3_1::<LeaveAsync>b__0(System.Collections.Generic.KeyValuePair`2<System.ValueTuple`2<System.String,System.Guid>,ManageD.Api.Services.PresenceService/PresenceEntry>)": {
+          "Lines": {
+            "45": 613
+          },
+          "Branches": [
+            {
+              "Line": 45,
+              "Offset": 28,
+              "EndOffset": 30,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 203
+            },
+            {
+              "Line": 45,
+              "Offset": 28,
+              "EndOffset": 60,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Services.PresenceService/<>c__DisplayClass4_0": {
+        "System.Boolean ManageD.Api.Services.PresenceService/<>c__DisplayClass4_0::<LeaveAllAsync>b__0(System.ValueTuple`2<System.String,System.Guid>)": {
+          "Lines": {
+            "58": 649
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.PresenceService/<JoinAsync>d__2": {
+        "System.Void ManageD.Api.Services.PresenceService/<JoinAsync>d__2::MoveNext()": {
+          "Lines": {
+            "16": 415,
+            "17": 415,
+            "18": 415,
+            "21": 415,
+            "23": 415,
+            "25": 415,
+            "28": 415,
+            "29": 415,
+            "30": 415,
+            "31": 415
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.PresenceService/<LeaveAllAsync>d__4": {
+        "System.Void ManageD.Api.Services.PresenceService/<LeaveAllAsync>d__4::MoveNext()": {
+          "Lines": {
+            "56": 408,
+            "57": 408,
+            "60": 408,
+            "62": 408,
+            "64": 2036,
+            "65": 406,
+            "66": 406,
+            "68": 406,
+            "69": 406,
+            "70": 406,
+            "71": 406,
+            "72": 406,
+            "74": 408,
+            "75": 408
+          },
+          "Branches": [
+            {
+              "Line": 64,
+              "Offset": 387,
+              "EndOffset": 173,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 406
+            },
+            {
+              "Line": 68,
+              "Offset": 346,
+              "EndOffset": 348,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 406
+            },
+            {
+              "Line": 68,
+              "Offset": 346,
+              "EndOffset": 368,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 406
+            },
+            {
+              "Line": 64,
+              "Offset": 387,
+              "EndOffset": 392,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 408
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Services.PresenceService/<LeaveAsync>d__3": {
+        "System.Void ManageD.Api.Services.PresenceService/<LeaveAsync>d__3::MoveNext()": {
+          "Lines": {
+            "34": 410,
+            "35": 410,
+            "36": 410,
+            "39": 410,
+            "40": 410,
+            "41": 1,
+            "42": 1,
+            "47": 409,
+            "50": 410,
+            "51": 410,
+            "52": 410,
+            "53": 410
+          },
+          "Branches": [
+            {
+              "Line": 40,
+              "Offset": 262,
+              "EndOffset": 264,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 1
+            },
+            {
+              "Line": 40,
+              "Offset": 262,
+              "EndOffset": 272,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 409
+            }
+          ]
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Services\\PresetCatalog.cs": {
+      "ManageD.Api.Services.PresetCatalog": {
+        "System.Collections.Generic.List`1<ManageD.Api.Models.TodoPreset> ManageD.Api.Services.PresetCatalog::Validate(System.Collections.Generic.List`1<ManageD.Api.Models.TodoPreset>)": {
+          "Lines": {
+            "30": 6,
+            "31": 6,
+            "32": 6,
+            "34": 68,
+            "35": 25,
+            "36": 25,
+            "37": 1,
+            "38": 1,
+            "41": 132,
+            "42": 2,
+            "43": 2,
+            "46": 22,
+            "47": 1,
+            "48": 1,
+            "51": 21,
+            "52": 21,
+            "54": 6,
+            "55": 6
+          },
+          "Branches": [
+            {
+              "Line": 34,
+              "Offset": 162,
+              "EndOffset": 28,
+              "Path": 1,
+              "Ordinal": 9,
+              "Hits": 25
+            },
+            {
+              "Line": 36,
+              "Offset": 48,
+              "EndOffset": 50,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 24
+            },
+            {
+              "Line": 36,
+              "Offset": 48,
+              "EndOffset": 61,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            },
+            {
+              "Line": 36,
+              "Offset": 66,
+              "EndOffset": 68,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 1
+            },
+            {
+              "Line": 36,
+              "Offset": 66,
+              "EndOffset": 71,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 24
+            },
+            {
+              "Line": 41,
+              "Offset": 117,
+              "EndOffset": 119,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 2
+            },
+            {
+              "Line": 41,
+              "Offset": 117,
+              "EndOffset": 122,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 22
+            },
+            {
+              "Line": 46,
+              "Offset": 141,
+              "EndOffset": 143,
+              "Path": 0,
+              "Ordinal": 6,
+              "Hits": 1
+            },
+            {
+              "Line": 46,
+              "Offset": 141,
+              "EndOffset": 146,
+              "Path": 1,
+              "Ordinal": 7,
+              "Hits": 21
+            },
+            {
+              "Line": 34,
+              "Offset": 162,
+              "EndOffset": 167,
+              "Path": 0,
+              "Ordinal": 8,
+              "Hits": 6
+            },
+            {
+              "Line": 41,
+              "Offset": 6,
+              "EndOffset": 8,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 107
+            },
+            {
+              "Line": 41,
+              "Offset": 6,
+              "EndOffset": 23,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            }
+          ]
+        },
+        "System.Void ManageD.Api.Services.PresetCatalog::.ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment)": {
+          "Lines": {
+            "15": 4,
+            "16": 4,
+            "17": 4,
+            "18": 4
+          },
+          "Branches": []
+        },
+        "System.Void ManageD.Api.Services.PresetCatalog::.cctor()": {
+          "Lines": {
+            "11": 1
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.PresetCatalog/<>c__DisplayClass7_0": {
+        "System.Boolean ManageD.Api.Services.PresetCatalog/<>c__DisplayClass7_0::<FindAsync>b__0(ManageD.Api.Models.TodoPreset)": {
+          "Lines": {
+            "71": 6
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.PresetCatalog/<FindAsync>d__7": {
+        "System.Void ManageD.Api.Services.PresetCatalog/<FindAsync>d__7::MoveNext()": {
+          "Lines": {
+            "68": 3,
+            "69": 3,
+            "72": 3
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.PresetCatalog/<GetInfosAsync>d__6": {
+        "System.Void ManageD.Api.Services.PresetCatalog/<GetInfosAsync>d__6::MoveNext()": {
+          "Lines": {
+            "58": 2,
+            "59": 2,
+            "61": 2,
+            "64": 2,
+            "65": 2
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.PresetCatalog/<LoadAsync>d__4": {
+        "System.Void ManageD.Api.Services.PresetCatalog/<LoadAsync>d__4::MoveNext()": {
+          "Lines": {
+            "21": 6,
+            "22": 6,
+            "24": 6,
+            "26": 6,
+            "27": 6
+          },
+          "Branches": [
+            {
+              "Line": 26,
+              "Offset": 227,
+              "EndOffset": 229,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 26,
+              "Offset": 227,
+              "EndOffset": 235,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 6
+            }
+          ]
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Services\\TodoItemExtensions.cs": {
+      "ManageD.Api.Services.TodoItemExtensions": {
+        "System.Collections.Generic.List`1<ManageD.Api.Dtos.TodoItemDto> ManageD.Api.Services.TodoItemExtensions::ToOrderedDtos(System.Collections.Generic.IEnumerable`1<ManageD.Api.Models.TodoItem>)": {
+          "Lines": {
+            "9": 8,
+            "10": 8,
+            "11": 6,
+            "12": 8,
+            "13": 8,
+            "14": 8
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Services\\UserService.cs": {
+      "ManageD.Api.Services.UserService": {
+        "System.Void ManageD.Api.Services.UserService::.ctor(ManageD.Api.Data.ManageDDbContext)": {
+          "Lines": {
+            "13": 34,
+            "14": 34,
+            "15": 34,
+            "16": 34
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.UserService/<>c": {
+        "ManageD.Api.Dtos.UserSummary ManageD.Api.Services.UserService/<>c::<GetAsync>b__3_0(ManageD.Api.Models.User)": {
+          "Lines": {
+            "37": 8
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.UserService/<CreateAsync>d__2": {
+        "System.Void ManageD.Api.Services.UserService/<CreateAsync>d__2::MoveNext()": {
+          "Lines": {
+            "19": 9,
+            "20": 9,
+            "21": 9,
+            "22": 9,
+            "23": 9,
+            "24": 9,
+            "25": 9,
+            "27": 9,
+            "28": 9,
+            "30": 9,
+            "31": 9
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.UserService/<FindAsync>d__4": {
+        "System.Void ManageD.Api.Services.UserService/<FindAsync>d__4::MoveNext()": {
+          "Lines": {
+            "41": 4,
+            "42": 4,
+            "44": 4,
+            "45": 4
+          },
+          "Branches": [
+            {
+              "Line": 44,
+              "Offset": 313,
+              "EndOffset": 315,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 4
+            },
+            {
+              "Line": 44,
+              "Offset": 313,
+              "EndOffset": 328,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Services.UserService/<GetAsync>d__3": {
+        "System.Void ManageD.Api.Services.UserService/<GetAsync>d__3::MoveNext()": {
+          "Lines": {
+            "34": 4,
+            "35": 4,
+            "38": 4
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Services\\WorkspaceService.cs": {
+      "ManageD.Api.Services.WorkspaceService": {
+        "System.Threading.Tasks.Task`1<System.Boolean> ManageD.Api.Services.WorkspaceService::IsMemberAsync(System.Guid,System.Guid,System.Threading.CancellationToken)": {
+          "Lines": {
+            "125": 5,
+            "126": 5,
+            "127": 5,
+            "128": 5,
+            "129": 5
+          },
+          "Branches": []
+        },
+        "System.Void ManageD.Api.Services.WorkspaceService::.ctor(ManageD.Api.Data.ManageDDbContext)": {
+          "Lines": {
+            "13": 33,
+            "14": 33,
+            "15": 33,
+            "16": 33
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.WorkspaceService/<>c__DisplayClass5_0": {
+        "System.Boolean ManageD.Api.Services.WorkspaceService/<>c__DisplayClass5_0::<AddMemberAsync>b__3(ManageD.Api.Models.User)": {
+          "Lines": {
+            "99": 8
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Services.WorkspaceService/<AddMemberAsync>d__5": {
+        "System.Void ManageD.Api.Services.WorkspaceService/<AddMemberAsync>d__5::MoveNext()": {
+          "Lines": {
+            "82": 4,
+            "83": 4,
+            "85": 4,
+            "86": 0,
+            "87": 0,
+            "90": 4,
+            "92": 4,
+            "93": 0,
+            "94": 0,
+            "97": 4,
+            "100": 0,
+            "101": 0,
+            "104": 4,
+            "105": 4,
+            "107": 4,
+            "108": 4
+          },
+          "Branches": [
+            {
+              "Line": 85,
+              "Offset": 419,
+              "EndOffset": 421,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 85,
+              "Offset": 419,
+              "EndOffset": 438,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 4
+            },
+            {
+              "Line": 92,
+              "Offset": 720,
+              "EndOffset": 722,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 92,
+              "Offset": 720,
+              "EndOffset": 739,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 4
+            },
+            {
+              "Line": 99,
+              "Offset": 819,
+              "EndOffset": 821,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 99,
+              "Offset": 819,
+              "EndOffset": 839,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 4
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Services.WorkspaceService/<CreateAsync>d__2": {
+        "System.Void ManageD.Api.Services.WorkspaceService/<CreateAsync>d__2::MoveNext()": {
+          "Lines": {
+            "19": 4,
+            "20": 4,
+            "22": 4,
+            "23": 0,
+            "24": 0,
+            "27": 4,
+            "28": 4,
+            "29": 4,
+            "30": 4,
+            "31": 4,
+            "32": 4,
+            "33": 4,
+            "35": 4,
+            "36": 4,
+            "38": 4,
+            "39": 4
+          },
+          "Branches": [
+            {
+              "Line": 22,
+              "Offset": 326,
+              "EndOffset": 328,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 22,
+              "Offset": 326,
+              "EndOffset": 341,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 4
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Services.WorkspaceService/<DeleteAsync>d__6": {
+        "System.Void ManageD.Api.Services.WorkspaceService/<DeleteAsync>d__6::MoveNext()": {
+          "Lines": {
+            "111": 0,
+            "112": 0,
+            "114": 0,
+            "115": 0,
+            "116": 0,
+            "119": 0,
+            "120": 0,
+            "121": 0,
+            "122": 0
+          },
+          "Branches": [
+            {
+              "Line": 114,
+              "Offset": 326,
+              "EndOffset": 328,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 114,
+              "Offset": 326,
+              "EndOffset": 336,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Services.WorkspaceService/<ListForUserAsync>d__3": {
+        "System.Void ManageD.Api.Services.WorkspaceService/<ListForUserAsync>d__3::MoveNext()": {
+          "Lines": {
+            "43": 0,
+            "44": 0,
+            "45": 0,
+            "46": 0,
+            "49": 0,
+            "50": 0,
+            "51": 0,
+            "52": 0,
+            "54": 0,
+            "55": 0
+          },
+          "Branches": [
+            {
+              "Line": 44,
+              "Offset": 308,
+              "EndOffset": 310,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 44,
+              "Offset": 308,
+              "EndOffset": 323,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Services.WorkspaceService/<ListMembersAsync>d__4": {
+        "System.Void ManageD.Api.Services.WorkspaceService/<ListMembersAsync>d__4::MoveNext()": {
+          "Lines": {
+            "61": 0,
+            "62": 0,
+            "63": 0,
+            "64": 0,
+            "67": 0,
+            "68": 0,
+            "69": 0,
+            "70": 0,
+            "71": 0,
+            "72": 0,
+            "73": 0,
+            "75": 0,
+            "76": 0
+          },
+          "Branches": [
+            {
+              "Line": 62,
+              "Offset": 325,
+              "EndOffset": 327,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 62,
+              "Offset": 325,
+              "EndOffset": 340,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Models\\Asset.cs": {
+      "ManageD.Api.Models.Asset": {
+        "System.Guid ManageD.Api.Models.Asset::get_Id()": {
+          "Lines": {
+            "5": 49
+          },
+          "Branches": []
+        },
+        "System.String ManageD.Api.Models.Asset::get_Title()": {
+          "Lines": {
+            "6": 53
+          },
+          "Branches": []
+        },
+        "ManageD.Api.Models.TemplateType ManageD.Api.Models.Asset::get_TemplateType()": {
+          "Lines": {
+            "7": 46
+          },
+          "Branches": []
+        },
+        "System.Single ManageD.Api.Models.Asset::get_X()": {
+          "Lines": {
+            "9": 0
+          },
+          "Branches": []
+        },
+        "System.Single ManageD.Api.Models.Asset::get_Y()": {
+          "Lines": {
+            "10": 0
+          },
+          "Branches": []
+        },
+        "System.Single ManageD.Api.Models.Asset::get_SizeX()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.Single ManageD.Api.Models.Asset::get_SizeY()": {
+          "Lines": {
+            "12": 0
+          },
+          "Branches": []
+        },
+        "System.Int32 ManageD.Api.Models.Asset::get_ZPos()": {
+          "Lines": {
+            "13": 0
+          },
+          "Branches": []
+        },
+        "System.Guid ManageD.Api.Models.Asset::get_WorkspaceId()": {
+          "Lines": {
+            "15": 9
+          },
+          "Branches": []
+        },
+        "ManageD.Api.Models.Workspace ManageD.Api.Models.Asset::get_Workspace()": {
+          "Lines": {
+            "16": 0
+          },
+          "Branches": []
+        },
+        "System.DateTime ManageD.Api.Models.Asset::get_CreatedAt()": {
+          "Lines": {
+            "17": 9
+          },
+          "Branches": []
+        },
+        "System.DateTime ManageD.Api.Models.Asset::get_UpdatedAt()": {
+          "Lines": {
+            "18": 14
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.List`1<ManageD.Api.Models.TodoItem> ManageD.Api.Models.Asset::get_Items()": {
+          "Lines": {
+            "20": 96
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Models\\TodoItem.cs": {
+      "ManageD.Api.Models.TodoItem": {
+        "System.Guid ManageD.Api.Models.TodoItem::get_Id()": {
+          "Lines": {
+            "5": 53
+          },
+          "Branches": []
+        },
+        "System.Guid ManageD.Api.Models.TodoItem::get_AssetId()": {
+          "Lines": {
+            "6": 15
+          },
+          "Branches": []
+        },
+        "ManageD.Api.Models.Asset ManageD.Api.Models.TodoItem::get_Asset()": {
+          "Lines": {
+            "7": 0
+          },
+          "Branches": []
+        },
+        "System.String ManageD.Api.Models.TodoItem::get_Text()": {
+          "Lines": {
+            "8": 65
+          },
+          "Branches": []
+        },
+        "System.Boolean ManageD.Api.Models.TodoItem::get_IsDone()": {
+          "Lines": {
+            "9": 16
+          },
+          "Branches": []
+        },
+        "System.Int32 ManageD.Api.Models.TodoItem::get_Order()": {
+          "Lines": {
+            "10": 32
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Models\\TodoPreset.cs": {
+      "ManageD.Api.Models.TodoPreset": {
+        "System.String ManageD.Api.Models.TodoPreset::get_Name()": {
+          "Lines": {
+            "3": 145
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Models\\User.cs": {
+      "ManageD.Api.Models.User": {
+        "System.Guid ManageD.Api.Models.User::get_Id()": {
+          "Lines": {
+            "5": 34
+          },
+          "Branches": []
+        },
+        "System.String ManageD.Api.Models.User::get_DisplayName()": {
+          "Lines": {
+            "6": 51
+          },
+          "Branches": []
+        },
+        "System.DateTime ManageD.Api.Models.User::get_CreatedAt()": {
+          "Lines": {
+            "7": 9
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.ICollection`1<ManageD.Api.Models.Workspace> ManageD.Api.Models.User::get_Workspaces()": {
+          "Lines": {
+            "9": 25
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Models\\Workspace.cs": {
+      "ManageD.Api.Models.Workspace": {
+        "System.Guid ManageD.Api.Models.Workspace::get_Id()": {
+          "Lines": {
+            "5": 22
+          },
+          "Branches": []
+        },
+        "System.String ManageD.Api.Models.Workspace::get_Name()": {
+          "Lines": {
+            "6": 30
+          },
+          "Branches": []
+        },
+        "System.DateTime ManageD.Api.Models.Workspace::get_CreatedAt()": {
+          "Lines": {
+            "7": 11
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.ICollection`1<ManageD.Api.Models.User> ManageD.Api.Models.Workspace::get_Users()": {
+          "Lines": {
+            "9": 27
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.ICollection`1<ManageD.Api.Models.Asset> ManageD.Api.Models.Workspace::get_Assets()": {
+          "Lines": {
+            "10": 15
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Hubs\\DomainExceptionHubFilter.cs": {
+      "ManageD.Api.Hubs.DomainExceptionHubFilter/<InvokeMethodAsync>d__0": {
+        "System.Void ManageD.Api.Hubs.DomainExceptionHubFilter/<InvokeMethodAsync>d__0::MoveNext()": {
+          "Lines": {
+            "12": 13,
+            "14": 13,
+            "15": 13,
+            "17": 2,
+            "18": 2,
+            "19": 2,
+            "21": 8
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Hubs\\WorkspaceHub.cs": {
+      "ManageD.Api.Hubs.WorkspaceHub": {
+        "System.Void ManageD.Api.Hubs.WorkspaceHub::EnsureJoined(System.Guid)": {
+          "Lines": {
+            "152": 5,
+            "153": 5,
+            "154": 1,
+            "155": 1,
+            "157": 4
+          },
+          "Branches": [
+            {
+              "Line": 153,
+              "Offset": 29,
+              "EndOffset": 31,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 1
+            },
+            {
+              "Line": 153,
+              "Offset": 29,
+              "EndOffset": 43,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 4
+            }
+          ]
+        },
+        "System.String ManageD.Api.Hubs.WorkspaceHub::GroupName(System.Guid)": {
+          "Lines": {
+            "160": 16,
+            "161": 16,
+            "162": 16
+          },
+          "Branches": []
+        },
+        "System.Void ManageD.Api.Hubs.WorkspaceHub::.ctor(ManageD.Api.Services.IWorkspaceService,ManageD.Api.Services.IUserService,ManageD.Api.Services.IAssetService,ManageD.Api.Services.IPresenceService,ManageD.Api.Services.IAssetLocks,ManageD.Api.Services.PresetCatalog)": {
+          "Lines": {
+            "18": 25,
+            "19": 25,
+            "20": 25,
+            "21": 25,
+            "22": 25,
+            "23": 25,
+            "24": 25,
+            "25": 25,
+            "26": 25,
+            "27": 25,
+            "28": 25,
+            "29": 25,
+            "30": 25,
+            "31": 25,
+            "32": 25
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Hubs.WorkspaceHub/<>c": {
+        "System.Boolean ManageD.Api.Hubs.WorkspaceHub/<>c::<OnDisconnectedAsync>b__12_0(ManageD.Api.Services.PresenceLeaveResult)": {
+          "Lines": {
+            "143": 33
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Hubs.WorkspaceHub/<>c__DisplayClass10_0/<<UpdateAsset>b__0>d": {
+        "System.Void ManageD.Api.Hubs.WorkspaceHub/<>c__DisplayClass10_0/<<UpdateAsset>b__0>d::MoveNext()": {
+          "Lines": {
+            "110": 1,
+            "112": 1,
+            "114": 1,
+            "115": 1,
+            "116": 1,
+            "117": 1,
+            "118": 2
+          },
+          "Branches": [
+            {
+              "Line": 114,
+              "Offset": 204,
+              "EndOffset": 209,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 1
+            },
+            {
+              "Line": 114,
+              "Offset": 204,
+              "EndOffset": 380,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Hubs.WorkspaceHub/<>c__DisplayClass11_0/<<DeleteAsset>b__0>d": {
+        "System.Void ManageD.Api.Hubs.WorkspaceHub/<>c__DisplayClass11_0/<<DeleteAsset>b__0>d::MoveNext()": {
+          "Lines": {
+            "128": 1,
+            "130": 1,
+            "131": 0,
+            "132": 0,
+            "135": 1,
+            "136": 2
+          },
+          "Branches": [
+            {
+              "Line": 130,
+              "Offset": 169,
+              "EndOffset": 171,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 130,
+              "Offset": 169,
+              "EndOffset": 189,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Hubs.WorkspaceHub/<CreateAsset>d__9": {
+        "System.Void ManageD.Api.Hubs.WorkspaceHub/<CreateAsset>d__9::MoveNext()": {
+          "Lines": {
+            "72": 3,
+            "73": 3,
+            "75": 2,
+            "76": 0,
+            "77": 0,
+            "80": 2,
+            "81": 0,
+            "82": 0,
+            "85": 2,
+            "86": 2,
+            "87": 1,
+            "88": 1,
+            "89": 1,
+            "90": 1,
+            "91": 1,
+            "93": 2,
+            "94": 2,
+            "95": 2,
+            "96": 2,
+            "97": 2,
+            "98": 2,
+            "100": 2,
+            "101": 2
+          },
+          "Branches": [
+            {
+              "Line": 75,
+              "Offset": 74,
+              "EndOffset": 76,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 75,
+              "Offset": 74,
+              "EndOffset": 88,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 2
+            },
+            {
+              "Line": 80,
+              "Offset": 113,
+              "EndOffset": 115,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 80,
+              "Offset": 113,
+              "EndOffset": 177,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 2
+            },
+            {
+              "Line": 86,
+              "Offset": 197,
+              "EndOffset": 202,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 1
+            },
+            {
+              "Line": 88,
+              "Offset": 348,
+              "EndOffset": 350,
+              "Path": 0,
+              "Ordinal": 6,
+              "Hits": 0
+            },
+            {
+              "Line": 88,
+              "Offset": 348,
+              "EndOffset": 363,
+              "Path": 1,
+              "Ordinal": 7,
+              "Hits": 1
+            },
+            {
+              "Line": 86,
+              "Offset": 197,
+              "EndOffset": 400,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 2
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Hubs.WorkspaceHub/<DeleteAsset>d__11": {
+        "System.Void ManageD.Api.Hubs.WorkspaceHub/<DeleteAsset>d__11::MoveNext()": {
+          "Lines": {
+            "122": 1,
+            "123": 1,
+            "124": 1,
+            "125": 1,
+            "127": 1,
+            "129": 1,
+            "133": 1,
+            "134": 1,
+            "137": 1
+          },
+          "Branches": [
+            {
+              "Line": 123,
+              "Offset": 241,
+              "EndOffset": 243,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 123,
+              "Offset": 241,
+              "EndOffset": 260,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Hubs.WorkspaceHub/<JoinWorkspace>d__7": {
+        "System.Void ManageD.Api.Hubs.WorkspaceHub/<JoinWorkspace>d__7::MoveNext()": {
+          "Lines": {
+            "35": 5,
+            "36": 5,
+            "38": 5,
+            "39": 1,
+            "40": 1,
+            "43": 4,
+            "44": 4,
+            "46": 4,
+            "48": 4,
+            "49": 4,
+            "51": 4,
+            "52": 4,
+            "53": 4,
+            "54": 4,
+            "55": 4,
+            "57": 4,
+            "58": 4
+          },
+          "Branches": [
+            {
+              "Line": 38,
+              "Offset": 233,
+              "EndOffset": 235,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 1
+            },
+            {
+              "Line": 38,
+              "Offset": 233,
+              "EndOffset": 247,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 4
+            },
+            {
+              "Line": 51,
+              "Offset": 887,
+              "EndOffset": 892,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 4
+            },
+            {
+              "Line": 51,
+              "Offset": 887,
+              "EndOffset": 1048,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 4
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Hubs.WorkspaceHub/<LeaveWorkspace>d__8": {
+        "System.Void ManageD.Api.Hubs.WorkspaceHub/<LeaveWorkspace>d__8::MoveNext()": {
+          "Lines": {
+            "61": 0,
+            "62": 0,
+            "63": 0,
+            "65": 0,
+            "66": 0,
+            "67": 0,
+            "68": 0,
+            "69": 0
+          },
+          "Branches": [
+            {
+              "Line": 65,
+              "Offset": 341,
+              "EndOffset": 343,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 65,
+              "Offset": 341,
+              "EndOffset": 356,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 65,
+              "Offset": 361,
+              "EndOffset": 366,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 65,
+              "Offset": 361,
+              "EndOffset": 521,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Hubs.WorkspaceHub/<OnDisconnectedAsync>d__12": {
+        "System.Void ManageD.Api.Hubs.WorkspaceHub/<OnDisconnectedAsync>d__12::MoveNext()": {
+          "Lines": {
+            "140": 7,
+            "141": 7,
+            "144": 4,
+            "145": 4,
+            "146": 4,
+            "148": 7,
+            "149": 7
+          },
+          "Branches": [
+            {
+              "Line": 143,
+              "Offset": 452,
+              "EndOffset": 257,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 4
+            },
+            {
+              "Line": 143,
+              "Offset": 452,
+              "EndOffset": 457,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 7
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Hubs.WorkspaceHub/<UpdateAsset>d__10": {
+        "System.Void ManageD.Api.Hubs.WorkspaceHub/<UpdateAsset>d__10::MoveNext()": {
+          "Lines": {
+            "104": 2,
+            "105": 2,
+            "106": 2,
+            "107": 1,
+            "109": 1,
+            "111": 1,
+            "113": 1,
+            "119": 1
+          },
+          "Branches": [
+            {
+              "Line": 105,
+              "Offset": 258,
+              "EndOffset": 260,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 1
+            },
+            {
+              "Line": 105,
+              "Offset": 258,
+              "EndOffset": 277,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 1
+            }
+          ]
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Dtos\\AssetDelta.cs": {
+      "ManageD.Api.Dtos.AssetDelta": {
+        "System.Collections.Generic.IReadOnlyList`1<ManageD.Api.Dtos.TodoItemDto> ManageD.Api.Dtos.AssetDelta::get_Added()": {
+          "Lines": {
+            "6": 37
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.IReadOnlyList`1<ManageD.Api.Dtos.TodoItemChange> ManageD.Api.Dtos.AssetDelta::get_Updated()": {
+          "Lines": {
+            "7": 34
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.IReadOnlyList`1<System.Guid> ManageD.Api.Dtos.AssetDelta::get_Deleted()": {
+          "Lines": {
+            "8": 31
+          },
+          "Branches": []
+        },
+        "System.String ManageD.Api.Dtos.AssetDelta::get_Title()": {
+          "Lines": {
+            "9": 96
+          },
+          "Branches": []
+        },
+        "System.Boolean ManageD.Api.Dtos.AssetDelta::get_IsEmpty()": {
+          "Lines": {
+            "13": 8,
+            "14": 8,
+            "15": 8,
+            "16": 8
+          },
+          "Branches": [
+            {
+              "Line": 13,
+              "Offset": 7,
+              "EndOffset": 9,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 13,
+              "Offset": 7,
+              "EndOffset": 13,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 8
+            },
+            {
+              "Line": 13,
+              "Offset": 18,
+              "EndOffset": 20,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 4
+            },
+            {
+              "Line": 13,
+              "Offset": 27,
+              "EndOffset": 29,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 13,
+              "Offset": 27,
+              "EndOffset": 33,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 4
+            },
+            {
+              "Line": 13,
+              "Offset": 38,
+              "EndOffset": 40,
+              "Path": 0,
+              "Ordinal": 6,
+              "Hits": 2
+            },
+            {
+              "Line": 13,
+              "Offset": 47,
+              "EndOffset": 49,
+              "Path": 0,
+              "Ordinal": 8,
+              "Hits": 0
+            },
+            {
+              "Line": 13,
+              "Offset": 47,
+              "EndOffset": 53,
+              "Path": 1,
+              "Ordinal": 9,
+              "Hits": 2
+            },
+            {
+              "Line": 13,
+              "Offset": 58,
+              "EndOffset": 60,
+              "Path": 0,
+              "Ordinal": 10,
+              "Hits": 2
+            },
+            {
+              "Line": 13,
+              "Offset": 18,
+              "EndOffset": 71,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 6
+            },
+            {
+              "Line": 13,
+              "Offset": 38,
+              "EndOffset": 71,
+              "Path": 1,
+              "Ordinal": 7,
+              "Hits": 6
+            },
+            {
+              "Line": 13,
+              "Offset": 58,
+              "EndOffset": 71,
+              "Path": 1,
+              "Ordinal": 11,
+              "Hits": 6
+            }
+          ]
+        },
+        "System.Void ManageD.Api.Dtos.AssetDelta::.ctor(System.Collections.Generic.IReadOnlyList`1<ManageD.Api.Dtos.TodoItemDto>,System.Collections.Generic.IReadOnlyList`1<ManageD.Api.Dtos.TodoItemChange>,System.Collections.Generic.IReadOnlyList`1<System.Guid>,System.String)": {
+          "Lines": {
+            "5": 46
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Dtos\\AssetEvents.cs": {
+      "ManageD.Api.Dtos.AssetCreatedEvent": {
+        "ManageD.Api.Dtos.AssetSnapshot ManageD.Api.Dtos.AssetCreatedEvent::get_Asset()": {
+          "Lines": {
+            "3": 6
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Dtos.AssetUpdatedEvent": {
+        "System.Guid ManageD.Api.Dtos.AssetUpdatedEvent::get_AssetId()": {
+          "Lines": {
+            "5": 6
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Dtos.AssetDeletedEvent": {
+        "System.Guid ManageD.Api.Dtos.AssetDeletedEvent::get_AssetId()": {
+          "Lines": {
+            "7": 4
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Dtos\\AssetSnapshot.cs": {
+      "ManageD.Api.Dtos.AssetSnapshot": {
+        "System.Guid ManageD.Api.Dtos.AssetSnapshot::get_Id()": {
+          "Lines": {
+            "7": 11
+          },
+          "Branches": []
+        },
+        "System.String ManageD.Api.Dtos.AssetSnapshot::get_Title()": {
+          "Lines": {
+            "8": 5
+          },
+          "Branches": []
+        },
+        "ManageD.Api.Models.TemplateType ManageD.Api.Dtos.AssetSnapshot::get_TemplateType()": {
+          "Lines": {
+            "9": 3
+          },
+          "Branches": []
+        },
+        "System.Collections.Generic.IReadOnlyList`1<ManageD.Api.Dtos.TodoItemDto> ManageD.Api.Dtos.AssetSnapshot::get_Items()": {
+          "Lines": {
+            "10": 16
+          },
+          "Branches": []
+        },
+        "System.Void ManageD.Api.Dtos.AssetSnapshot::.ctor(System.Guid,System.String,ManageD.Api.Models.TemplateType,System.Collections.Generic.IReadOnlyList`1<ManageD.Api.Dtos.TodoItemDto>)": {
+          "Lines": {
+            "6": 10
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Dtos\\MemberSummary.cs": {
+      "ManageD.Api.Dtos.MemberSummary": {
+        "System.Guid ManageD.Api.Dtos.MemberSummary::get_Id()": {
+          "Lines": {
+            "3": 12
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Dtos\\PresetInfo.cs": {
+      "ManageD.Api.Dtos.PresetInfo": {
+        "System.String ManageD.Api.Dtos.PresetInfo::get_Name()": {
+          "Lines": {
+            "5": 19
+          },
+          "Branches": []
+        },
+        "System.Int32 ManageD.Api.Dtos.PresetInfo::get_ItemCount()": {
+          "Lines": {
+            "6": 37
+          },
+          "Branches": []
+        },
+        "System.Boolean ManageD.Api.Dtos.PresetInfo::get_IsEmpty()": {
+          "Lines": {
+            "7": 18
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Dtos\\TodoItemChange.cs": {
+      "ManageD.Api.Dtos.TodoItemChange": {
+        "System.Guid ManageD.Api.Dtos.TodoItemChange::get_Id()": {
+          "Lines": {
+            "4": 73
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Dtos\\TodoItemDto.cs": {
+      "ManageD.Api.Dtos.TodoItemDto": {
+        "System.Guid ManageD.Api.Dtos.TodoItemDto::get_Id()": {
+          "Lines": {
+            "3": 111
+          },
+          "Branches": []
+        },
+        "System.Int32 ManageD.Api.Dtos.TodoItemDto::CompareTo(ManageD.Api.Dtos.TodoItemDto)": {
+          "Lines": {
+            "6": 4,
+            "7": 4,
+            "8": 0,
+            "9": 0,
+            "12": 4,
+            "14": 4,
+            "15": 4
+          },
+          "Branches": [
+            {
+              "Line": 7,
+              "Offset": 7,
+              "EndOffset": 9,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 7,
+              "Offset": 7,
+              "EndOffset": 14,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 4
+            },
+            {
+              "Line": 14,
+              "Offset": 36,
+              "EndOffset": 38,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 0
+            },
+            {
+              "Line": 14,
+              "Offset": 36,
+              "EndOffset": 61,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 4
+            }
+          ]
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Dtos\\UserLeftNotice.cs": {
+      "ManageD.Api.Dtos.UserLeftNotice": {
+        "System.Guid ManageD.Api.Dtos.UserLeftNotice::get_UserId()": {
+          "Lines": {
+            "3": 8
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Dtos\\UserSummary.cs": {
+      "ManageD.Api.Dtos.UserSummary": {
+        "System.Guid ManageD.Api.Dtos.UserSummary::get_Id()": {
+          "Lines": {
+            "3": 62
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Dtos\\ViewerSummary.cs": {
+      "ManageD.Api.Dtos.ViewerSummary": {
+        "System.Guid ManageD.Api.Dtos.ViewerSummary::get_UserId()": {
+          "Lines": {
+            "3": 1280
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Dtos\\WorkspaceState.cs": {
+      "ManageD.Api.Dtos.WorkspaceState": {
+        "System.Collections.Generic.IReadOnlyList`1<ManageD.Api.Dtos.AssetSnapshot> ManageD.Api.Dtos.WorkspaceState::get_Assets()": {
+          "Lines": {
+            "4": 20
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Dtos\\WorkspaceSummary.cs": {
+      "ManageD.Api.Dtos.WorkspaceSummary": {
+        "System.Guid ManageD.Api.Dtos.WorkspaceSummary::get_Id()": {
+          "Lines": {
+            "3": 20
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Data\\ManageDDbContext.cs": {
+      "ManageD.Api.Data.ManageDDbContext": {
+        "Microsoft.EntityFrameworkCore.DbSet`1<ManageD.Api.Models.User> ManageD.Api.Data.ManageDDbContext::get_Users()": {
+          "Lines": {
+            "13": 145
+          },
+          "Branches": []
+        },
+        "Microsoft.EntityFrameworkCore.DbSet`1<ManageD.Api.Models.Workspace> ManageD.Api.Data.ManageDDbContext::get_Workspaces()": {
+          "Lines": {
+            "14": 151
+          },
+          "Branches": []
+        },
+        "Microsoft.EntityFrameworkCore.DbSet`1<ManageD.Api.Models.Asset> ManageD.Api.Data.ManageDDbContext::get_Assets()": {
+          "Lines": {
+            "15": 154
+          },
+          "Branches": []
+        },
+        "Microsoft.EntityFrameworkCore.DbSet`1<ManageD.Api.Models.TodoItem> ManageD.Api.Data.ManageDDbContext::get_TodoItems()": {
+          "Lines": {
+            "16": 124
+          },
+          "Branches": []
+        },
+        "System.Void ManageD.Api.Data.ManageDDbContext::OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)": {
+          "Lines": {
+            "19": 2,
+            "20": 2,
+            "21": 2
+          },
+          "Branches": []
+        },
+        "System.Void ManageD.Api.Data.ManageDDbContext::.ctor(Microsoft.EntityFrameworkCore.DbContextOptions`1<ManageD.Api.Data.ManageDDbContext>)": {
+          "Lines": {
+            "9": 62,
+            "10": 62,
+            "11": 62
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Controllers\\ApiControllerBase.cs": {
+      "ManageD.Api.Controllers.ApiControllerBase": {
+        "Microsoft.AspNetCore.Mvc.IActionResult ManageD.Api.Controllers.ApiControllerBase::ToActionResult(ManageD.Api.Common.Result`1<T>)": {
+          "Lines": {
+            "10": 8,
+            "11": 8,
+            "12": 8,
+            "13": 0,
+            "14": 8,
+            "15": 0,
+            "16": 0,
+            "17": 0,
+            "18": 8,
+            "19": 8
+          },
+          "Branches": [
+            {
+              "Line": 11,
+              "Offset": 13,
+              "EndOffset": 32,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            },
+            {
+              "Line": 11,
+              "Offset": 13,
+              "EndOffset": 55,
+              "Path": 2,
+              "Ordinal": 2,
+              "Hits": 8
+            },
+            {
+              "Line": 11,
+              "Offset": 13,
+              "EndOffset": 80,
+              "Path": 3,
+              "Ordinal": 3,
+              "Hits": 0
+            },
+            {
+              "Line": 15,
+              "Offset": 86,
+              "EndOffset": 90,
+              "Path": 1,
+              "Ordinal": 5,
+              "Hits": 0
+            },
+            {
+              "Line": 15,
+              "Offset": 86,
+              "EndOffset": 99,
+              "Path": 0,
+              "Ordinal": 4,
+              "Hits": 0
+            },
+            {
+              "Line": 11,
+              "Offset": 13,
+              "EndOffset": 128,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            }
+          ]
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Controllers\\AssetsController.cs": {
+      "ManageD.Api.Controllers.AssetsController": {
+        "System.Void ManageD.Api.Controllers.AssetsController::.ctor(ManageD.Api.Services.PresetCatalog)": {
+          "Lines": {
+            "12": 1,
+            "13": 1,
+            "14": 1,
+            "15": 1
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Controllers.AssetsController/<GetPresetsAsync>d__2": {
+        "System.Void ManageD.Api.Controllers.AssetsController/<GetPresetsAsync>d__2::MoveNext()": {
+          "Lines": {
+            "19": 1,
+            "20": 1,
+            "22": 1,
+            "23": 1
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Controllers\\UsersController.cs": {
+      "ManageD.Api.Controllers.CreateUserRequest": {
+        "System.String ManageD.Api.Controllers.CreateUserRequest::get_DisplayName()": {
+          "Lines": {
+            "11": 36
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Controllers.UsersController": {
+        "System.Void ManageD.Api.Controllers.UsersController::.ctor(ManageD.Api.Services.IUserService)": {
+          "Lines": {
+            "20": 9,
+            "21": 9,
+            "22": 9,
+            "23": 9
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Controllers.UsersController/<CreateUserAsync>d__2": {
+        "System.Void ManageD.Api.Controllers.UsersController/<CreateUserAsync>d__2::MoveNext()": {
+          "Lines": {
+            "27": 9,
+            "28": 9,
+            "30": 9,
+            "31": 9
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Controllers.UsersController/<GetUserAsync>d__3": {
+        "System.Void ManageD.Api.Controllers.UsersController/<GetUserAsync>d__3::MoveNext()": {
+          "Lines": {
+            "35": 0,
+            "36": 0,
+            "37": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Controllers\\WorkspacesController.cs": {
+      "ManageD.Api.Controllers.CreateWorkspaceRequest": {
+        "System.String ManageD.Api.Controllers.CreateWorkspaceRequest::get_Name()": {
+          "Lines": {
+            "11": 16
+          },
+          "Branches": []
+        },
+        "System.Nullable`1<System.Guid> ManageD.Api.Controllers.CreateWorkspaceRequest::get_CreatorUserId()": {
+          "Lines": {
+            "14": 12
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Controllers.AddMemberRequest": {
+        "System.Nullable`1<System.Guid> ManageD.Api.Controllers.AddMemberRequest::get_UserId()": {
+          "Lines": {
+            "20": 12
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Controllers.WorkspacesController": {
+        "System.Void ManageD.Api.Controllers.WorkspacesController::.ctor(ManageD.Api.Services.IWorkspaceService)": {
+          "Lines": {
+            "29": 8,
+            "30": 8,
+            "31": 8,
+            "32": 8
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Controllers.WorkspacesController/<AddMemberAsync>d__5": {
+        "System.Void ManageD.Api.Controllers.WorkspacesController/<AddMemberAsync>d__5::MoveNext()": {
+          "Lines": {
+            "60": 4,
+            "62": 4,
+            "63": 4
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Controllers.WorkspacesController/<CreateWorkspaceAsync>d__2": {
+        "System.Void ManageD.Api.Controllers.WorkspacesController/<CreateWorkspaceAsync>d__2::MoveNext()": {
+          "Lines": {
+            "38": 4,
+            "40": 4,
+            "41": 4
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Controllers.WorkspacesController/<DeleteWorkspaceAsync>d__6": {
+        "System.Void ManageD.Api.Controllers.WorkspacesController/<DeleteWorkspaceAsync>d__6::MoveNext()": {
+          "Lines": {
+            "67": 0,
+            "68": 0,
+            "69": 0
+          },
+          "Branches": [
+            {
+              "Line": 68,
+              "Offset": 144,
+              "EndOffset": 146,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 0
+            },
+            {
+              "Line": 68,
+              "Offset": 144,
+              "EndOffset": 163,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 0
+            }
+          ]
+        }
+      },
+      "ManageD.Api.Controllers.WorkspacesController/<GetMembersAsync>d__4": {
+        "System.Void ManageD.Api.Controllers.WorkspacesController/<GetMembersAsync>d__4::MoveNext()": {
+          "Lines": {
+            "54": 0,
+            "55": 0,
+            "56": 0
+          },
+          "Branches": []
+        }
+      },
+      "ManageD.Api.Controllers.WorkspacesController/<GetWorkspacesAsync>d__3": {
+        "System.Void ManageD.Api.Controllers.WorkspacesController/<GetWorkspacesAsync>d__3::MoveNext()": {
+          "Lines": {
+            "47": 0,
+            "49": 0,
+            "50": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Common\\AssetNotFoundException.cs": {
+      "ManageD.Api.Common.AssetNotFoundException": {
+        "System.Guid ManageD.Api.Common.AssetNotFoundException::get_AssetId()": {
+          "Lines": {
+            "11": 0
+          },
+          "Branches": []
+        },
+        "System.Void ManageD.Api.Common.AssetNotFoundException::.ctor(System.Guid)": {
+          "Lines": {
+            "6": 2,
+            "7": 2,
+            "8": 2,
+            "9": 2
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Common\\ConcurrencyConflictException.cs": {
+      "ManageD.Api.Common.ConcurrencyConflictException": {
+        "System.Void ManageD.Api.Common.ConcurrencyConflictException::.ctor()": {
+          "Lines": {
+            "7": 4,
+            "8": 4,
+            "9": 4
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Common\\DomainException.cs": {
+      "ManageD.Api.Common.DomainException": {
+        "System.Void ManageD.Api.Common.DomainException::.ctor(System.String)": {
+          "Lines": {
+            "7": 15,
+            "8": 15,
+            "9": 15
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Common\\InvalidDeltaException.cs": {
+      "ManageD.Api.Common.InvalidDeltaException": {
+        "System.Void ManageD.Api.Common.InvalidDeltaException::.ctor(System.String)": {
+          "Lines": {
+            "6": 8,
+            "7": 8,
+            "8": 8
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Common\\InvalidRequestException.cs": {
+      "ManageD.Api.Common.InvalidRequestException": {
+        "System.Void ManageD.Api.Common.InvalidRequestException::.ctor(System.String)": {
+          "Lines": {
+            "6": 0,
+            "7": 0,
+            "8": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Common\\Result.cs": {
+      "ManageD.Api.Common.Result`1": {
+        "ManageD.Api.Common.ResultStatus ManageD.Api.Common.Result`1::get_Status()": {
+          "Lines": {
+            "12": 20
+          },
+          "Branches": []
+        },
+        "T ManageD.Api.Common.Result`1::get_Value()": {
+          "Lines": {
+            "13": 22
+          },
+          "Branches": []
+        },
+        "System.String ManageD.Api.Common.Result`1::get_Error()": {
+          "Lines": {
+            "14": 3
+          },
+          "Branches": []
+        },
+        "ManageD.Api.Common.Result`1<T> ManageD.Api.Common.Result`1::Ok(T)": {
+          "Lines": {
+            "16": 11
+          },
+          "Branches": []
+        },
+        "ManageD.Api.Common.Result`1<T> ManageD.Api.Common.Result`1::Created(T)": {
+          "Lines": {
+            "18": 11
+          },
+          "Branches": []
+        },
+        "ManageD.Api.Common.Result`1<T> ManageD.Api.Common.Result`1::NotFound(System.String)": {
+          "Lines": {
+            "20": 3
+          },
+          "Branches": []
+        },
+        "ManageD.Api.Common.Result`1<TOut> ManageD.Api.Common.Result`1::Map(System.Func`2<T,TOut>)": {
+          "Lines": {
+            "24": 7,
+            "25": 7,
+            "26": 7,
+            "27": 5,
+            "28": 1,
+            "29": 1,
+            "30": 7,
+            "31": 7
+          },
+          "Branches": [
+            {
+              "Line": 25,
+              "Offset": 13,
+              "EndOffset": 17,
+              "Path": 0,
+              "Ordinal": 0,
+              "Hits": 2
+            },
+            {
+              "Line": 25,
+              "Offset": 13,
+              "EndOffset": 23,
+              "Path": 1,
+              "Ordinal": 1,
+              "Hits": 5
+            },
+            {
+              "Line": 25,
+              "Offset": 19,
+              "EndOffset": 43,
+              "Path": 1,
+              "Ordinal": 3,
+              "Hits": 1
+            },
+            {
+              "Line": 25,
+              "Offset": 19,
+              "EndOffset": 63,
+              "Path": 0,
+              "Ordinal": 2,
+              "Hits": 1
+            }
+          ]
+        },
+        "System.Void ManageD.Api.Common.Result`1::.ctor(ManageD.Api.Common.ResultStatus,T,System.String)": {
+          "Lines": {
+            "5": 25,
+            "6": 25,
+            "7": 25,
+            "8": 25,
+            "9": 25,
+            "10": 25
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Common\\UnknownPresetException.cs": {
+      "ManageD.Api.Common.UnknownPresetException": {
+        "System.Void ManageD.Api.Common.UnknownPresetException::.ctor(System.String)": {
+          "Lines": {
+            "6": 0,
+            "7": 0,
+            "8": 0
+          },
+          "Branches": []
+        }
+      }
+    },
+    "C:\\Users\\gabriele\\Desktop\\prgrm\\c_sharp\\ManageD\\backend\\src\\ManageD.Api\\Common\\WorkspaceNotFoundException.cs": {
+      "ManageD.Api.Common.WorkspaceNotFoundException": {
+        "System.Void ManageD.Api.Common.WorkspaceNotFoundException::.ctor(System.Guid)": {
+          "Lines": {
+            "6": 1,
+            "7": 1,
+            "8": 1
+          },
+          "Branches": []
+        }
+      }
+    }
+  }
+}

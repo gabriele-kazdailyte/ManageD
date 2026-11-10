@@ -5,13 +5,20 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <Exclude>[ManageD.Api]Microsoft.AspNetCore.OpenApi.Generated.*</Exclude>
+    <ThresholdStat>total</ThresholdStat>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="coverlet.msbuild" Version="10.1.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="11.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.12" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,5 +28,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\ManageD.Api\ManageD.Api.csproj" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <Include>[ManageD.Api]*</Include>
+    <ExcludeByFile>**/Migrations/*.cs</ExcludeByFile>
+    <Threshold>50</Threshold>
+    <ThresholdType>line</ThresholdType>
+  </PropertyGroup>
 
 </Project>
