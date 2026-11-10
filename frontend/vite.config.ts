@@ -7,6 +7,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:5093',
-    }
-  }
+      // SignalR negotiates over HTTP and then upgrades to a WebSocket, so the proxy needs ws: true.
+      '/hubs': { target: 'http://localhost:5093', ws: true },
+    },
+  },
 })

@@ -1,16 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import {
-  createAsset,
-  deleteAsset,
-  loadPresets,
-  loadWorkspaceAssets,
-  type AssetSnapshot,
-  type PresetInfo,
-} from '../api/assets'
+import { loadPresets, type AssetSnapshot, type PresetInfo } from '../api/assets'
 import Toolbar from '../components/Toolbar'
 import Canvas from '../components/Canvas'
 import MembersPanel from '../components/MembersPanel'
+import OnlineViewers from '../components/OnlineViewers'
+import { useWorkspace } from '../context/WorkspaceContext'
+import { WorkspaceProvider } from '../context/WorkspaceProvider'
 import '../components/DeleteConfirmation.css'
 
 type WorkspaceCanvasProps = {
@@ -18,11 +14,18 @@ type WorkspaceCanvasProps = {
 }
 
 function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
-  const [assets, setAssets] = useState<AssetSnapshot[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const {
+    assets,
+    viewers,
+    isLoading,
+    error: workspaceError,
+    connectionStatus,
+    createAsset,
+    deleteAsset,
+  } = useWorkspace()
+  const [actionError, setActionError] = useState<string | null>(null)
   const [deletingIds, setDeletingIds] = useState<ReadonlySet<string>>(new Set())
-  const [assetToDelete, setAssetToDelete] = useState<AssetSnapshot | null>(null)
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
   const [skipDeleteConfirmation, setSkipDeleteConfirmation] = useState(false)
   const [confirmFutureDeletes, setConfirmFutureDeletes] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
@@ -32,25 +35,16 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
   const checkboxRef = useRef<HTMLInputElement>(null)
   const deleteTriggerRef = useRef<HTMLElement | null>(null)
   const [presets, setPresets] = useState<PresetInfo[]>([])
+  const [selectedPreset, setSelectedPreset] = useState<string | null>(null)
 
-  useEffect(() => {
-    const controller = new AbortController()
+  const assetToDelete = deleteTargetId ? assets.find((asset) => asset.id === deleteTargetId) ?? null : null
 
-    loadWorkspaceAssets(workspaceId, controller.signal)
-      .then(setAssets)
-      .catch((loadError: unknown) => {
-        if (!controller.signal.aborted) {
-          setError(loadError instanceof Error ? loadError.message : 'Could not load assets.')
-        }
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) {
-          setIsLoading(false)
-        }
-      })
-
-    return () => controller.abort()
-  }, [workspaceId])
+  const statusMessage =
+    connectionStatus === 'reconnecting'
+      ? 'Connection lost. Reconnecting…'
+      : connectionStatus === 'disconnected'
+        ? 'Disconnected from the server. Reload the page to reconnect.'
+        : null
 
   useEffect(() => {
     if (assetToDelete) {
@@ -69,7 +63,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
       if (event.key === 'Escape') {
         if (!deletingIds.has(assetToDelete.id)) {
           event.preventDefault()
-          setAssetToDelete(null)
+          setDeleteTargetId(null)
           setDeleteError(null)
         }
         return
@@ -131,18 +125,18 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
 
-    // dataTransfer can only be read while the drop event is being handled, so before any await.
+    // dataTransfer can only be read while the drop event is being handled, so before any await
     const label = event.dataTransfer.getData('application/todo-list')
     if (!label) {
       return
     }
 
     try {
-      const createdAsset = await createAsset(workspaceId, label, 'Todo')
-      setAssets((current) => [...current, createdAsset])
-      setError(null)
+      // The new asset shows up when the server's AssetCreated event arrives
+      await createAsset(label, selectedPreset)
+      setActionError(null)
     } catch (createError) {
-      setError(createError instanceof Error ? createError.message : 'Could not create the asset.')
+      setActionError(createError instanceof Error ? createError.message : 'Could not create the asset.')
     }
   }
 
@@ -150,9 +144,9 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     setDeletingIds((current) => new Set(current).add(assetId))
 
     try {
+      // The asset disappears when the server's AssetDeleted event arrives
       await deleteAsset(assetId)
-      setAssets((current) => current.filter((asset) => asset.id !== assetId))
-      setError(null)
+      setActionError(null)
       setDeleteError(null)
       return true
     } catch (deleteError) {
@@ -160,7 +154,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
       if (showDialogError) {
         setDeleteError(message)
       } else {
-        setError(message)
+        setActionError(message)
       }
       return false
     } finally {
@@ -181,7 +175,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     deleteTriggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
     setConfirmFutureDeletes(false)
     setDeleteError(null)
-    setAssetToDelete(asset)
+    setDeleteTargetId(asset.id)
   }
 
   const handleConfirmDelete = async () => {
@@ -194,34 +188,22 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
       if (confirmFutureDeletes) {
         setSkipDeleteConfirmation(true)
       }
-      setAssetToDelete(null)
-    }
-  }
-
-  const handleSelectPreset = async (asset: AssetSnapshot, presetName: string | null) => {
-    try {
-      const created = await createAsset(workspaceId, asset.title, 'Todo', presetName ?? undefined)
-      await deleteAsset(asset.id)
-      setAssets((current) => current.map((item) => (item.id === asset.id ? created : item)))
-      setError(null)
-    } catch (selectError) {
-      setError(selectError instanceof Error ? selectError.message : 'Could not apply the preset.')
+      setDeleteTargetId(null)
     }
   }
 
   return (
     <>
       <MembersPanel workspaceId={workspaceId} />
-      <Toolbar />
+      <OnlineViewers viewers={viewers} />
+      <Toolbar presets={presets} selectedPreset={selectedPreset} onPresetChange={setSelectedPreset} />
       <Canvas
         assets={assets}
         isLoading={isLoading}
-        error={error}
+        error={actionError ?? workspaceError ?? statusMessage}
         deletingIds={deletingIds}
-        presets={presets}
         onDrop={handleDrop}
         onDelete={handleRequestDelete}
-        onSelectPreset={handleSelectPreset}
       />
       {assetToDelete ? (
         <div className="delete-dialog__backdrop">
@@ -256,7 +238,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
                 className="delete-dialog__cancel"
                 ref={cancelButtonRef}
                 onClick={() => {
-                  setAssetToDelete(null)
+                  setDeleteTargetId(null)
                   setDeleteError(null)
                 }}
                 disabled={deletingIds.has(assetToDelete.id)}
@@ -287,9 +269,13 @@ function WorkspacePage() {
     return null
   }
 
-  // Keyed by workspace so switching workspaces starts from fresh state instead of briefly
-  // showing the previous workspace's assets.
-  return <WorkspaceCanvas key={workspaceId} workspaceId={workspaceId} />
+  // Keyed by workspace so switching workspaces starts from fresh state and a fresh connection
+  // instead of briefly showing the previous workspace's assets
+  return (
+    <WorkspaceProvider key={workspaceId} workspaceId={workspaceId}>
+      <WorkspaceCanvas workspaceId={workspaceId} />
+    </WorkspaceProvider>
+  )
 }
 
 export default WorkspacePage
