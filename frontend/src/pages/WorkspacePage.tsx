@@ -25,7 +25,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
   } = useWorkspace()
   const [actionError, setActionError] = useState<string | null>(null)
   const [deletingIds, setDeletingIds] = useState<ReadonlySet<string>>(new Set())
-  const [assetToDelete, setAssetToDelete] = useState<AssetSnapshot | null>(null)
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
   const [skipDeleteConfirmation, setSkipDeleteConfirmation] = useState(false)
   const [confirmFutureDeletes, setConfirmFutureDeletes] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
@@ -36,6 +36,8 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
   const deleteTriggerRef = useRef<HTMLElement | null>(null)
   const [presets, setPresets] = useState<PresetInfo[]>([])
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null)
+
+  const assetToDelete = deleteTargetId ? assets.find((asset) => asset.id === deleteTargetId) ?? null : null
 
   const statusMessage =
     connectionStatus === 'reconnecting'
@@ -61,7 +63,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
       if (event.key === 'Escape') {
         if (!deletingIds.has(assetToDelete.id)) {
           event.preventDefault()
-          setAssetToDelete(null)
+          setDeleteTargetId(null)
           setDeleteError(null)
         }
         return
@@ -173,7 +175,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     deleteTriggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
     setConfirmFutureDeletes(false)
     setDeleteError(null)
-    setAssetToDelete(asset)
+    setDeleteTargetId(asset.id)
   }
 
   const handleConfirmDelete = async () => {
@@ -186,7 +188,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
       if (confirmFutureDeletes) {
         setSkipDeleteConfirmation(true)
       }
-      setAssetToDelete(null)
+      setDeleteTargetId(null)
     }
   }
 
@@ -236,7 +238,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
                 className="delete-dialog__cancel"
                 ref={cancelButtonRef}
                 onClick={() => {
-                  setAssetToDelete(null)
+                  setDeleteTargetId(null)
                   setDeleteError(null)
                 }}
                 disabled={deletingIds.has(assetToDelete.id)}
