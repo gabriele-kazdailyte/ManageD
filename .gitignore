@@ -46,3 +46,5 @@ lerna-debug.log*
 Thumbs.db
 
 .claude
+coverage/
+**/coverage.json

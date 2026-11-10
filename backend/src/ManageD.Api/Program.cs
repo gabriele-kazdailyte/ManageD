@@ -56,3 +56,5 @@ app.MapControllers();
 app.MapHub<WorkspaceHub>("/hubs/workspace");
 
 app.Run();
+
+public partial class Program { }
