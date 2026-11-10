@@ -23,6 +23,7 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting')
   const connectionRef = useRef<HubConnection | null>(null)
   const joinRef = useRef<(() => Promise<void>) | null>(null)
+  const joinSeqRef = useRef(0)
 
   useEffect(() => {
     const connection = createWorkspaceConnection()
@@ -32,16 +33,17 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
 
     // Runs on connect and on every reconnect: the server forgets group membership when a connection drops
     const join = async () => {
+      const seq = (joinSeqRef.current += 1)
       dispatch({ type: 'SYNC_STARTED' })
 
       try {
         const joined = await connection.invoke<JoinedState>('JoinWorkspace', workspaceId, identity.userId)
 
-        if (!cancelled) {
+        if (!cancelled && seq === joinSeqRef.current) {
           dispatch({ type: 'STATE_LOADED', assets: joined.assets, viewers: joined.viewers })
         }
       } catch (joinError) {
-        if (!cancelled) {
+        if (!cancelled && seq === joinSeqRef.current) {
           dispatch({ type: 'SYNC_FAILED', message: hubErrorMessage(joinError, 'Could not join the workspace.') })
         }
       }
