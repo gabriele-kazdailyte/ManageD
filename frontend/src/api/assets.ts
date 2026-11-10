@@ -15,6 +15,20 @@ export type AssetSnapshot = {
   items: TodoItem[]
 }
 
+export type TodoItemChange = {
+  id: string
+  text?: string | null
+  isDone?: boolean | null
+  order?: number | null
+}
+
+export type AssetDelta = {
+  title?: string | null
+  added?: TodoItem[]
+  updated?: TodoItemChange[]
+  deleted?: string[]
+}
+
 export type PresetInfo = {
   name: string
   itemCount: number

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react'
-import type { HubConnection } from '@microsoft/signalr'
-import type { AssetSnapshot } from '../api/assets'
+import { HubConnectionState, type HubConnection } from '@microsoft/signalr'
+import type { AssetDelta, AssetSnapshot } from '../api/assets'
 import {
   createWorkspaceConnection,
   hubErrorMessage,
@@ -22,30 +22,40 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
   const [state, dispatch] = useReducer(workspaceReducer, initialWorkspaceState)
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connecting')
   const connectionRef = useRef<HubConnection | null>(null)
+  const joinRef = useRef<(() => Promise<void>) | null>(null)
+  const joinSeqRef = useRef(0)
 
   useEffect(() => {
     const connection = createWorkspaceConnection()
     connectionRef.current = connection
+    // StrictMode runs effects twice in dev; a stopped connection must not touch state
     let cancelled = false
 
+    // Runs on connect and on every reconnect: the server forgets group membership when a connection drops
     const join = async () => {
+      const seq = (joinSeqRef.current += 1)
       dispatch({ type: 'SYNC_STARTED' })
 
       try {
         const joined = await connection.invoke<JoinedState>('JoinWorkspace', workspaceId, identity.userId)
 
-        if (!cancelled) {
+        if (!cancelled && seq === joinSeqRef.current) {
           dispatch({ type: 'STATE_LOADED', assets: joined.assets, viewers: joined.viewers })
         }
       } catch (joinError) {
-        if (!cancelled) {
+        if (!cancelled && seq === joinSeqRef.current) {
           dispatch({ type: 'SYNC_FAILED', message: hubErrorMessage(joinError, 'Could not join the workspace.') })
         }
       }
     }
 
+    joinRef.current = join
+
     connection.on('AssetCreated', (payload: { asset: AssetSnapshot }) =>
       dispatch({ type: 'ASSET_CREATED', asset: payload.asset }),
+    )
+    connection.on('AssetUpdated', (payload: { assetId: string; delta: AssetDelta }) =>
+      dispatch({ type: 'ASSET_UPDATED', assetId: payload.assetId, delta: payload.delta }),
     )
     connection.on('AssetDeleted', (payload: { assetId: string }) =>
       dispatch({ type: 'ASSET_DELETED', assetId: payload.assetId }),
@@ -91,6 +101,7 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
 
     return () => {
       cancelled = true
+      joinRef.current = null
       void connection.stop()
     }
   }, [workspaceId, identity.userId])
@@ -98,7 +109,7 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
   const createAsset = useCallback(
     async (title: string, presetName: string | null) => {
       const connection = connectionRef.current
-      if (!connection) {
+      if (!connection || connection.state !== HubConnectionState.Connected) {
         throw new Error('Not connected to the server.')
       }
 
@@ -113,7 +124,7 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
 
   const deleteAsset = useCallback(async (assetId: string) => {
     const connection = connectionRef.current
-    if (!connection) {
+    if (!connection || connection.state !== HubConnectionState.Connected) {
       throw new Error('Not connected to the server.')
     }
 
@@ -121,6 +132,24 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
       await connection.invoke('DeleteAsset', assetId)
     } catch (invokeError) {
       throw new Error(hubErrorMessage(invokeError, 'Could not delete the asset.'), { cause: invokeError })
+    }
+  }, [])
+
+  const updateAsset = useCallback(async (assetId: string, delta: AssetDelta) => {
+    const connection = connectionRef.current
+    if (!connection || connection.state !== HubConnectionState.Connected) {
+      throw new Error('Not connected to the server.')
+    }
+
+    // Optimistic: the server's echo of this change is applied again, harmlessly
+    dispatch({ type: 'LOCAL_EDIT', assetId, delta })
+
+    try {
+      await connection.invoke('UpdateAsset', assetId, delta)
+    } catch (invokeError) {
+      // Rejected: drop the optimistic change by reloading the server's state
+      void joinRef.current?.()
+      throw new Error(hubErrorMessage(invokeError, 'Could not save the change.'), { cause: invokeError })
     }
   }, [])
 
@@ -133,8 +162,9 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
       connectionStatus,
       createAsset,
       deleteAsset,
+      updateAsset,
     }),
-    [state, connectionStatus, createAsset, deleteAsset],
+    [state, connectionStatus, createAsset, deleteAsset, updateAsset],
   )
 
   return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>

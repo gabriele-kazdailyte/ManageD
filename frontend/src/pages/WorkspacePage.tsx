@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { loadPresets, type AssetSnapshot, type PresetInfo } from '../api/assets'
+import { loadPresets, type AssetDelta, type AssetSnapshot, type PresetInfo } from '../api/assets'
 import Toolbar from '../components/Toolbar'
 import Canvas from '../components/Canvas'
 import MembersPanel from '../components/MembersPanel'
@@ -22,6 +22,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     connectionStatus,
     createAsset,
     deleteAsset,
+    updateAsset,
   } = useWorkspace()
   const [actionError, setActionError] = useState<string | null>(null)
   const [deletingIds, setDeletingIds] = useState<ReadonlySet<string>>(new Set())
@@ -125,14 +126,14 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
 
-    // dataTransfer can only be read while the drop event is being handled, so before any await
+    // dataTransfer can only be read while the drop event is being handled, so before any await.
     const label = event.dataTransfer.getData('application/todo-list')
     if (!label) {
       return
     }
 
     try {
-      // The new asset shows up when the server's AssetCreated event arrives
+      // The new asset shows up when the server's AssetCreated event arrives.
       await createAsset(label, selectedPreset)
       setActionError(null)
     } catch (createError) {
@@ -144,7 +145,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     setDeletingIds((current) => new Set(current).add(assetId))
 
     try {
-      // The asset disappears when the server's AssetDeleted event arrives
+      // The asset disappears when the server's AssetDeleted event arrives.
       await deleteAsset(assetId)
       setActionError(null)
       setDeleteError(null)
@@ -164,6 +165,15 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
         return next
       })
     }
+  }
+
+  const handleUpdate = (asset: AssetSnapshot, delta: AssetDelta) => {
+    // The change is already visible; this only reports a failure (the provider reloads the server's state).
+    updateAsset(asset.id, delta)
+      .then(() => setActionError(null))
+      .catch((updateError: unknown) => {
+        setActionError(updateError instanceof Error ? updateError.message : 'Could not save the change.')
+      })
   }
 
   const handleRequestDelete = (asset: AssetSnapshot) => {
@@ -204,6 +214,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
         deletingIds={deletingIds}
         onDrop={handleDrop}
         onDelete={handleRequestDelete}
+        onUpdate={handleUpdate}
       />
       {assetToDelete ? (
         <div className="delete-dialog__backdrop">
@@ -269,8 +280,6 @@ function WorkspacePage() {
     return null
   }
 
-  // Keyed by workspace so switching workspaces starts from fresh state and a fresh connection
-  // instead of briefly showing the previous workspace's assets
   return (
     <WorkspaceProvider key={workspaceId} workspaceId={workspaceId}>
       <WorkspaceCanvas workspaceId={workspaceId} />

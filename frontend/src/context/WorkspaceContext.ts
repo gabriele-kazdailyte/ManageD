@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { AssetSnapshot } from '../api/assets'
+import type { AssetDelta, AssetSnapshot } from '../api/assets'
 import type { ConnectionStatus, Viewer } from '../api/hub'
 
 export type WorkspaceContextValue = {
@@ -11,6 +11,8 @@ export type WorkspaceContextValue = {
   // The created asset arrives as an AssetCreated event, so these return nothing
   createAsset: (title: string, presetName: string | null) => Promise<void>
   deleteAsset: (assetId: string) => Promise<void>
+  // Shows the change at once, then sends it. If the server rejects it, local state is reloaded from the server
+  updateAsset: (assetId: string, delta: AssetDelta) => Promise<void>
 }
 
 export const WorkspaceContext = createContext<WorkspaceContextValue | undefined>(undefined)
