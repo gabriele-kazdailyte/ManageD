@@ -90,6 +90,41 @@ public class HubIntegrationTests : IClassFixture<ManageDFactory>
     }
 
     [Fact]
+    public async Task Sticky_note_markdown_is_persisted_and_shared_through_hub_events()
+    {
+        var (aliceId, bobId, workspaceId) = await ArrangeAsync();
+        await using var alice = _factory.CreateHubConnection();
+        await using var bob = _factory.CreateHubConnection();
+        await alice.StartAsync();
+        await bob.StartAsync();
+        await alice.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, aliceId);
+        await bob.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, bobId);
+
+        var created = NextEvent<AssetCreatedEvent>(bob, "AssetCreated");
+        await alice.InvokeAsync("CreateAsset", workspaceId, "Sticky Note", TemplateType.Note, (string?)null);
+        var note = (await created).Asset;
+        Assert.Equal(TemplateType.Note, note.TemplateType);
+        Assert.Empty(note.Items);
+        Assert.Empty(note.NoteContent);
+
+        const string markdown = "# Shared note\n\n**Remember this**";
+        var updated = NextEvent<AssetUpdatedEvent>(bob, "AssetUpdated");
+        await alice.InvokeAsync(
+            "UpdateAsset",
+            note.Id,
+            new AssetDelta(null, null, null, NoteContent: markdown));
+        Assert.Equal(markdown, (await updated).Delta.NoteContent);
+
+        var charlieId = await _factory.CreateUserAsync("Charlie");
+        await _factory.AddMemberAsync(workspaceId, charlieId);
+        await using var charlie = _factory.CreateHubConnection();
+        await charlie.StartAsync();
+        var state = await charlie.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, charlieId);
+
+        Assert.Equal(markdown, Assert.Single(state.Assets).NoteContent);
+    }
+
+    [Fact]
     public async Task A_user_who_is_not_a_member_cannot_join()
     {
         var (_, _, workspaceId) = await ArrangeAsync();

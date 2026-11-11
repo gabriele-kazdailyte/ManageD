@@ -8,6 +8,7 @@ public static class DeltaApplier
 {
     public const int MaxTextLength = 200;
     public const int MaxTitleLength = 200;
+    public const int MaxNoteContentLength = 5000;
 
     /// <summary>
     /// Applies the delta to the asset and returns what was really applied
@@ -20,7 +21,7 @@ public static class DeltaApplier
         var updated = delta.Updated ?? [];
         var deleted = delta.Deleted ?? [];
 
-        Validate(asset, added, updated, delta.Title);
+        Validate(asset, added, updated, delta.Title, delta.NoteContent);
 
         // 1. Deletes first: an edit of an item deleted in the same delta is skipped
         var appliedDeleted = new List<Guid>();
@@ -85,15 +86,35 @@ public static class DeltaApplier
             appliedTitle = asset.Title;
         }
 
-        return new AssetDelta(appliedAdded, appliedUpdated, appliedDeleted, appliedTitle);
+        var appliedNoteContent = delta.NoteContent;
+        if (appliedNoteContent is not null)
+        {
+            asset.NoteContent = appliedNoteContent;
+        }
+
+        return new AssetDelta(appliedAdded, appliedUpdated, appliedDeleted, appliedTitle, appliedNoteContent);
     }
 
     private static void Validate(
         Asset asset,
         IReadOnlyList<TodoItemDto> added,
         IReadOnlyList<TodoItemChange> updated,
-        string? title)
+        string? title,
+        string? noteContent)
     {
+        if (noteContent is not null)
+        {
+            if (asset.TemplateType != TemplateType.Note)
+            {
+                throw new InvalidDeltaException("Only sticky notes can be updated with note content.");
+            }
+
+            if (noteContent.Length > MaxNoteContentLength)
+            {
+                throw new InvalidDeltaException($"Note content can't be longer than {MaxNoteContentLength} characters.");
+            }
+        }
+
         if (title is not null)
         {
             var trimmedTitle = title.Trim();

@@ -1,5 +1,6 @@
 import type { AssetDelta, AssetSnapshot } from '../api/assets'
 import TodoAsset from './TodoAsset'
+import StickyNoteAsset from './StickyNoteAsset'
 import './Canvas.css'
 
 type CanvasProps = {
@@ -18,6 +19,16 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
       case 'Todo':
         return (
           <TodoAsset
+            key={asset.id}
+            asset={asset}
+            isDeleting={deletingIds.has(asset.id)}
+            onDelete={onDelete}
+            onUpdate={onUpdate}
+          />
+        )
+      case 'Note':
+        return (
+          <StickyNoteAsset
             key={asset.id}
             asset={asset}
             isDeleting={deletingIds.has(asset.id)}

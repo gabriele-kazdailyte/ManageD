@@ -6,12 +6,14 @@ public record AssetDelta(
     IReadOnlyList<TodoItemDto>? Added,
     IReadOnlyList<TodoItemChange>? Updated,
     IReadOnlyList<Guid>? Deleted,
-    string? Title = null)
+    string? Title = null,
+    string? NoteContent = null)
 {
     [JsonIgnore]
     public bool IsEmpty =>
         (Added?.Count ?? 0) == 0 &&
         (Updated?.Count ?? 0) == 0 &&
         (Deleted?.Count ?? 0) == 0 &&
-        Title is null;
+        Title is null &&
+        NoteContent is null;
 }
