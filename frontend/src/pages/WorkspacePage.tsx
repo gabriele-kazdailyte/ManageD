@@ -127,14 +127,17 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     event.preventDefault()
 
     // dataTransfer can only be read while the drop event is being handled, so before any await.
-    const label = event.dataTransfer.getData('application/todo-list')
+    const todoLabel = event.dataTransfer.getData('application/todo-list')
+    const noteLabel = event.dataTransfer.getData('application/sticky-note')
+    const templateType = noteLabel ? 'Note' : 'Todo'
+    const label = noteLabel || todoLabel
     if (!label) {
       return
     }
 
     try {
       // The new asset shows up when the server's AssetCreated event arrives.
-      await createAsset(label, selectedPreset)
+      await createAsset(label, templateType === 'Todo' ? selectedPreset : null, templateType)
       setActionError(null)
     } catch (createError) {
       setActionError(createError instanceof Error ? createError.message : 'Could not create the asset.')
@@ -206,7 +209,16 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     <>
       <MembersPanel workspaceId={workspaceId} />
       <OnlineViewers viewers={viewers} />
-      <Toolbar presets={presets} selectedPreset={selectedPreset} onPresetChange={setSelectedPreset} />
+      <Toolbar
+        presets={presets}
+        selectedPreset={selectedPreset}
+        onPresetChange={setSelectedPreset}
+        onCreateNote={() => {
+          createAsset('Sticky Note', null, 'Note').catch((createError: unknown) =>
+            setActionError(createError instanceof Error ? createError.message : 'Could not create the sticky note.'),
+          )
+        }}
+      />
       <Canvas
         assets={assets}
         isLoading={isLoading}

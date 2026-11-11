@@ -47,6 +47,7 @@ public class AssetService : IAssetService
             Items = templateType switch
             {
                 TemplateType.Todo => BuildItems(initialItems),
+                TemplateType.Note => [],
 
                 // TODO: if a template type is added to the enum before its setup is written, reject it with a 400
                 // in request validation instead of reaching this throw (500).

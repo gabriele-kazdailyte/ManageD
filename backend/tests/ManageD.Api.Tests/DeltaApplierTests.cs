@@ -175,4 +175,50 @@ public class DeltaApplierTests
         Assert.Throws<InvalidDeltaException>(() =>
             DeltaApplier.Apply(asset, new AssetDelta(null, null, null, title)));
     }
+
+    [Fact]
+    public void Note_content_is_applied_and_reported()
+    {
+        var asset = new Asset { Id = Guid.NewGuid(), TemplateType = TemplateType.Note };
+
+        var applied = DeltaApplier.Apply(asset, new AssetDelta(null, null, null, NoteContent: "**Hello**"));
+
+        Assert.Equal("**Hello**", asset.NoteContent);
+        Assert.Equal("**Hello**", applied.NoteContent);
+        Assert.False(applied.IsEmpty);
+    }
+
+    [Fact]
+    public void Empty_note_content_clears_the_note()
+    {
+        var asset = new Asset
+        {
+            Id = Guid.NewGuid(),
+            TemplateType = TemplateType.Note,
+            NoteContent = "previous",
+        };
+
+        DeltaApplier.Apply(asset, new AssetDelta(null, null, null, NoteContent: ""));
+
+        Assert.Empty(asset.NoteContent);
+    }
+
+    [Fact]
+    public void Note_content_cannot_be_applied_to_a_todo_asset()
+    {
+        var asset = AssetWith();
+
+        Assert.Throws<InvalidDeltaException>(() =>
+            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, NoteContent: "text")));
+    }
+
+    [Fact]
+    public void Too_long_note_content_is_rejected()
+    {
+        var asset = new Asset { Id = Guid.NewGuid(), TemplateType = TemplateType.Note };
+        var content = new string('x', DeltaApplier.MaxNoteContentLength + 1);
+
+        Assert.Throws<InvalidDeltaException>(() =>
+            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, NoteContent: content)));
+    }
 }

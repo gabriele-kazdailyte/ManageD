@@ -5,6 +5,7 @@ public class Asset
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public TemplateType TemplateType { get; set; } = TemplateType.Todo;
+    public string NoteContent { get; set; } = string.Empty;
 
     public float X { get; set; }
     public float Y { get; set; }

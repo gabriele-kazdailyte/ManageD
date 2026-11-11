@@ -8,9 +8,16 @@ type ToolbarProps = {
   presets: PresetInfo[]
   selectedPreset: string | null
   onPresetChange: (presetName: string | null) => void
+  onCreateNote: () => void
 }
 
-function Toolbar({ blockLabel = 'Todo List', presets, selectedPreset, onPresetChange }: ToolbarProps) {
+function Toolbar({
+  blockLabel = 'Todo List',
+  presets,
+  selectedPreset,
+  onPresetChange,
+  onCreateNote,
+}: ToolbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const blockRef = useRef<HTMLDivElement>(null)
 
@@ -74,6 +81,7 @@ function Toolbar({ blockLabel = 'Todo List', presets, selectedPreset, onPresetCh
             </ul>
           ) : null}
         </div>
+        <TodoList label="Sticky Note" type="application/sticky-note" onClick={onCreateNote} />
       </div>
     </div>
   )
