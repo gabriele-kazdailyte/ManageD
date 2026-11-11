@@ -3,11 +3,13 @@ import { useParams } from 'react-router-dom'
 import { loadPresets, type AssetDelta, type AssetSnapshot, type PresetInfo } from '../api/assets'
 import Toolbar from '../components/Toolbar'
 import Canvas from '../components/Canvas'
+import CalendarView from '../components/CalendarView'
 import MembersPanel from '../components/MembersPanel'
 import OnlineViewers from '../components/OnlineViewers'
 import { useWorkspace } from '../context/WorkspaceContext'
 import { WorkspaceProvider } from '../context/WorkspaceProvider'
 import '../components/DeleteConfirmation.css'
+import './WorkspacePage.css'
 
 type WorkspaceCanvasProps = {
   workspaceId: string
@@ -37,6 +39,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
   const deleteTriggerRef = useRef<HTMLElement | null>(null)
   const [presets, setPresets] = useState<PresetInfo[]>([])
   const [selectedPreset, setSelectedPreset] = useState<string | null>(null)
+  const [activeView, setActiveView] = useState<'board' | 'calendar'>('board')
 
   const assetToDelete = deleteTargetId ? assets.find((asset) => asset.id === deleteTargetId) ?? null : null
 
@@ -206,6 +209,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     <>
       <MembersPanel workspaceId={workspaceId} />
       <OnlineViewers viewers={viewers} />
+<<<<<<< Updated upstream
       <Toolbar presets={presets} selectedPreset={selectedPreset} onPresetChange={setSelectedPreset} />
       <Canvas
         assets={assets}
@@ -216,6 +220,54 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
         onDelete={handleRequestDelete}
         onUpdate={handleUpdate}
       />
+=======
+      <Toolbar
+        presets={presets}
+        selectedPreset={selectedPreset}
+        onPresetChange={setSelectedPreset}
+        onCreateNote={() => {
+          createAsset('Sticky Note', null, 'Note').catch((createError: unknown) =>
+            setActionError(createError instanceof Error ? createError.message : 'Could not create the sticky note.'),
+          )
+        }}
+      />
+      <nav className="workspace-view-switch" aria-label="Workspace view">
+        <button
+          type="button"
+          className={activeView === 'board' ? 'workspace-view-switch__active' : ''}
+          aria-pressed={activeView === 'board'}
+          onClick={() => setActiveView('board')}
+        >
+          Board
+        </button>
+        <button
+          type="button"
+          className={activeView === 'calendar' ? 'workspace-view-switch__active' : ''}
+          aria-pressed={activeView === 'calendar'}
+          onClick={() => setActiveView('calendar')}
+        >
+          Calendar
+        </button>
+      </nav>
+      {activeView === 'calendar' ? (
+        <>
+          {actionError ?? workspaceError ?? statusMessage ? (
+            <p className="calendar__error" role="alert">{actionError ?? workspaceError ?? statusMessage}</p>
+          ) : null}
+          <CalendarView assets={assets} />
+        </>
+      ) : (
+        <Canvas
+          assets={assets}
+          isLoading={isLoading}
+          error={actionError ?? workspaceError ?? statusMessage}
+          deletingIds={deletingIds}
+          onDrop={handleDrop}
+          onDelete={handleRequestDelete}
+          onUpdate={handleUpdate}
+        />
+      )}
+>>>>>>> Stashed changes
       {assetToDelete ? (
         <div className="delete-dialog__backdrop">
           <section
