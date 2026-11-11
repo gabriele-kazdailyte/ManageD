@@ -1,6 +1,6 @@
 namespace ManageD.Api.Dtos;
 
-public record TodoItemDto(Guid Id, string Text, bool IsDone, int Order) : IComparable<TodoItemDto>
+public record TodoItemDto(Guid Id, string Text, bool IsDone, int Order, DateOnly? DeadlineDate = null) : IComparable<TodoItemDto>
 {
     public int CompareTo(TodoItemDto? other)
     {

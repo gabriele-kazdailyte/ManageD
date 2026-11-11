@@ -69,6 +69,9 @@ namespace ManageD.Api.Migrations
                     b.Property<Guid>("AssetId")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateOnly?>("DeadlineDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsDone")
                         .HasColumnType("INTEGER");
 

@@ -30,6 +30,7 @@ export function applyDelta(asset: AssetSnapshot, delta: AssetDelta): AssetSnapsh
         text: change.text ?? item.text,
         isDone: change.isDone ?? item.isDone,
         order: change.order ?? item.order,
+        deadlineDate: change.clearDeadline ? null : change.deadlineDate ?? item.deadlineDate,
       }
     })
   }

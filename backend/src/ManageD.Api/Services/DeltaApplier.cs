@@ -61,6 +61,15 @@ public static class DeltaApplier
                 item.Order = change.Order.Value;
             }
 
+            if (change.ClearDeadline)
+            {
+                item.DeadlineDate = null;
+            }
+            else if (change.DeadlineDate is not null)
+            {
+                item.DeadlineDate = change.DeadlineDate;
+            }
+
             appliedUpdated.Add(change);
         }
 
@@ -74,6 +83,7 @@ public static class DeltaApplier
                 Text = dto.Text.Trim(),
                 IsDone = dto.IsDone,
                 Order = dto.Order,
+                DeadlineDate = dto.DeadlineDate,
             });
             appliedAdded.Add(dto with { Text = dto.Text.Trim() });
         }
@@ -121,6 +131,11 @@ public static class DeltaApplier
 
         foreach (var change in updated)
         {
+            if (change.ClearDeadline && change.DeadlineDate is not null)
+            {
+                throw new InvalidDeltaException("A deadline can't be set and cleared in the same change.");
+            }
+
             if (change.Text is not null)
             {
                 ValidateText(change.Text);

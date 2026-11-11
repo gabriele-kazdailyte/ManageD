@@ -5,7 +5,7 @@ export const MAX_ITEM_TEXT_LENGTH = 200
 export function addItemDelta(items: TodoItem[], text: string): AssetDelta {
   const nextOrder = items.reduce((highest, item) => Math.max(highest, item.order), -1) + 1
 
-  return { added: [{ id: crypto.randomUUID(), text, isDone: false, order: nextOrder }] }
+  return { added: [{ id: crypto.randomUUID(), text, isDone: false, order: nextOrder, deadlineDate: null }] }
 }
 
 export function editTextDelta(itemId: string, text: string): AssetDelta {
@@ -14,6 +14,16 @@ export function editTextDelta(itemId: string, text: string): AssetDelta {
 
 export function setDoneDelta(itemId: string, isDone: boolean): AssetDelta {
   return { updated: [{ id: itemId, isDone }] }
+}
+
+export function setDeadlineDelta(itemId: string, deadlineDate: string | null): AssetDelta {
+  return {
+    updated: [
+      deadlineDate === null
+        ? { id: itemId, clearDeadline: true }
+        : { id: itemId, deadlineDate },
+    ],
+  }
 }
 
 export function deleteItemDelta(itemId: string): AssetDelta {

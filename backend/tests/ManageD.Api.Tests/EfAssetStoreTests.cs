@@ -49,6 +49,27 @@ public class EfAssetStoreTests : IDisposable
     }
 
     [Fact]
+    public async Task Deadline_is_persisted_and_returned_in_snapshots()
+    {
+        var assetId = await SeedAssetAsync("task");
+        var deadline = new DateOnly(2026, 11, 12);
+
+        await using (var context = _db.CreateContext())
+        {
+            var store = new EfAssetStore(context);
+            var asset = await store.GetForUpdateAsync(assetId, CancellationToken.None);
+            DeltaApplier.Apply(
+                asset!,
+                new AssetDelta(null, [new TodoItemChange(asset!.Items.Single().Id, null, null, null, deadline)], null));
+            await store.SaveAsync(asset, CancellationToken.None);
+        }
+
+        await using var verify = _db.CreateContext();
+        var saved = await new EfAssetStore(verify).GetAsync(assetId, CancellationToken.None);
+        Assert.Equal(deadline, Assert.Single(saved!.Items).DeadlineDate);
+    }
+
+    [Fact]
     public async Task Editing_an_item_deleted_by_someone_else_throws_ConcurrencyConflict()
     {
         var assetId = await SeedAssetAsync("only");

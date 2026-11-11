@@ -60,6 +60,45 @@ public class DeltaApplierTests
     }
 
     [Fact]
+    public void Deadline_can_be_set()
+    {
+        var item = Item("task");
+        var asset = AssetWith(item);
+        var deadline = new DateOnly(2026, 11, 12);
+
+        DeltaApplier.Apply(asset, new AssetDelta(null, [new TodoItemChange(item.Id, null, null, null, deadline)], null));
+
+        Assert.Equal(deadline, item.DeadlineDate);
+    }
+
+    [Fact]
+    public void Deadline_can_be_cleared()
+    {
+        var item = Item("task");
+        item.DeadlineDate = new DateOnly(2026, 11, 12);
+        var asset = AssetWith(item);
+
+        DeltaApplier.Apply(asset, new AssetDelta(null, [new TodoItemChange(item.Id, null, null, null, ClearDeadline: true)], null));
+
+        Assert.Null(item.DeadlineDate);
+    }
+
+    [Fact]
+    public void Deadline_cannot_be_set_and_cleared_in_one_change()
+    {
+        var item = Item("task");
+        var asset = AssetWith(item);
+
+        Assert.Throws<InvalidDeltaException>(() =>
+            DeltaApplier.Apply(asset, new AssetDelta(
+                null,
+                [new TodoItemChange(item.Id, null, null, null, new DateOnly(2026, 11, 12), ClearDeadline: true)],
+                null)));
+
+        Assert.Null(item.DeadlineDate);
+    }
+
+    [Fact]
     public void Edit_of_a_deleted_item_is_skipped_and_not_reported_as_applied()
     {
         var asset = AssetWith();

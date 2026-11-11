@@ -100,6 +100,90 @@
   padding: 2px 4px;
 }
 
+.todo-asset__item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-asset__deadline {
+  display: flex;
+  align-items: center;
+  margin: 0 4px 2px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.todo-asset__deadline-dropdown {
+  position: relative;
+}
+
+.todo-asset__deadline-dropdown summary {
+  width: fit-content;
+  padding: 1px 5px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.todo-asset__deadline-dropdown summary::-webkit-details-marker {
+  display: none;
+}
+
+.todo-asset__deadline-dropdown summary::after {
+  content: ' ▾';
+}
+
+.todo-asset__deadline-dropdown summary:hover,
+.todo-asset__deadline-dropdown[open] summary {
+  border-color: var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.todo-asset__deadline-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 5;
+  display: grid;
+  gap: 6px;
+  min-width: max-content;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+}
+
+.todo-asset__deadline-menu label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.todo-asset__deadline-menu input {
+  min-width: 0;
+  padding: 1px 3px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.todo-asset__deadline-menu button {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+}
+
 .todo-asset__text:hover {
   border-color: var(--border);
 }
