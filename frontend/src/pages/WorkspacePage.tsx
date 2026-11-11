@@ -209,28 +209,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     <>
       <MembersPanel workspaceId={workspaceId} />
       <OnlineViewers viewers={viewers} />
-<<<<<<< Updated upstream
       <Toolbar presets={presets} selectedPreset={selectedPreset} onPresetChange={setSelectedPreset} />
-      <Canvas
-        assets={assets}
-        isLoading={isLoading}
-        error={actionError ?? workspaceError ?? statusMessage}
-        deletingIds={deletingIds}
-        onDrop={handleDrop}
-        onDelete={handleRequestDelete}
-        onUpdate={handleUpdate}
-      />
-=======
-      <Toolbar
-        presets={presets}
-        selectedPreset={selectedPreset}
-        onPresetChange={setSelectedPreset}
-        onCreateNote={() => {
-          createAsset('Sticky Note', null, 'Note').catch((createError: unknown) =>
-            setActionError(createError instanceof Error ? createError.message : 'Could not create the sticky note.'),
-          )
-        }}
-      />
       <nav className="workspace-view-switch" aria-label="Workspace view">
         <button
           type="button"
@@ -267,7 +246,6 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
           onUpdate={handleUpdate}
         />
       )}
->>>>>>> Stashed changes
       {assetToDelete ? (
         <div className="delete-dialog__backdrop">
           <section
