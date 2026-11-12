@@ -9,4 +9,5 @@ public class TodoItem
     public bool IsDone { get; set; }
     public int Order { get; set; }
     public DateOnly? DeadlineDate { get; set; }
+    public DateOnly? CompletedDate { get; set; }
 }

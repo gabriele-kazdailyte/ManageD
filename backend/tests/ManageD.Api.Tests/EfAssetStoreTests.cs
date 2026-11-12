@@ -49,10 +49,11 @@ public class EfAssetStoreTests : IDisposable
     }
 
     [Fact]
-    public async Task Deadline_is_persisted_and_returned_in_snapshots()
+    public async Task Deadline_and_completion_date_are_persisted_and_returned_in_snapshots()
     {
         var assetId = await SeedAssetAsync("task");
         var deadline = new DateOnly(2026, 11, 12);
+        var completedDate = DateOnly.FromDateTime(DateTime.UtcNow);
 
         await using (var context = _db.CreateContext())
         {
@@ -60,13 +61,15 @@ public class EfAssetStoreTests : IDisposable
             var asset = await store.GetForUpdateAsync(assetId, CancellationToken.None);
             DeltaApplier.Apply(
                 asset!,
-                new AssetDelta(null, [new TodoItemChange(asset!.Items.Single().Id, null, null, null, deadline)], null));
+                new AssetDelta(null, [new TodoItemChange(asset!.Items.Single().Id, null, true, null, deadline)], null));
             await store.SaveAsync(asset, CancellationToken.None);
         }
 
         await using var verify = _db.CreateContext();
         var saved = await new EfAssetStore(verify).GetAsync(assetId, CancellationToken.None);
-        Assert.Equal(deadline, Assert.Single(saved!.Items).DeadlineDate);
+        var item = Assert.Single(saved!.Items);
+        Assert.Equal(deadline, item.DeadlineDate);
+        Assert.Equal(completedDate, item.CompletedDate);
     }
 
     [Fact]

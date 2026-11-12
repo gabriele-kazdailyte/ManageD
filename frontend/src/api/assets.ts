@@ -7,6 +7,7 @@ export type TodoItem = {
   isDone: boolean
   order: number
   deadlineDate: string | null
+  completedDate: string | null
 }
 
 export type AssetSnapshot = {
@@ -23,6 +24,8 @@ export type TodoItemChange = {
   order?: number | null
   deadlineDate?: string | null
   clearDeadline?: boolean
+  completedDate?: string | null
+  clearCompletedDate?: boolean
 }
 
 export type AssetDelta = {

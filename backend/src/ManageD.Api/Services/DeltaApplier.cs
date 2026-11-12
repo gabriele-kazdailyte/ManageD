@@ -53,6 +53,15 @@ public static class DeltaApplier
 
             if (change.IsDone is not null)
             {
+                if (change.IsDone.Value && (!item.IsDone || item.CompletedDate is null))
+                {
+                    item.CompletedDate = DateOnly.FromDateTime(DateTime.UtcNow);
+                }
+                else if (!change.IsDone.Value)
+                {
+                    item.CompletedDate = null;
+                }
+
                 item.IsDone = change.IsDone.Value;
             }
 
@@ -70,12 +79,19 @@ public static class DeltaApplier
                 item.DeadlineDate = change.DeadlineDate;
             }
 
-            appliedUpdated.Add(change);
+            appliedUpdated.Add(change.IsDone is not null
+                ? change with
+                {
+                    CompletedDate = item.CompletedDate,
+                    ClearCompletedDate = item.CompletedDate is null,
+                }
+                : change with { CompletedDate = null, ClearCompletedDate = false });
         }
 
         var appliedAdded = new List<TodoItemDto>();
         foreach (var dto in added)
         {
+            DateOnly? completedDate = dto.IsDone ? DateOnly.FromDateTime(DateTime.UtcNow) : null;
             asset.Items.Add(new TodoItem
             {
                 Id = dto.Id,
@@ -84,8 +100,9 @@ public static class DeltaApplier
                 IsDone = dto.IsDone,
                 Order = dto.Order,
                 DeadlineDate = dto.DeadlineDate,
+                CompletedDate = completedDate,
             });
-            appliedAdded.Add(dto with { Text = dto.Text.Trim() });
+            appliedAdded.Add(dto with { Text = dto.Text.Trim(), CompletedDate = completedDate });
         }
 
         string? appliedTitle = null;
@@ -134,6 +151,16 @@ public static class DeltaApplier
             if (change.ClearDeadline && change.DeadlineDate is not null)
             {
                 throw new InvalidDeltaException("A deadline can't be set and cleared in the same change.");
+            }
+
+            if (change.IsDone is null && (change.CompletedDate is not null || change.ClearCompletedDate))
+            {
+                throw new InvalidDeltaException("A completion date can only change with the done state.");
+            }
+
+            if (change.ClearCompletedDate && change.CompletedDate is not null)
+            {
+                throw new InvalidDeltaException("A completion date can't be set and cleared in the same change.");
             }
 
             if (change.Text is not null)

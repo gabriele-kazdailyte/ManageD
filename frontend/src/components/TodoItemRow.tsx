@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { TodoItem } from '../api/assets'
 import { MAX_ITEM_TEXT_LENGTH } from '../context/todoDeltas'
+import DeadlineStatusIndicator from './DeadlineStatusIndicator'
 
 function formatDeadline(deadlineDate: string | null) {
   return deadlineDate?.replaceAll('-', '/') ?? ''
@@ -165,6 +166,7 @@ function TodoItemRow({
           aria-label="Item text"
         />
         <div className="todo-asset__deadline">
+          <DeadlineStatusIndicator item={item} />
           <details className="todo-asset__deadline-dropdown">
             <summary>
               {item.deadlineDate

@@ -7,4 +7,6 @@ public record TodoItemChange(
     bool? IsDone,
     int? Order,
     DateOnly? DeadlineDate = null,
-    bool ClearDeadline = false);
+    bool ClearDeadline = false,
+    DateOnly? CompletedDate = null,
+    bool ClearCompletedDate = false);

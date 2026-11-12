@@ -34,6 +34,24 @@
   letter-spacing: 0;
 }
 
+.calendar__legend {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+}
+
+.calendar__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .calendar__navigation {
   display: flex;
   align-items: center;
@@ -140,9 +158,10 @@
 }
 
 .calendar__event {
+  position: relative;
   display: grid;
   gap: 1px;
-  padding: 3px 5px;
+  padding: 3px 20px 3px 5px;
   border-left: 3px solid var(--accent);
   border-radius: 3px;
   background: var(--accent-bg);
@@ -153,6 +172,12 @@
   word-break: break-word;
 }
 
+.calendar__event .deadline-status {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
 .calendar__event-asset {
   font-weight: 700;
 }
@@ -160,12 +185,6 @@
 .calendar__event--done {
   opacity: 0.6;
   text-decoration: line-through;
-}
-
-.calendar__event--overdue {
-  border-left-color: var(--danger);
-  background: var(--danger-bg);
-  color: var(--danger-text);
 }
 
 @media (max-width: 700px) {
@@ -195,7 +214,7 @@
   }
 
   .calendar__event {
-    padding: 2px;
+    padding: 2px 18px 2px 2px;
     border-left-width: 2px;
     font-size: 9px;
   }

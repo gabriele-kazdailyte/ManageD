@@ -1,10 +1,19 @@
 import { useMemo, useState } from 'react'
 import type { AssetSnapshot } from '../api/assets'
+import { getDeadlineStatus, type DeadlineStatus } from '../utils/deadlineStatus'
+import DeadlineStatusIndicator from './DeadlineStatusIndicator'
 import './CalendarView.css'
 
 type CalendarViewProps = {
   assets: AssetSnapshot[]
 }
+
+const deadlineLegend: { status: DeadlineStatus; label: string }[] = [
+  { status: 'on-time', label: 'Done on time or early' },
+  { status: 'late', label: 'Done late' },
+  { status: 'missed', label: 'Not done and overdue' },
+  { status: 'pending', label: 'Not done and not yet overdue' },
+]
 
 function dateKey(date: Date) {
   const year = date.getFullYear()
@@ -22,7 +31,15 @@ function CalendarView({ assets }: CalendarViewProps) {
   const monthKey = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}`
 
   const entriesByDate = useMemo(() => {
-    const entries = new Map<string, { assetId: string; assetTitle: string; itemId: string; text: string; isDone: boolean }[]>()
+    const entries = new Map<string, {
+      assetId: string
+      assetTitle: string
+      itemId: string
+      text: string
+      isDone: boolean
+      deadlineDate: string | null
+      completedDate: string | null
+    }[]>()
 
     for (const asset of assets) {
       for (const item of asset.items) {
@@ -36,6 +53,8 @@ function CalendarView({ assets }: CalendarViewProps) {
           itemId: item.id,
           text: item.text,
           isDone: item.isDone,
+          deadlineDate: item.deadlineDate,
+          completedDate: item.completedDate,
         }
         entries.set(item.deadlineDate, [...(entries.get(item.deadlineDate) ?? []), entry])
       }
@@ -72,6 +91,14 @@ function CalendarView({ assets }: CalendarViewProps) {
           </button>
         </div>
       </header>
+      <ul className="calendar__legend" aria-label="Deadline status legend">
+        {deadlineLegend.map(({ status, label }) => (
+          <li key={status}>
+            <DeadlineStatusIndicator item={{ isDone: false, deadlineDate: null, completedDate: null }} status={status} />
+            <span>{label}</span>
+          </li>
+        ))}
+      </ul>
       <div className="calendar__grid" role="table" aria-label={month.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}>
         <div className="calendar__week" role="row">
           {weekdays.map((weekday, index) => (
@@ -96,22 +123,26 @@ function CalendarView({ assets }: CalendarViewProps) {
                 <div className={cellClasses} role="cell" key={key} aria-label={`${date.toLocaleDateString()}, ${entries.length} deadlines`}>
                   <span className="calendar__date">{date.getDate()}</span>
                   <div className="calendar__events">
-                    {entries.map((entry) => (
-                      <div
-                        className={[
-                          'calendar__event',
-                          entry.isDone ? 'calendar__event--done' : '',
-                          !entry.isDone && key < todayKey ? 'calendar__event--overdue' : '',
-                        ]
-                          .filter(Boolean)
-                          .join(' ')}
-                        key={`${entry.assetId}-${entry.itemId}`}
-                        title={`${entry.assetTitle}: ${entry.text}`}
-                      >
-                        <span className="calendar__event-asset">{entry.assetTitle}</span>
-                        <span>{entry.text}</span>
-                      </div>
-                    ))}
+                    {entries.map((entry) => {
+                      const status = getDeadlineStatus(entry)
+
+                      return (
+                        <div
+                          className={[
+                            'calendar__event',
+                            entry.isDone ? 'calendar__event--done' : '',
+                          ]
+                            .filter(Boolean)
+                            .join(' ')}
+                          key={`${entry.assetId}-${entry.itemId}`}
+                          title={`${entry.assetTitle}: ${entry.text}`}
+                        >
+                          <span className="calendar__event-asset">{entry.assetTitle}</span>
+                          <span>{entry.text}</span>
+                          <DeadlineStatusIndicator item={entry} status={status} />
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               )

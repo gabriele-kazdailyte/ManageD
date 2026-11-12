@@ -99,6 +99,70 @@ public class DeltaApplierTests
     }
 
     [Fact]
+    public void Completing_an_item_records_and_broadcasts_its_completion_date()
+    {
+        var item = Item("task");
+        var asset = AssetWith(item);
+
+        var applied = DeltaApplier.Apply(
+            asset,
+            new AssetDelta(null, [new TodoItemChange(item.Id, null, true, null)], null));
+
+        var expectedDate = DateOnly.FromDateTime(DateTime.UtcNow);
+        Assert.True(item.IsDone);
+        Assert.Equal(expectedDate, item.CompletedDate);
+        Assert.Equal(expectedDate, Assert.Single(applied.Updated!).CompletedDate);
+    }
+
+    [Fact]
+    public void Reopening_an_item_clears_and_broadcasts_its_completion_date()
+    {
+        var item = Item("task");
+        item.IsDone = true;
+        item.CompletedDate = new DateOnly(2026, 11, 12);
+        var asset = AssetWith(item);
+
+        var applied = DeltaApplier.Apply(
+            asset,
+            new AssetDelta(null, [new TodoItemChange(item.Id, null, false, null)], null));
+
+        Assert.False(item.IsDone);
+        Assert.Null(item.CompletedDate);
+        Assert.True(Assert.Single(applied.Updated!).ClearCompletedDate);
+    }
+
+    [Fact]
+    public void Repeated_done_update_does_not_change_the_original_completion_date()
+    {
+        var originalCompletionDate = new DateOnly(2026, 11, 10);
+        var item = Item("task");
+        item.IsDone = true;
+        item.CompletedDate = originalCompletionDate;
+        var asset = AssetWith(item);
+
+        var applied = DeltaApplier.Apply(
+            asset,
+            new AssetDelta(null, [new TodoItemChange(item.Id, null, true, null)], null));
+
+        Assert.Equal(originalCompletionDate, item.CompletedDate);
+        Assert.Equal(originalCompletionDate, Assert.Single(applied.Updated!).CompletedDate);
+    }
+
+    [Fact]
+    public void Completion_date_cannot_be_changed_without_changing_done_state()
+    {
+        var item = Item("task");
+        var asset = AssetWith(item);
+
+        Assert.Throws<InvalidDeltaException>(() =>
+            DeltaApplier.Apply(
+                asset,
+                new AssetDelta(null, [new TodoItemChange(item.Id, null, null, null, CompletedDate: new DateOnly(2026, 11, 12))], null)));
+
+        Assert.Null(item.CompletedDate);
+    }
+
+    [Fact]
     public void Edit_of_a_deleted_item_is_skipped_and_not_reported_as_applied()
     {
         var asset = AssetWith();
