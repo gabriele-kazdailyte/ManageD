@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type PointerEvent } from 'react'
 import type { AssetDelta, AssetSnapshot } from '../api/assets'
 import {
   MAX_ITEM_TEXT_LENGTH,
@@ -17,9 +17,10 @@ type TodoAssetProps = {
   isDeleting: boolean
   onDelete: (asset: AssetSnapshot) => void
   onUpdate: (asset: AssetSnapshot, delta: AssetDelta) => void
+  onMoveStart: (event: PointerEvent<HTMLElement>) => void
 }
 
-function TodoAsset({ asset, isDeleting, onDelete, onUpdate }: TodoAssetProps) {
+function TodoAsset({ asset, isDeleting, onDelete, onUpdate, onMoveStart }: TodoAssetProps) {
   const [newText, setNewText] = useState('')
   const [draggedId, setDraggedId] = useState<string | null>(null)
   const [overId, setOverId] = useState<string | null>(null)
@@ -63,7 +64,7 @@ function TodoAsset({ asset, isDeleting, onDelete, onUpdate }: TodoAssetProps) {
 
   return (
     <article className="todo-asset">
-      <header className="todo-asset__header">
+      <header className="todo-asset__header" onPointerDown={onMoveStart}>
         <h2 className="todo-asset__title">{asset.title}</h2>
         <button
           type="button"
