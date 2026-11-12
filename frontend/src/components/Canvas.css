@@ -20,11 +20,12 @@
 }
 
 .canvas__fit {
-  position: absolute;
+  position: sticky;
   z-index: 3;
   top: 12px;
-  right: 16px;
   display: flex;
+  width: fit-content;
+  margin-left: auto;
   align-items: center;
   gap: 6px;
   padding: 6px 9px;
