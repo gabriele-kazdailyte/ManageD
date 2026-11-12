@@ -18,9 +18,11 @@ type TodoAssetProps = {
   onDelete: (asset: AssetSnapshot) => void
   onUpdate: (asset: AssetSnapshot, delta: AssetDelta) => void
   onMoveStart: (event: PointerEvent<HTMLElement>) => void
+  onMove: (event: PointerEvent<HTMLElement>) => void
+  onMoveEnd: (event: PointerEvent<HTMLElement>) => void
 }
 
-function TodoAsset({ asset, isDeleting, onDelete, onUpdate, onMoveStart }: TodoAssetProps) {
+function TodoAsset({ asset, isDeleting, onDelete, onUpdate, onMoveStart, onMove, onMoveEnd }: TodoAssetProps) {
   const [newText, setNewText] = useState('')
   const [draggedId, setDraggedId] = useState<string | null>(null)
   const [overId, setOverId] = useState<string | null>(null)
@@ -64,7 +66,13 @@ function TodoAsset({ asset, isDeleting, onDelete, onUpdate, onMoveStart }: TodoA
 
   return (
     <article className="todo-asset">
-      <header className="todo-asset__header" onPointerDown={onMoveStart}>
+      <header
+        className="todo-asset__header"
+        onPointerDown={onMoveStart}
+        onPointerMove={onMove}
+        onPointerUp={onMoveEnd}
+        onPointerCancel={onMoveEnd}
+      >
         <h2 className="todo-asset__title">{asset.title}</h2>
         <button
           type="button"

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { useState, type PointerEvent as ReactPointerEvent } from 'react'
 import type { AssetDelta, AssetSnapshot } from '../api/assets'
 import TodoAsset from './TodoAsset'
 import './Canvas.css'
@@ -16,52 +16,37 @@ type CanvasProps = {
 function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpdate }: CanvasProps) {
   const [drag, setDrag] = useState<{
     asset: AssetSnapshot
-    pointerX: number
-    pointerY: number
+    pointerId: number
+    pointerStartX: number
+    pointerStartY: number
+    startX: number
+    startY: number
     x: number
     y: number
   } | null>(null)
-  const dragRef = useRef(drag)
 
-  useEffect(() => {
-    if (!drag) {
+  const handleMove = (event: ReactPointerEvent<HTMLElement>) => {
+    if (!drag || drag.pointerId !== event.pointerId) {
       return
     }
 
-    const handlePointerMove = (event: PointerEvent) => {
-      const current = dragRef.current
-      if (!current) {
-        return
-      }
+    setDrag({
+      ...drag,
+      x: Math.max(0, drag.startX + event.clientX - drag.pointerStartX),
+      y: Math.max(0, drag.startY + event.clientY - drag.pointerStartY),
+    })
+  }
 
-      const next = {
-        ...current,
-        x: Math.max(1, current.x + event.clientX - current.pointerX),
-        y: Math.max(1, current.y + event.clientY - current.pointerY),
-        pointerX: event.clientX,
-        pointerY: event.clientY,
-      }
-      dragRef.current = next
-      setDrag(next)
-    }
-    const handlePointerUp = () => {
-      const current = dragRef.current
-      if (current) {
-        onUpdate(current.asset, { x: current.x, y: current.y })
-        dragRef.current = null
-        setDrag(null)
-      }
+  const endMove = (event: ReactPointerEvent<HTMLElement>) => {
+    if (!drag || drag.pointerId !== event.pointerId) {
+      return
     }
 
-    window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('pointerup', handlePointerUp)
-    window.addEventListener('pointercancel', handlePointerUp)
-    return () => {
-      window.removeEventListener('pointermove', handlePointerMove)
-      window.removeEventListener('pointerup', handlePointerUp)
-      window.removeEventListener('pointercancel', handlePointerUp)
-    }
-  }, [drag, onUpdate])
+    const x = Math.max(0, drag.startX + event.clientX - drag.pointerStartX)
+    const y = Math.max(0, drag.startY + event.clientY - drag.pointerStartY)
+    onUpdate(drag.asset, { x, y })
+    setDrag(null)
+  }
 
   const beginMove = (asset: AssetSnapshot, x: number, y: number, event: ReactPointerEvent<HTMLElement>) => {
     if (event.button !== 0 || (event.target instanceof Element && event.target.closest('button'))) {
@@ -69,17 +54,30 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
     }
 
     event.preventDefault()
-    const next = { asset, x, y, pointerX: event.clientX, pointerY: event.clientY }
-    dragRef.current = next
-    setDrag(next)
+    event.currentTarget.setPointerCapture(event.pointerId)
+    setDrag({
+      asset,
+      pointerId: event.pointerId,
+      pointerStartX: event.clientX,
+      pointerStartY: event.clientY,
+      startX: x,
+      startY: y,
+      x,
+      y,
+    })
+  }
+
+  const getPosition = (asset: AssetSnapshot, index: number) => {
+    const defaultX = (index % 3) * 280
+    const defaultY = Math.floor(index / 3) * 280
+    const hasSavedPosition = Number.isFinite(asset.x) && Number.isFinite(asset.y) && (asset.x !== 0 || asset.y !== 0)
+    const x = drag?.asset.id === asset.id ? drag.x : hasSavedPosition ? asset.x : defaultX
+    const y = drag?.asset.id === asset.id ? drag.y : hasSavedPosition ? asset.y : defaultY
+    return { x, y }
   }
 
   const renderAsset = (asset: AssetSnapshot, index: number) => {
-    const defaultX = (index % 3) * 280
-    const defaultY = Math.floor(index / 3) * 280
-    const x = drag?.asset.id === asset.id ? drag.x : asset.x === 0 && asset.y === 0 ? defaultX : asset.x
-    const y = drag?.asset.id === asset.id ? drag.y : asset.x === 0 && asset.y === 0 ? defaultY : asset.y
-
+    const { x, y } = getPosition(asset, index)
     switch (asset.templateType) {
       case 'Todo':
         return (
@@ -94,6 +92,8 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
               onDelete={onDelete}
               onUpdate={onUpdate}
               onMoveStart={(event) => beginMove(asset, x, y, event)}
+              onMove={handleMove}
+              onMoveEnd={endMove}
             />
           </div>
         )
@@ -109,7 +109,18 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
       return <div className="canvas__empty">Drop here</div>
     }
 
-    return assets.map(renderAsset)
+    const positions = assets.map(getPosition)
+    const minWidth = Math.max(100, ...positions.map(({ x }) => x + 280))
+    const minHeight = Math.max(100, ...positions.map(({ y }) => y + 280))
+
+    return (
+      <div
+        className="canvas__board"
+        style={{ minWidth: `max(100%, ${minWidth}px)`, minHeight: `max(100%, ${minHeight}px)` }}
+      >
+        {assets.map(renderAsset)}
+      </div>
+    )
   }
 
   return (
@@ -119,7 +130,7 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
       onDrop={onDrop}
     >
       {error ? <p className="canvas__error">{error}</p> : null}
-      <div className="canvas__board">{renderContent()}</div>
+      {isLoading || assets.length === 0 ? <div className="canvas__board">{renderContent()}</div> : renderContent()}
     </section>
   )
 }
