@@ -20,7 +20,7 @@ public static class DeltaApplier
         var updated = delta.Updated ?? [];
         var deleted = delta.Deleted ?? [];
 
-        Validate(asset, added, updated, delta.Title);
+        Validate(asset, added, updated, delta.Title, delta.X, delta.Y);
 
         // 1. Deletes first: an edit of an item deleted in the same delta is skipped
         var appliedDeleted = new List<Guid>();
@@ -112,15 +112,38 @@ public static class DeltaApplier
             appliedTitle = asset.Title;
         }
 
-        return new AssetDelta(appliedAdded, appliedUpdated, appliedDeleted, appliedTitle);
+        if (delta.X is not null)
+        {
+            asset.X = delta.X.Value;
+        }
+
+        if (delta.Y is not null)
+        {
+            asset.Y = delta.Y.Value;
+        }
+
+        return new AssetDelta(
+            appliedAdded,
+            appliedUpdated,
+            appliedDeleted,
+            appliedTitle,
+            delta.X,
+            delta.Y);
     }
 
     private static void Validate(
         Asset asset,
         IReadOnlyList<TodoItemDto> added,
         IReadOnlyList<TodoItemChange> updated,
-        string? title)
+        string? title,
+        float? x,
+        float? y)
     {
+        if (x is < 0 || y is < 0 || x is float xValue && !float.IsFinite(xValue) || y is float yValue && !float.IsFinite(yValue))
+        {
+            throw new InvalidDeltaException("Asset coordinates must be finite and non-negative.");
+        }
+
         if (title is not null)
         {
             var trimmedTitle = title.Trim();

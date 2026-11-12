@@ -28,6 +28,8 @@ public class EfAssetStore : IAssetStore
             asset.Id,
             asset.Title,
             asset.TemplateType,
+            asset.X,
+            asset.Y,
             asset.Items.ToOrderedDtos());
     }
 
