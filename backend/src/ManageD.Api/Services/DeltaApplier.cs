@@ -21,8 +21,7 @@ public static class DeltaApplier
         var updated = delta.Updated ?? [];
         var deleted = delta.Deleted ?? [];
 
-        Validate(asset, added, updated, delta.Title, delta.X, delta.Y);
-        Validate(asset, added, updated, delta.Title, delta.NoteContent);
+        Validate(asset, added, updated, delta.Title, delta.X, delta.Y, delta.NoteContent);
 
         // 1. Deletes first: an edit of an item deleted in the same delta is skipped
         var appliedDeleted = new List<Guid>();
@@ -124,20 +123,20 @@ public static class DeltaApplier
             asset.Y = delta.Y.Value;
         }
 
-        return new AssetDelta(
-            appliedAdded,
-            appliedUpdated,
-            appliedDeleted,
-            appliedTitle,
-            delta.X,
-            delta.Y);
         var appliedNoteContent = delta.NoteContent;
         if (appliedNoteContent is not null)
         {
             asset.NoteContent = appliedNoteContent;
         }
 
-        return new AssetDelta(appliedAdded, appliedUpdated, appliedDeleted, appliedTitle, appliedNoteContent);
+        return new AssetDelta(
+            appliedAdded,
+            appliedUpdated,
+            appliedDeleted,
+            appliedTitle,
+            delta.X,
+            delta.Y,
+            appliedNoteContent);
     }
 
     private static void Validate(
@@ -146,13 +145,14 @@ public static class DeltaApplier
         IReadOnlyList<TodoItemChange> updated,
         string? title,
         float? x,
-        float? y)
+        float? y,
+        string? noteContent)
     {
         if (x is < 0 || y is < 0 || x is float xValue && !float.IsFinite(xValue) || y is float yValue && !float.IsFinite(yValue))
         {
             throw new InvalidDeltaException("Asset coordinates must be finite and non-negative.");
-        string? noteContent)
-    {
+        }
+
         if (asset.TemplateType == TemplateType.Note && (added.Count > 0 || updated.Count > 0))
         {
             throw new InvalidDeltaException("Only to-do lists can be updated with items.");

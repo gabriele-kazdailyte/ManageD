@@ -30,7 +30,6 @@ public class EfAssetStore : IAssetStore
             asset.TemplateType,
             asset.X,
             asset.Y,
-            asset.Items.ToOrderedDtos());
             asset.Items.ToOrderedDtos(),
             asset.NoteContent);
     }

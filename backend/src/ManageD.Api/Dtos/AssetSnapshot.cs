@@ -9,6 +9,5 @@ public record AssetSnapshot(
     TemplateType TemplateType,
     float X,
     float Y,
-    IReadOnlyList<TodoItemDto> Items);
     IReadOnlyList<TodoItemDto> Items,
     string NoteContent);
