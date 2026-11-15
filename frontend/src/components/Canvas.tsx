@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import type { AssetDelta, AssetSnapshot } from '../api/assets'
 import TodoAsset from './TodoAsset'
+import StickyNoteAsset from './StickyNoteAsset'
 import './Canvas.css'
 
 type CanvasProps = {
@@ -165,6 +166,16 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
               onMoveEnd={endMove}
             />
           </div>
+        )
+      case 'Note':
+        return (
+          <StickyNoteAsset
+            key={asset.id}
+            asset={asset}
+            isDeleting={deletingIds.has(asset.id)}
+            onDelete={onDelete}
+            onUpdate={onUpdate}
+          />
         )
     }
   }

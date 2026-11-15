@@ -8,6 +8,7 @@ public static class DeltaApplier
 {
     public const int MaxTextLength = 200;
     public const int MaxTitleLength = 200;
+    public const int MaxNoteContentLength = 5000;
 
     /// <summary>
     /// Applies the delta to the asset and returns what was really applied
@@ -21,6 +22,7 @@ public static class DeltaApplier
         var deleted = delta.Deleted ?? [];
 
         Validate(asset, added, updated, delta.Title, delta.X, delta.Y);
+        Validate(asset, added, updated, delta.Title, delta.NoteContent);
 
         // 1. Deletes first: an edit of an item deleted in the same delta is skipped
         var appliedDeleted = new List<Guid>();
@@ -129,6 +131,13 @@ public static class DeltaApplier
             appliedTitle,
             delta.X,
             delta.Y);
+        var appliedNoteContent = delta.NoteContent;
+        if (appliedNoteContent is not null)
+        {
+            asset.NoteContent = appliedNoteContent;
+        }
+
+        return new AssetDelta(appliedAdded, appliedUpdated, appliedDeleted, appliedTitle, appliedNoteContent);
     }
 
     private static void Validate(
@@ -142,6 +151,24 @@ public static class DeltaApplier
         if (x is < 0 || y is < 0 || x is float xValue && !float.IsFinite(xValue) || y is float yValue && !float.IsFinite(yValue))
         {
             throw new InvalidDeltaException("Asset coordinates must be finite and non-negative.");
+        string? noteContent)
+    {
+        if (asset.TemplateType == TemplateType.Note && (added.Count > 0 || updated.Count > 0))
+        {
+            throw new InvalidDeltaException("Only to-do lists can be updated with items.");
+        }
+
+        if (noteContent is not null)
+        {
+            if (asset.TemplateType != TemplateType.Note)
+            {
+                throw new InvalidDeltaException("Only sticky notes can be updated with note content.");
+            }
+
+            if (noteContent.Length > MaxNoteContentLength)
+            {
+                throw new InvalidDeltaException($"Note content can't be longer than {MaxNoteContentLength} characters.");
+            }
         }
 
         if (title is not null)
