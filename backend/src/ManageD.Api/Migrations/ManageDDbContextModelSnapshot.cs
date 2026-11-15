@@ -26,6 +26,10 @@ namespace ManageD.Api.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("NoteContent")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<float>("SizeX")
                         .HasColumnType("REAL");
 

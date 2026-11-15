@@ -40,5 +40,10 @@ export function applyDelta(asset: AssetSnapshot, delta: AssetDelta): AssetSnapsh
     items = [...items, ...delta.added.filter((item) => !existing.has(item.id))]
   }
 
-  return { ...asset, title: delta.title ?? asset.title, items: sortItems(items) }
+  return {
+    ...asset,
+    title: delta.title ?? asset.title,
+    noteContent: delta.noteContent ?? asset.noteContent,
+    items: sortItems(items),
+  }
 }
