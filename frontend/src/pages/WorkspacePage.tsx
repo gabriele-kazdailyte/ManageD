@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { loadPresets, type AssetDelta, type AssetSnapshot, type PresetInfo } from '../api/assets'
 import Toolbar from '../components/Toolbar'
@@ -130,14 +130,17 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     event.preventDefault()
 
     // dataTransfer can only be read while the drop event is being handled, so before any await.
-    const label = event.dataTransfer.getData('application/todo-list')
+    const todoLabel = event.dataTransfer.getData('application/todo-list')
+    const noteLabel = event.dataTransfer.getData('application/sticky-note')
+    const templateType = noteLabel ? 'Note' : 'Todo'
+    const label = noteLabel || todoLabel
     if (!label) {
       return
     }
 
     try {
       // The new asset shows up when the server's AssetCreated event arrives.
-      await createAsset(label, selectedPreset)
+      await createAsset(label, templateType === 'Todo' ? selectedPreset : null, templateType)
       setActionError(null)
     } catch (createError) {
       setActionError(createError instanceof Error ? createError.message : 'Could not create the asset.')
@@ -170,14 +173,14 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     }
   }
 
-  const handleUpdate = (asset: AssetSnapshot, delta: AssetDelta) => {
+  const handleUpdate = useCallback((asset: AssetSnapshot, delta: AssetDelta) => {
     // The change is already visible; this only reports a failure (the provider reloads the server's state).
     updateAsset(asset.id, delta)
       .then(() => setActionError(null))
       .catch((updateError: unknown) => {
         setActionError(updateError instanceof Error ? updateError.message : 'Could not save the change.')
       })
-  }
+  }, [updateAsset])
 
   const handleRequestDelete = (asset: AssetSnapshot) => {
     if (skipDeleteConfirmation) {
@@ -246,6 +249,25 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
           onUpdate={handleUpdate}
         />
       )}
+      <Toolbar
+        presets={presets}
+        selectedPreset={selectedPreset}
+        onPresetChange={setSelectedPreset}
+        onCreateNote={() => {
+          createAsset('Sticky Note', null, 'Note').catch((createError: unknown) =>
+            setActionError(createError instanceof Error ? createError.message : 'Could not create the sticky note.'),
+          )
+        }}
+      />
+      <Canvas
+        assets={assets}
+        isLoading={isLoading}
+        error={actionError ?? workspaceError ?? statusMessage}
+        deletingIds={deletingIds}
+        onDrop={handleDrop}
+        onDelete={handleRequestDelete}
+        onUpdate={handleUpdate}
+      />
       {assetToDelete ? (
         <div className="delete-dialog__backdrop">
           <section
