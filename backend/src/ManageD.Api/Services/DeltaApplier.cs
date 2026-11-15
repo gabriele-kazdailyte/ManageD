@@ -102,6 +102,11 @@ public static class DeltaApplier
         string? title,
         string? noteContent)
     {
+        if (asset.TemplateType == TemplateType.Note && (added.Count > 0 || updated.Count > 0))
+        {
+            throw new InvalidDeltaException("Only to-do lists can be updated with items.");
+        }
+
         if (noteContent is not null)
         {
             if (asset.TemplateType != TemplateType.Note)

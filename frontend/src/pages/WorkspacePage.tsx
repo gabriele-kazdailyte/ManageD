@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { loadPresets, type AssetDelta, type AssetSnapshot, type PresetInfo } from '../api/assets'
 import Toolbar from '../components/Toolbar'
@@ -170,14 +170,14 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     }
   }
 
-  const handleUpdate = (asset: AssetSnapshot, delta: AssetDelta) => {
+  const handleUpdate = useCallback((asset: AssetSnapshot, delta: AssetDelta) => {
     // The change is already visible; this only reports a failure (the provider reloads the server's state).
     updateAsset(asset.id, delta)
       .then(() => setActionError(null))
       .catch((updateError: unknown) => {
         setActionError(updateError instanceof Error ? updateError.message : 'Could not save the change.')
       })
-  }
+  }, [updateAsset])
 
   const handleRequestDelete = (asset: AssetSnapshot) => {
     if (skipDeleteConfirmation) {
