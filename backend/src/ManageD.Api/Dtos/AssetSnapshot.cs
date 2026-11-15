@@ -10,3 +10,5 @@ public record AssetSnapshot(
     float X,
     float Y,
     IReadOnlyList<TodoItemDto> Items);
+    IReadOnlyList<TodoItemDto> Items,
+    string NoteContent);

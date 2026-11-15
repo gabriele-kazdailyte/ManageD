@@ -1,5 +1,5 @@
 // Mirrors the backend's response records (see docs/api-contract.md).
-export type TemplateType = 'Todo'
+export type TemplateType = 'Todo' | 'Note'
 
 export type TodoItem = {
   id: string
@@ -17,6 +17,7 @@ export type AssetSnapshot = {
   x: number
   y: number
   items: TodoItem[]
+  noteContent: string
 }
 
 export type TodoItemChange = {
@@ -34,6 +35,7 @@ export type AssetDelta = {
   title?: string | null
   x?: number | null
   y?: number | null
+  noteContent?: string | null
   added?: TodoItem[]
   updated?: TodoItemChange[]
   deleted?: string[]

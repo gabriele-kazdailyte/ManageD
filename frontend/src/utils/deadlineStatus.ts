@@ -2,16 +2,16 @@ import type { TodoItem } from '../api/assets'
 
 export type DeadlineStatus = 'pending' | 'missed' | 'on-time' | 'late'
 
-function utcDateKey(date: Date) {
-  const year = date.getUTCFullYear()
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0')
-  const day = String(date.getUTCDate()).padStart(2, '0')
+function localDateKey(date: Date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
 }
 
 export function getDeadlineStatus(
   item: Pick<TodoItem, 'isDone' | 'deadlineDate' | 'completedDate'>,
-  today = utcDateKey(new Date()),
+  today = localDateKey(new Date()),
 ): DeadlineStatus | null {
   if (!item.deadlineDate) {
     return null

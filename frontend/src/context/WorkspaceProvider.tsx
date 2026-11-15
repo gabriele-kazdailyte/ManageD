@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react'
 import { HubConnectionState, type HubConnection } from '@microsoft/signalr'
-import type { AssetDelta, AssetSnapshot } from '../api/assets'
+import type { AssetDelta, AssetSnapshot, TemplateType } from '../api/assets'
 import {
   createWorkspaceConnection,
   hubErrorMessage,
@@ -107,14 +107,14 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
   }, [workspaceId, identity.userId])
 
   const createAsset = useCallback(
-    async (title: string, presetName: string | null) => {
+    async (title: string, presetName: string | null, templateType: TemplateType = 'Todo') => {
       const connection = connectionRef.current
       if (!connection || connection.state !== HubConnectionState.Connected) {
         throw new Error('Not connected to the server.')
       }
 
       try {
-        await connection.invoke('CreateAsset', workspaceId, title, 'Todo', presetName)
+        await connection.invoke('CreateAsset', workspaceId, title, templateType, presetName)
       } catch (invokeError) {
         throw new Error(hubErrorMessage(invokeError, 'Could not create the asset.'), { cause: invokeError })
       }

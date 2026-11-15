@@ -50,3 +50,7 @@ export function applyDelta(asset: AssetSnapshot, delta: AssetDelta): AssetSnapsh
     items: sortItems(items),
   }
 }
+    noteContent: delta.noteContent ?? asset.noteContent,
+    items: sortItems(items),
+  }
+}

@@ -124,7 +124,7 @@ function CalendarView({ assets }: CalendarViewProps) {
                   <span className="calendar__date">{date.getDate()}</span>
                   <div className="calendar__events">
                     {entries.map((entry) => {
-                      const status = getDeadlineStatus(entry)
+                      const status = getDeadlineStatus(entry, todayKey)
 
                       return (
                         <div
