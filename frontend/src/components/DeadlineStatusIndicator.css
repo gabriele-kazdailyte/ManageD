@@ -1,0 +1,27 @@
+.deadline-status {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.deadline-status--missed {
+  color: var(--danger);
+}
+
+.deadline-status--on-time {
+  color: var(--ws-mint-text);
+}
+
+.deadline-status--late {
+  color: #b7791f;
+}
+
+.deadline-status--pending {
+  color: var(--muted);
+}

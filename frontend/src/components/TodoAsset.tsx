@@ -6,6 +6,7 @@ import {
   deleteItemDelta,
   editTextDelta,
   reorderDelta,
+  setDeadlineDelta,
   setDoneDelta,
 } from '../context/todoDeltas'
 import TodoItemRow from './TodoItemRow'
@@ -86,6 +87,7 @@ function TodoAsset({ asset, isDeleting, onDelete, onUpdate }: TodoAssetProps) {
             isDropTarget={draggedId !== null && draggedId !== item.id && overId === item.id}
             onToggle={(isDone) => onUpdate(asset, setDoneDelta(item.id, isDone))}
             onRename={(text) => onUpdate(asset, editTextDelta(item.id, text))}
+            onSetDeadline={(deadlineDate) => onUpdate(asset, setDeadlineDelta(item.id, deadlineDate))}
             onRemove={() => onUpdate(asset, deleteItemDelta(item.id))}
             onMove={(direction) => handleMove(item.id, direction)}
             onDragStart={() => setDraggedId(item.id)}

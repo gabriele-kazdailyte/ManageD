@@ -1,0 +1,29 @@
+.workspace-view-switch {
+  display: flex;
+  gap: 4px;
+  padding: 8px 16px 0;
+  background: var(--panel);
+}
+
+.workspace-view-switch button {
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 7px 7px 0 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.workspace-view-switch button:hover {
+  color: var(--text-h);
+}
+
+.workspace-view-switch .workspace-view-switch__active {
+  border-color: var(--border);
+  border-bottom-color: var(--panel);
+  background: var(--bg);
+  color: var(--text-h);
+  font-weight: 600;
+}
