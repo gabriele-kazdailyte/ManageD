@@ -28,7 +28,8 @@ public class EfAssetStore : IAssetStore
             asset.Id,
             asset.Title,
             asset.TemplateType,
-            asset.Items.ToOrderedDtos());
+            asset.Items.ToOrderedDtos(),
+            asset.NoteContent);
     }
 
     public async Task<bool> RemoveAsync(Guid id, CancellationToken cancellationToken)
