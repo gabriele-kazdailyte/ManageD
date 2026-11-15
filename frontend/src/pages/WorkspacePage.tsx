@@ -212,7 +212,6 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
     <>
       <MembersPanel workspaceId={workspaceId} />
       <OnlineViewers viewers={viewers} />
-      <Toolbar presets={presets} selectedPreset={selectedPreset} onPresetChange={setSelectedPreset} />
       <nav className="workspace-view-switch" aria-label="Workspace view">
         <button
           type="button"
@@ -231,6 +230,16 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
           Calendar
         </button>
       </nav>
+      <Toolbar
+        presets={presets}
+        selectedPreset={selectedPreset}
+        onPresetChange={setSelectedPreset}
+        onCreateNote={() => {
+          createAsset('Sticky Note', null, 'Note').catch((createError: unknown) =>
+            setActionError(createError instanceof Error ? createError.message : 'Could not create the sticky note.'),
+          )
+        }}
+      />
       {activeView === 'calendar' ? (
         <>
           {actionError ?? workspaceError ?? statusMessage ? (
@@ -249,25 +258,6 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
           onUpdate={handleUpdate}
         />
       )}
-      <Toolbar
-        presets={presets}
-        selectedPreset={selectedPreset}
-        onPresetChange={setSelectedPreset}
-        onCreateNote={() => {
-          createAsset('Sticky Note', null, 'Note').catch((createError: unknown) =>
-            setActionError(createError instanceof Error ? createError.message : 'Could not create the sticky note.'),
-          )
-        }}
-      />
-      <Canvas
-        assets={assets}
-        isLoading={isLoading}
-        error={actionError ?? workspaceError ?? statusMessage}
-        deletingIds={deletingIds}
-        onDrop={handleDrop}
-        onDelete={handleRequestDelete}
-        onUpdate={handleUpdate}
-      />
       {assetToDelete ? (
         <div className="delete-dialog__backdrop">
           <section
