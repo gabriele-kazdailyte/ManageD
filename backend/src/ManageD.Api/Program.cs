@@ -27,6 +27,7 @@ builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<IWorkspaceService, WorkspaceService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddAuthRateLimits(builder.Configuration);
 builder.Services.AddSingleton<PresetCatalog>();
 builder.Services.AddSingleton<IAssetLocks, AssetLocks>();
 
@@ -54,6 +55,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("Frontend");
+app.UseRateLimiter();
 
 app.MapControllers();
 app.MapHub<WorkspaceHub>("/hubs/workspace");

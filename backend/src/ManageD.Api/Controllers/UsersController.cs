@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using ManageD.Api.Models;
 using ManageD.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace ManageD.Api.Controllers;
 
@@ -53,6 +54,7 @@ public class UsersController : ApiControllerBase
     }
 
     [HttpPost]
+    [EnableRateLimiting(RateLimitPolicies.Register)]
     public async Task<IActionResult> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken)
     {
         var result = await _userService.RegisterAsync(request.Username, request.Password, request.DisplayName, cancellationToken);
@@ -63,6 +65,7 @@ public class UsersController : ApiControllerBase
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting(RateLimitPolicies.Login)]
     public async Task<IActionResult> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
     {
         return ToActionResult(await _userService.LoginAsync(request.Username, request.Password, cancellationToken));

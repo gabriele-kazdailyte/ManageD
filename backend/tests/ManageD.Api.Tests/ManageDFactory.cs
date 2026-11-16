@@ -28,6 +28,9 @@ public sealed class ManageDFactory : WebApplicationFactory<Program>
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseSetting("ConnectionStrings:DefaultConnection", _connectionString);
+        // Every test request comes from the same address, so the normal per-IP limits would trip across tests.
+        builder.UseSetting("RateLimits:Login:PermitLimit", "10000");
+        builder.UseSetting("RateLimits:Register:PermitLimit", "10000");
     }
 
     protected override IHost CreateHost(IHostBuilder builder)
