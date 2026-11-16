@@ -16,6 +16,15 @@ public class RegisterUserRequest
     public string DisplayName { get; set; } = string.Empty;
 }
 
+public class LoginRequest
+{
+    [Required]
+    public string Username { get; set; } = string.Empty;
+
+    [Required]
+    public string Password { get; set; } = string.Empty;
+}
+
 [ApiController]
 [Route("api/users")]
 public class UsersController : ApiControllerBase
@@ -35,6 +44,12 @@ public class UsersController : ApiControllerBase
         return result.Value is { } user
             ? CreatedAtRoute("GetUserById", new { id = user.Id }, user)
             : ToActionResult(result);
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
+    {
+        return ToActionResult(await _userService.LoginAsync(request.Username, request.Password, cancellationToken));
     }
 
     [HttpGet("{id}", Name = "GetUserById")]

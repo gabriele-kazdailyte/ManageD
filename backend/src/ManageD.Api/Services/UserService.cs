@@ -11,15 +11,18 @@ namespace ManageD.Api.Services;
 public class UserService : IUserService
 {
     public const string UsernameTakenError = "That username is already taken.";
-
+    public const string InvalidLoginError = "Wrong username or password.";
     private const int SqliteConstraintError = 19;
     private readonly ManageDDbContext _dbContext;
     private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly Lazy<string> _dummyHash;
 
     public UserService(ManageDDbContext dbContext, IPasswordHasher<User> passwordHasher)
     {
         _dbContext = dbContext;
         _passwordHasher = passwordHasher;
+
+        _dummyHash = new Lazy<string>(() => _passwordHasher.HashPassword(new User(), Guid.NewGuid().ToString()));
     }
 
     public static string Normalize(string username) => username.Trim().ToLowerInvariant();
@@ -58,6 +61,34 @@ public class UserService : IUserService
         }
 
         return Result<UserSummary>.Created(ToSummary(user));
+    }
+
+    public async Task<Result<UserSummary>> LoginAsync(string username, string password, CancellationToken cancellationToken)
+    {
+        var normalizedUsername = Normalize(username);
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.NormalizedUsername == normalizedUsername, cancellationToken);
+
+        if (user is null)
+        {
+            _passwordHasher.VerifyHashedPassword(new User(), _dummyHash.Value, password);
+            return Result<UserSummary>.Unauthorized(InvalidLoginError);
+        }
+
+        var verification = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+
+        if (verification == PasswordVerificationResult.Failed)
+        {
+            return Result<UserSummary>.Unauthorized(InvalidLoginError);
+        }
+
+        // The hash was made with older settings (for example fewer iterations), so store it again with the current ones.
+        if (verification == PasswordVerificationResult.SuccessRehashNeeded)
+        {
+            user.PasswordHash = _passwordHasher.HashPassword(user, password);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        return Result<UserSummary>.Ok(ToSummary(user));
     }
 
     public async Task<Result<UserSummary>> GetAsync(Guid id, CancellationToken cancellationToken)
