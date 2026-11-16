@@ -18,5 +18,13 @@ public class ManageDDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TodoItem>().Property(i => i.Id).ValueGeneratedNever();
+
+        modelBuilder.Entity<User>(user =>
+        {
+            user.Property(u => u.Username).HasMaxLength(User.UsernameMaxLength);
+            user.Property(u => u.NormalizedUsername).HasMaxLength(User.UsernameMaxLength);
+            user.Property(u => u.DisplayName).HasMaxLength(User.DisplayNameMaxLength);
+            user.HasIndex(u => u.NormalizedUsername).IsUnique();
+        });
     }
 }

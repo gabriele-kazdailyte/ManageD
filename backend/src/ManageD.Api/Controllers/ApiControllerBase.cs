@@ -14,6 +14,8 @@ public abstract class ApiControllerBase : ControllerBase
             ResultStatus.Created => StatusCode(StatusCodes.Status201Created, result.Value),
             ResultStatus.NotFound when result.Error is null => NotFound(),
             ResultStatus.NotFound => Problem(detail: result.Error, statusCode: StatusCodes.Status404NotFound),
+            ResultStatus.Conflict => Problem(detail: result.Error, statusCode: StatusCodes.Status409Conflict),
+            ResultStatus.Unauthorized => Problem(detail: result.Error, statusCode: StatusCodes.Status401Unauthorized),
             _ => throw new NotSupportedException($"Unexpected result status '{result.Status}'."),
         };
     }
