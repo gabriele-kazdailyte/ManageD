@@ -169,13 +169,29 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
         )
       case 'Note':
         return (
-          <StickyNoteAsset
+          <div
             key={asset.id}
-            asset={asset}
-            isDeleting={deletingIds.has(asset.id)}
-            onDelete={onDelete}
-            onUpdate={onUpdate}
-          />
+            ref={(element) => {
+              if (element) {
+                assetElements.current.set(asset.id, element)
+              } else {
+                assetElements.current.delete(asset.id)
+              }
+            }}
+            data-asset-id={asset.id}
+            className={`canvas__asset${drag?.asset.id === asset.id ? ' canvas__asset--dragging' : ''}`}
+            style={{ left: x, top: y }}
+          >
+            <StickyNoteAsset
+              asset={asset}
+              isDeleting={deletingIds.has(asset.id)}
+              onDelete={onDelete}
+              onUpdate={onUpdate}
+              onMoveStart={(event) => beginMove(asset, x, y, scale, event)}
+              onMove={handleMove}
+              onMoveEnd={endMove}
+            />
+          </div>
         )
     }
   }

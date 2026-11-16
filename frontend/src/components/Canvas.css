@@ -64,13 +64,15 @@
   cursor: grabbing;
 }
 
-.canvas__asset .todo-asset__header {
+.canvas__asset .todo-asset__header,
+.canvas__asset .sticky-note__header {
   cursor: grab;
   touch-action: none;
   user-select: none;
 }
 
-.canvas__asset--dragging .todo-asset__header {
+.canvas__asset--dragging .todo-asset__header,
+.canvas__asset--dragging .sticky-note__header {
   cursor: grabbing;
 }
 
