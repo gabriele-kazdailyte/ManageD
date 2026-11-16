@@ -33,6 +33,15 @@ namespace ManageD.Api.Migrations
                 nullable: false,
                 defaultValue: "");
 
+            // Users created before login existed would all get "" and break the unique index.
+            // Give each one its id without dashes (32 chars, always unique) as a placeholder
+            // username. Their PasswordHash stays empty, so they can never log in.
+            migrationBuilder.Sql("""
+                UPDATE "Users"
+                SET "Username" = lower(replace("Id", '-', '')),
+                    "NormalizedUsername" = lower(replace("Id", '-', ''));
+                """);
+
             migrationBuilder.CreateIndex(
                 name: "IX_Users_NormalizedUsername",
                 table: "Users",
