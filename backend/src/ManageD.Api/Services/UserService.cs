@@ -15,14 +15,18 @@ public class UserService : IUserService
     private const int SqliteConstraintError = 19;
     private readonly ManageDDbContext _dbContext;
     private readonly IPasswordHasher<User> _passwordHasher;
-    private readonly Lazy<string> _dummyHash;
+    // Shared by every instance: UserService is scoped, so a per-instance hash would be
+    // computed during the login request and make unknown usernames slower than real ones.
+    private static string? s_dummyHash;
 
     public UserService(ManageDDbContext dbContext, IPasswordHasher<User> passwordHasher)
     {
         _dbContext = dbContext;
         _passwordHasher = passwordHasher;
 
-        _dummyHash = new Lazy<string>(() => _passwordHasher.HashPassword(new User(), Guid.NewGuid().ToString()));
+        LazyInitializer.EnsureInitialized(
+            ref s_dummyHash,
+            () => passwordHasher.HashPassword(new User(), Guid.NewGuid().ToString()));
     }
 
     public static string Normalize(string username) => username.Trim().ToLowerInvariant();
@@ -70,7 +74,7 @@ public class UserService : IUserService
 
         if (user is null)
         {
-            _passwordHasher.VerifyHashedPassword(new User(), _dummyHash.Value, password);
+            _passwordHasher.VerifyHashedPassword(new User(), s_dummyHash!, password);
             return Result<UserSummary>.Unauthorized(InvalidLoginError);
         }
 
