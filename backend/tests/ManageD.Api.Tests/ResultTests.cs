@@ -41,4 +41,16 @@ public class ResultTests
         Assert.Equal(ResultStatus.NotFound, mapped.Status);
         Assert.Equal("missing", mapped.Error);
     }
+
+    [Fact]
+    public void Map_keeps_a_conflict_or_unauthorized_status_instead_of_turning_it_into_not_found()
+    {
+        var conflict = Result<int>.Conflict("taken").Map(n => n.ToString());
+        var unauthorized = Result<int>.Unauthorized("wrong").Map(n => n.ToString());
+
+        Assert.Equal(ResultStatus.Conflict, conflict.Status);
+        Assert.Equal("taken", conflict.Error);
+        Assert.Equal(ResultStatus.Unauthorized, unauthorized.Status);
+        Assert.Equal("wrong", unauthorized.Error);
+    }
 }

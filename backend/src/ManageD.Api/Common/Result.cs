@@ -19,6 +19,10 @@ public sealed class Result<T>
 
     public static Result<T> NotFound(string? error = null) => new(ResultStatus.NotFound, default, error);
 
+    public static Result<T> Conflict(string error) => new(ResultStatus.Conflict, default, error);
+
+    public static Result<T> Unauthorized(string error) => new(ResultStatus.Unauthorized, default, error);
+    
     // Converts the value if there is one, a failure is passed on unchanged.
     public Result<TOut> Map<TOut>(Func<T, TOut> convert)
     {
@@ -26,7 +30,9 @@ public sealed class Result<T>
         {
             ResultStatus.Ok => Result<TOut>.Ok(convert(Value!)),
             ResultStatus.Created => Result<TOut>.Created(convert(Value!)),
-            _ => Result<TOut>.NotFound(Error),
+            _ => Result<TOut>.Failure(Status, Error),
         };
     }
+    
+    private static Result<T> Failure(ResultStatus status, string? error) => new(status, default, error);
 }
