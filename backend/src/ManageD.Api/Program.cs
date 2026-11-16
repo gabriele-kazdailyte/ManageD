@@ -1,7 +1,9 @@
 using System.Text.Json.Serialization;
 using ManageD.Api.Data;
 using ManageD.Api.Hubs;
+using ManageD.Api.Models;
 using ManageD.Api.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +26,7 @@ builder.Services.AddScoped<IAssetStore, EfAssetStore>();
 builder.Services.AddScoped<IAssetService, AssetService>();
 builder.Services.AddScoped<IWorkspaceService, WorkspaceService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddSingleton<PresetCatalog>();
 builder.Services.AddSingleton<IAssetLocks, AssetLocks>();
 

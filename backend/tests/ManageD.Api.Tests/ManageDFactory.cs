@@ -65,9 +65,13 @@ public sealed class ManageDFactory : WebApplicationFactory<Program>
             .Build();
     }
 
+    public const string TestPassword = "correct horse battery";
+
+    // Registers a user with a unique generated username, so tests can reuse display names like "Alice".
     public async Task<Guid> CreateUserAsync(string displayName)
     {
-        var response = await CreateClient().PostAsJsonAsync("/api/users", new { displayName });
+        var username = $"user_{Guid.NewGuid():N}"[..32];
+        var response = await CreateClient().PostAsJsonAsync("/api/users", new { username, password = TestPassword, displayName });
         response.EnsureSuccessStatusCode();
 
         var user = await response.Content.ReadFromJsonAsync<UserSummary>();

@@ -4,10 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ManageD.Api.Controllers;
 
-public class CreateUserRequest
+public class RegisterUserRequest
 {
     [Required]
-    [MaxLength(100)]
+    public string Username { get; set; } = string.Empty;
+
+    [Required]
+    public string Password { get; set; } = string.Empty;
+
+    [Required]
     public string DisplayName { get; set; } = string.Empty;
 }
 
@@ -23,11 +28,13 @@ public class UsersController : ApiControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUserAsync(CreateUserRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> RegisterAsync(RegisterUserRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userService.CreateAsync(request.DisplayName, cancellationToken);
+        var result = await _userService.RegisterAsync(request.Username, request.Password, request.DisplayName, cancellationToken);
 
-        return CreatedAtRoute("GetUserById", new { id = user.Id }, user);
+        return result.Value is { } user
+            ? CreatedAtRoute("GetUserById", new { id = user.Id }, user)
+            : ToActionResult(result);
     }
 
     [HttpGet("{id}", Name = "GetUserById")]

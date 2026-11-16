@@ -5,7 +5,7 @@ namespace ManageD.Api.Services;
 
 public interface IUserService
 {
-    Task<UserSummary> CreateAsync(string displayName, CancellationToken cancellationToken);
+    Task<Result<UserSummary>> RegisterAsync(string username, string password, string displayName, CancellationToken cancellationToken);
 
     Task<Result<UserSummary>> GetAsync(Guid id, CancellationToken cancellationToken);
 }
