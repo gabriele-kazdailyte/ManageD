@@ -1,16 +1,36 @@
 @ManageD_Api_HostAddress = http://localhost:5093
 @userId = 00000000-0000-0000-0000-000000000000
-# A second user (create one with "Create user"), to add to the workspace that @userId created.
+# A second user (create one with "Register user"), to add to the workspace that @userId created.
 @memberUserId = 00000000-0000-0000-0000-000000000000
 @workspaceId = 00000000-0000-0000-0000-000000000000
 @assetId = 00000000-0000-0000-0000-000000000000
 
-### Create user
+### Register user (201; 409 if the username is taken, in any case)
 POST {{ManageD_Api_HostAddress}}/api/users
 Content-Type: application/json
 
 {
+  "username": "alice",
+  "password": "correct horse battery",
   "displayName": "Alice"
+}
+
+### Log in (200; the username matches regardless of case)
+POST {{ManageD_Api_HostAddress}}/api/users/login
+Content-Type: application/json
+
+{
+  "username": "Alice",
+  "password": "correct horse battery"
+}
+
+### Log in with a wrong password (expect 401 with "Wrong username or password.")
+POST {{ManageD_Api_HostAddress}}/api/users/login
+Content-Type: application/json
+
+{
+  "username": "alice",
+  "password": "not the password"
 }
 
 ### Get user
