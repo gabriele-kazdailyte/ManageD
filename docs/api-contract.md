@@ -8,21 +8,45 @@ Types: `uuid` = string, `datetime` = ISO 8601 string, UTC, `templateType` = enum
 
 ### `POST /api/users`
 
+Registers a user.
+
 Request:
 ```json
-{ "displayName": "string" }
+{ "username": "string", "password": "string", "displayName": "string" }
 ```
-Response `201`:
+- `username`: 3–32 characters, only ASCII letters, digits and `_`. Unique regardless of case: `Marius` and `marius` can't both exist. Returned with the capitals it was registered with.
+- `password`: 8–128 characters. Not trimmed.
+- `displayName`: required, at most 32 characters, any characters (spaces and accents are fine). Not unique.
+
+Response `201` with a `Location` header pointing at `GET /api/users/{id}`:
 ```json
-{ "id": "uuid", "displayName": "string" }
+{ "id": "uuid", "username": "string", "displayName": "string" }
 ```
+A taken username is a `409` with `detail` `"That username is already taken."`. Too many attempts from one address is a `429`, see Errors.
+
+### `POST /api/users/login`
+
+Request:
+```json
+{ "username": "string", "password": "string" }
+```
+`username` matches regardless of case, `password` must match exactly.
+
+Response `200`:
+```json
+{ "id": "uuid", "username": "string", "displayName": "string" }
+```
+A wrong password and an unknown username both give the same `401` with `detail` `"Wrong username or password."`, so the reply never reveals which usernames exist. Too many attempts from one address is a `429`.
+
+There is no logout endpoint: the server keeps no session, so logging out is the client forgetting the user.
 
 ### `GET /api/users/{id}`
 
 Response `200`:
 ```json
-{ "id": "uuid", "displayName": "string" }
+{ "id": "uuid", "username": "string", "displayName": "string" }
 ```
+No user response ever includes the password or its hash.
 
 ### `POST /api/workspaces`
 
@@ -91,7 +115,10 @@ Assets themselves are created, read and deleted through the hub, see below.
 
 ### Errors
 
-- Validation failure (e.g. empty `name` or `displayName`): `400`, framework-default `application/problem+json` body.
+- Validation failure (e.g. empty `name` or `displayName`, a username with a space, a short password): `400`, framework-default `application/problem+json` body.
+- Taken username on register: `409`, `application/problem+json` body with a `detail` message.
+- Failed login: `401`, `application/problem+json` body with a `detail` message.
+- Rate limit: register and login are limited per IP address (by default 10 registers and 5 logins a minute, set under `RateLimits` in appsettings). Going over gives a `429` with an empty body.
 - Missing workspace/user: `404`, empty body. The exception is `POST /api/workspaces/{id}/members`, where either the workspace or the user can be missing: its `404` has an `application/problem+json` body whose `detail` says which one.
 
 ## Hub — `/hubs/workspace`

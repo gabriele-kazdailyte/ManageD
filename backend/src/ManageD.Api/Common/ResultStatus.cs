@@ -4,5 +4,7 @@ public enum ResultStatus
 {
     Ok,
     Created,
-    NotFound
+    NotFound,
+    Conflict,
+    Unauthorized
 }
