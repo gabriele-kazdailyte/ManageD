@@ -7,5 +7,7 @@ public record AssetSnapshot(
     Guid Id,
     string Title,
     TemplateType TemplateType,
+    float X,
+    float Y,
     IReadOnlyList<TodoItemDto> Items,
     string NoteContent);

@@ -14,6 +14,8 @@ export type AssetSnapshot = {
   id: string
   title: string
   templateType: TemplateType
+  x: number
+  y: number
   items: TodoItem[]
   noteContent: string
 }
@@ -31,6 +33,8 @@ export type TodoItemChange = {
 
 export type AssetDelta = {
   title?: string | null
+  x?: number | null
+  y?: number | null
   noteContent?: string | null
   added?: TodoItem[]
   updated?: TodoItemChange[]

@@ -60,6 +60,34 @@ public class DeltaApplierTests
     }
 
     [Fact]
+    public void Canvas_position_can_be_updated()
+    {
+        var asset = AssetWith();
+
+        var applied = DeltaApplier.Apply(asset, new AssetDelta(null, null, null, X: 125f, Y: 240f));
+
+        Assert.Equal(125f, asset.X);
+        Assert.Equal(240f, asset.Y);
+        Assert.Equal(125f, applied.X);
+        Assert.Equal(240f, applied.Y);
+        Assert.False(applied.IsEmpty);
+    }
+
+    [Fact]
+    public void Canvas_position_must_be_finite_and_non_negative()
+    {
+        var asset = AssetWith();
+
+        Assert.Throws<InvalidDeltaException>(() =>
+            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, X: -1)));
+        Assert.Throws<InvalidDeltaException>(() =>
+            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, Y: float.PositiveInfinity)));
+
+        Assert.Equal(0, asset.X);
+        Assert.Equal(0, asset.Y);
+    }
+
+    [Fact]
     public void Deadline_can_be_set()
     {
         var item = Item("task");

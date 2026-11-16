@@ -45,6 +45,8 @@ export function applyDelta(asset: AssetSnapshot, delta: AssetDelta): AssetSnapsh
   return {
     ...asset,
     title: delta.title ?? asset.title,
+    x: delta.x ?? asset.x,
+    y: delta.y ?? asset.y,
     noteContent: delta.noteContent ?? asset.noteContent,
     items: sortItems(items),
   }

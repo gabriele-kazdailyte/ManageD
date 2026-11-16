@@ -7,6 +7,8 @@ public record AssetDelta(
     IReadOnlyList<TodoItemChange>? Updated,
     IReadOnlyList<Guid>? Deleted,
     string? Title = null,
+    float? X = null,
+    float? Y = null,
     string? NoteContent = null)
 {
     [JsonIgnore]
@@ -15,5 +17,7 @@ public record AssetDelta(
         (Updated?.Count ?? 0) == 0 &&
         (Deleted?.Count ?? 0) == 0 &&
         Title is null &&
+        X is null &&
+        Y is null &&
         NoteContent is null;
 }

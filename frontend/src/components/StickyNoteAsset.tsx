@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type PointerEvent } from 'react'
 import ReactMarkdown from 'react-markdown'
 import type { AssetDelta, AssetSnapshot } from '../api/assets'
 import './StickyNoteAsset.css'
@@ -8,9 +8,20 @@ type StickyNoteAssetProps = {
   isDeleting: boolean
   onDelete: (asset: AssetSnapshot) => void
   onUpdate: (asset: AssetSnapshot, delta: AssetDelta) => void
+  onMoveStart: (event: PointerEvent<HTMLElement>) => void
+  onMove: (event: PointerEvent<HTMLElement>) => void
+  onMoveEnd: (event: PointerEvent<HTMLElement>) => void
 }
 
-function StickyNoteAsset({ asset, isDeleting, onDelete, onUpdate }: StickyNoteAssetProps) {
+function StickyNoteAsset({
+  asset,
+  isDeleting,
+  onDelete,
+  onUpdate,
+  onMoveStart,
+  onMove,
+  onMoveEnd,
+}: StickyNoteAssetProps) {
   const [draft, setDraft] = useState({
     assetId: asset.id,
     savedContent: asset.noteContent,
@@ -36,7 +47,13 @@ function StickyNoteAsset({ asset, isDeleting, onDelete, onUpdate }: StickyNoteAs
 
   return (
     <article className="sticky-note">
-      <header className="sticky-note__header">
+      <header
+        className="sticky-note__header"
+        onPointerDown={onMoveStart}
+        onPointerMove={onMove}
+        onPointerUp={onMoveEnd}
+        onPointerCancel={onMoveEnd}
+      >
         <h2 className="sticky-note__title">{asset.title}</h2>
         <button
           type="button"
