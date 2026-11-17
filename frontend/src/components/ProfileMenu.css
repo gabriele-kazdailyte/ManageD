@@ -1,0 +1,177 @@
+.profile-menu {
+  position: relative;
+}
+
+.profile-menu__button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--text-h);
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.profile-menu__button:hover,
+.profile-menu__button[aria-expanded='true'] {
+  background: var(--accent-bg);
+}
+
+.profile-menu__button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.profile-menu__button--compact {
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.profile-menu__avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--avatar-bg);
+  color: var(--accent-text);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.profile-menu__avatar--large {
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+}
+
+.profile-menu__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* Opens upwards from the button, and wider than the collapsed sidebar, so it sits above the page. */
+.profile-menu__popup {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 260px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.profile-menu__who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-menu__names {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.profile-menu__names strong,
+.profile-menu__names span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-menu__names strong {
+  color: var(--text-h);
+}
+
+.profile-menu__names span {
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.profile-menu__section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--divider);
+}
+
+.profile-menu__label {
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.profile-menu__id {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--code-bg);
+  color: var(--text-h);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+.profile-menu__copy {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.profile-menu__copy:hover {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.profile-menu__hint {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.75rem;
+}
+
+.profile-menu__logout {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg);
+  color: var(--danger-text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-menu__logout:hover {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+}
+
+.profile-menu__copy:focus-visible,
+.profile-menu__logout:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

@@ -1,13 +1,16 @@
 import { createContext, useContext, type Dispatch, type SetStateAction } from 'react'
+import type { User } from '../api/users'
 
 export type UserIdentity = {
   userId: string
+  username: string
   displayName: string
 }
 
 type UserContextValue = {
   identity: UserIdentity | null
   setIdentity: Dispatch<SetStateAction<UserIdentity | null>>
+  logout: () => void
 }
 
 const STORAGE_KEY = 'manageD.identity'
@@ -27,13 +30,16 @@ export function readStoredIdentity(): UserIdentity | null {
   try {
     const parsedIdentity = JSON.parse(storedIdentity) as Partial<UserIdentity>
 
-    if (!parsedIdentity.userId || !parsedIdentity.displayName) {
+    // Identities saved before login existed have no username. Their accounts have no password, so they
+    // can't log in again: drop them and show the login screen.
+    if (!parsedIdentity.userId || !parsedIdentity.username || !parsedIdentity.displayName) {
       window.localStorage.removeItem(STORAGE_KEY)
       return null
     }
 
     return {
       userId: parsedIdentity.userId,
+      username: parsedIdentity.username,
       displayName: parsedIdentity.displayName,
     }
   } catch {
@@ -46,23 +52,13 @@ export function persistIdentity(identity: UserIdentity) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(identity))
 }
 
-export async function createIdentity(displayName: string): Promise<UserIdentity> {
-  const response = await fetch('/api/users', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ displayName }),
-  })
+export function clearStoredIdentity() {
+  window.localStorage.removeItem(STORAGE_KEY)
+}
 
-  if (!response.ok) {
-    throw new Error(`Failed to create user (HTTP ${response.status}).`)
-  }
-
-  const createdUser = (await response.json()) as { id: string; displayName: string }
-
-  return {
-    userId: createdUser.id,
-    displayName: createdUser.displayName,
-  }
+// The server calls it `id`; the rest of the app has always called it `userId`.
+export function toIdentity(user: User): UserIdentity {
+  return { userId: user.id, username: user.username, displayName: user.displayName }
 }
 
 export function useUser(): Omit<UserContextValue, 'identity'> & { identity: UserIdentity } {
