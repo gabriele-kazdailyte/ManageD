@@ -16,6 +16,11 @@ async function readUserError(response: Response): Promise<Error> {
     return new Error('Too many attempts. Wait a minute, then try again.')
   }
 
+  // In development the Vite proxy answers 500 itself when the backend isn't running.
+  if (response.status >= 500) {
+    return new Error('Unable to reach the server. Check that the backend is running, then try again.')
+  }
+
   try {
     const problem = (await response.json()) as ProblemBody
 

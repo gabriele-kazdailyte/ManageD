@@ -61,22 +61,6 @@ export function toIdentity(user: User): UserIdentity {
   return { userId: user.id, username: user.username, displayName: user.displayName }
 }
 
-export async function createIdentity(displayName: string): Promise<UserIdentity> {
-  const response = await fetch('/api/users', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ displayName }),
-  })
-
-  if (!response.ok) {
-    throw new Error(`Failed to create user (HTTP ${response.status}).`)
-  }
-
-  const createdUser = (await response.json()) as User
-
-  return toIdentity(createdUser)
-}
-
 export function useUser(): Omit<UserContextValue, 'identity'> & { identity: UserIdentity } {
   const context = useContext(UserContext)
 
