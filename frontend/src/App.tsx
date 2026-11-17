@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import Layout from './components/Layout'
-import { UserContext, clearStoredIdentity, persistIdentity, readStoredIdentity, type UserIdentity } from './context/UserContext'
+import { getUser } from './api/users'
+import { UserContext, clearStoredIdentity, persistIdentity, readStoredIdentity, toIdentity, type UserIdentity } from './context/UserContext'
 import LoginPage from './pages/LoginPage'
 import WorkspacePage from './pages/WorkspacePage'
 import WorkspacesPage from './pages/WorkspacesPage'
@@ -24,6 +25,37 @@ function App() {
       persistIdentity(identity)
     }
   }, [identity])
+
+  // The saved user can go stale: the account may be gone (for example after the database was reset), or its
+  // names may have changed. Ask the server once per user and log out if it no longer exists.
+  const userId = identity?.userId
+  useEffect(() => {
+    if (!userId) {
+      return
+    }
+
+    const controller = new AbortController()
+
+    getUser(userId, controller.signal)
+      .then((user) => {
+        if (!user) {
+          logout()
+          return
+        }
+
+        const fresh = toIdentity(user)
+        // Only replace it when something changed, so the app doesn't re-render for nothing.
+        setIdentity((current) =>
+          current && current.username === fresh.username && current.displayName === fresh.displayName ? current : fresh,
+        )
+      })
+      .catch(() => {
+        // The server couldn't be reached (or the request was cancelled). Keep the saved user rather than
+        // logging out just because the backend is down.
+      })
+
+    return () => controller.abort()
+  }, [userId, logout])
 
   if (!identity) {
     return <LoginPage onLoggedIn={setIdentity} />
