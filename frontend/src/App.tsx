@@ -1,7 +1,7 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { useCallback, useEffect, useState, type FormEvent } from 'react'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import Layout from './components/Layout'
-import { UserContext, createIdentity, persistIdentity, readStoredIdentity, type UserIdentity } from './context/UserContext'
+import { UserContext, clearStoredIdentity, createIdentity, persistIdentity, readStoredIdentity, type UserIdentity } from './context/UserContext'
 import WorkspacePage from './pages/WorkspacePage'
 import WorkspacesPage from './pages/WorkspacesPage'
 import { WorkspaceListProvider } from './context/WorkspaceListContext'
@@ -12,6 +12,14 @@ function App() {
   const [draftName, setDraftName] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
+
+  const logout = useCallback(() => {
+    clearStoredIdentity()
+    setIdentity(null)
+    // Back to "/", so whoever logs in next doesn't land on a workspace they may not belong to.
+    navigate('/', { replace: true })
+  }, [navigate])
 
   useEffect(() => {
     if (identity) {
@@ -72,7 +80,7 @@ function App() {
   }
 
   return (
-    <UserContext.Provider value={{ identity, setIdentity }}>
+    <UserContext.Provider value={{ identity, setIdentity, logout }}>
       <WorkspaceListProvider key={identity.userId}>
         <Routes>
           <Route element={<Layout />}>
