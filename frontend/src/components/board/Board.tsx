@@ -8,6 +8,7 @@ import {
   ReactFlowProvider,
   useNodesInitialized,
   useReactFlow,
+  type OnBeforeDelete,
   type OnNodesChange,
   type NodeTypes,
   type OnNodeDrag,
@@ -32,6 +33,7 @@ type BoardProps = {
 // Defined outside the component so React Flow always sees the same object.
 const nodeTypes: NodeTypes = { todo: TodoNode, note: NoteNode }
 const MULTI_SELECT_KEYS = ['Shift', 'Meta', 'Control']
+const DELETE_KEYS = ['Delete', 'Backspace']
 
 function Flow({ assets, isLoading, error, deletingIds, onDelete, onUpdate }: BoardProps) {
   const [model, setModel] = useState(() => ({
@@ -77,6 +79,16 @@ function Flow({ assets, isLoading, error, deletingIds, onDelete, onUpdate }: Boa
     }
   }, [])
 
+  // Never let React Flow remove nodes itself: the key press only opens the confirmation dialog, and the
+  // card disappears when the server's AssetDeleted event arrives. The dialog handles one card at a time,
+  // so with several cards selected the keys do nothing (use the card's × button).
+  const onBeforeDelete = useCallback<OnBeforeDelete<AssetNode>>(async ({ nodes: toDelete }) => {
+    if (toDelete.length === 1) {
+      latest.current.onDelete(toDelete[0].data.asset)
+    }
+    return false
+  }, [])
+
   const { fitView } = useReactFlow()
   const initialized = useNodesInitialized()
   const hasFitted = useRef(false)
@@ -102,7 +114,8 @@ function Flow({ assets, isLoading, error, deletingIds, onDelete, onUpdate }: Boa
         onNodesChange={onNodesChange}
         onNodeDragStop={onNodeDragStop}
         nodesConnectable={false}
-        deleteKeyCode={null}
+        deleteKeyCode={DELETE_KEYS}
+        onBeforeDelete={onBeforeDelete}
         panOnScroll
         zoomOnScroll={false}
         zoomOnPinch
