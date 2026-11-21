@@ -9,7 +9,10 @@ public record AssetDelta(
     string? Title = null,
     float? X = null,
     float? Y = null,
-    string? NoteContent = null)
+    string? NoteContent = null,
+    float? SizeX = null,
+    float? SizeY = null,
+    int? ZPos = null)
 {
     [JsonIgnore]
     public bool IsEmpty =>
@@ -19,5 +22,8 @@ public record AssetDelta(
         Title is null &&
         X is null &&
         Y is null &&
-        NoteContent is null;
+        NoteContent is null &&
+        SizeX is null &&
+        SizeY is null &&
+        ZPos is null;
 }

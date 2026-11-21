@@ -122,12 +122,12 @@ The plan has two tracks:
 
 Can run at any time, in parallel with the frontend track. The two tracks share no files.
 
-### BE1. [ ] `CreateAsset` takes an optional position
+### BE1. [x] `CreateAsset` takes an optional position
 - **Files:** `backend/src/ManageD.Api/Hubs/WorkspaceHub.cs`, `Services/AssetService.cs` + `IAssetService.cs`, `docs/api-contract.md`, `backend/tests/ManageD.Api.Tests`
-- **Steps:** add `float? x = null, float? y = null` to the end of `CreateAsset` and store them on the new asset. Reject values that aren't finite.
+- **Steps:** add `float? x, float? y` to the new asset. Reject values that aren't finite. **Deviation:** SignalR doesn't support optional hub arguments or overloads (a 4-argument call to a 6-parameter method fails), so this is a new hub method `CreateAssetAt(..., x, y)` and `CreateAsset` is unchanged.
 - **Acceptance:** tests show the given x/y is saved and that leaving them out still gives (0,0). Existing clients are unaffected.
 
-### BE2. [ ] Send size and z-order in snapshots and deltas
+### BE2. [x] Send size and z-order in snapshots and deltas
 - **Files:** `Dtos/AssetSnapshot.cs`, `Dtos/AssetDelta.cs` (+ `IsEmpty`), `Services/DeltaApplier.cs`, `Services/EfAssetStore.cs` (`ToSnapshot`), `docs/api-contract.md`, `docs/architecture.md`, tests. The DB columns already exist, so there's no migration.
 - **Steps:**
   1. `AssetSnapshot` gets `float SizeX, float SizeY, int ZPos`. 0 means "auto".
@@ -142,7 +142,7 @@ Can run at any time, in parallel with the frontend track. The two tracks share n
 
 ### FE8. [ ] Drop at the cursor — needs BE1
 - **Steps:**
-  1. In `onDrop`, `screenToFlowPosition({ x: e.clientX, y: e.clientY })` gives the board position. Pass it to `createAsset(title, presetName, templateType, position?)`, which calls `CreateAsset(..., x, y)`.
+  1. In `onDrop`, `screenToFlowPosition({ x: e.clientX, y: e.clientY })` gives the board position. Pass it to `createAsset(title, presetName, templateType, position?)`, which calls `CreateAssetAt(..., x, y)` (see BE1).
   2. The toolbar's "new note" button places the note at the center of the current view.
 - **Acceptance:** a dropped card appears under the cursor for every viewer.
 

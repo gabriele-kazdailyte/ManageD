@@ -108,6 +108,38 @@ public class HubIntegrationTests : IClassFixture<ManageDFactory>
     }
 
     [Fact]
+    public async Task Size_and_z_order_are_persisted_and_broadcast()
+    {
+        var (aliceId, bobId, workspaceId) = await ArrangeAsync();
+        await using var alice = _factory.CreateHubConnection();
+        await using var bob = _factory.CreateHubConnection();
+        await alice.StartAsync();
+        await bob.StartAsync();
+        await alice.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, aliceId);
+        await bob.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, bobId);
+
+        var created = NextEvent<AssetCreatedEvent>(bob, "AssetCreated");
+        await alice.InvokeAsync("CreateAsset", workspaceId, "Card", TemplateType.Todo, (string?)null);
+        var asset = (await created).Asset;
+
+        var updated = NextEvent<AssetUpdatedEvent>(bob, "AssetUpdated");
+        await alice.InvokeAsync("UpdateAsset", asset.Id, new AssetDelta(null, null, null, SizeX: 400f, SizeY: 300f, ZPos: 5));
+        var delta = (await updated).Delta;
+        Assert.Equal(400f, delta.SizeX);
+        Assert.Equal(300f, delta.SizeY);
+        Assert.Equal(5, delta.ZPos);
+
+        await Assert.ThrowsAsync<HubException>(() =>
+            alice.InvokeAsync("UpdateAsset", asset.Id, new AssetDelta(null, null, null, SizeX: 50f)));
+
+        var joined = await alice.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, aliceId);
+        var saved = Assert.Single(joined.Assets);
+        Assert.Equal(400f, saved.SizeX);
+        Assert.Equal(300f, saved.SizeY);
+        Assert.Equal(5, saved.ZPos);
+    }
+
+    [Fact]
     public async Task A_new_viewer_joining_later_gets_the_existing_assets()
     {
         var (aliceId, bobId, workspaceId) = await ArrangeAsync();
