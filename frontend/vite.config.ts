@@ -6,6 +6,12 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom',
+    coverage: {
+      provider: 'v8',
+      include: ['src/**'],
+      exclude: ['src/**/*.test.*', 'src/main.tsx'],
+      reporter: ['text', 'html', 'cobertura', 'json-summary'],
+    },
   },
   server: {
     proxy: {
