@@ -119,6 +119,14 @@ forwards `/api/*` requests to the .NET backend on `http://localhost:5093`,
 as configured by the backend's HTTP launch profile.
 
 
+## Tests and coverage
+
+```bash
+./scripts/coverage.sh
+```
+
+Runs the backend tests (the build fails below 50% line coverage), builds an HTML report in `coverage/report/` and opens it. Migrations and generated OpenAPI code are left out. If `frontend/coverage/cobertura-coverage.xml` exists (from `npm run test:coverage` in `frontend/`), it is merged into the same report. The first run restores the report tool from `.config/dotnet-tools.json`. CI runs the same script and shows the summary on the run page.
+
 ## Coding Standards
 
 Standards are based on the official Microsoft C# coding conventions (https://learn.microsoft.com/dotnet/csharp/fundamentals/coding-style/coding-conventions):

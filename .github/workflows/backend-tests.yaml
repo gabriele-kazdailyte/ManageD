@@ -12,4 +12,13 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-      - run: dotnet test backend/ManageD.slnx /p:CollectCoverage=true
+      - run: ./scripts/coverage.sh
+      - name: Coverage summary
+        if: always()
+        run: cat coverage/report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/report
