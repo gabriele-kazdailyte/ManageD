@@ -9,6 +9,7 @@ import {
   useNodesInitialized,
   useReactFlow,
   type OnBeforeDelete,
+  type OnMoveEnd,
   type OnNodesChange,
   type NodeTypes,
   type OnNodeDrag,
@@ -18,9 +19,11 @@ import { BoardActionsContext, type BoardActions } from './BoardActionsContext'
 import { assetsToNodes, positionDelta, type AssetNode } from './boardModel'
 import NoteNode from './NoteNode'
 import TodoNode from './TodoNode'
+import { loadViewport, saveViewport } from './boardViewport'
 import './Board.css'
 
 type BoardProps = {
+  workspaceId: string
   assets: AssetSnapshot[]
   isLoading: boolean
   error: string | null
@@ -35,7 +38,7 @@ const nodeTypes: NodeTypes = { todo: TodoNode, note: NoteNode }
 const MULTI_SELECT_KEYS = ['Shift', 'Meta', 'Control']
 const DELETE_KEYS = ['Delete', 'Backspace']
 
-function Flow({ assets, isLoading, error, deletingIds, onDelete, onUpdate }: BoardProps) {
+function Flow({ workspaceId, assets, isLoading, error, deletingIds, onDelete, onUpdate }: BoardProps) {
   const [model, setModel] = useState(() => ({
     assets,
     deletingIds,
@@ -91,7 +94,10 @@ function Flow({ assets, isLoading, error, deletingIds, onDelete, onUpdate }: Boa
 
   const { fitView } = useReactFlow()
   const initialized = useNodesInitialized()
-  const hasFitted = useRef(false)
+  // A saved view for this workspace wins over fitting to the cards. Read once, on mount.
+  const [savedViewport] = useState(() => loadViewport(workspaceId))
+  const hasFitted = useRef(savedViewport !== undefined)
+  const onMoveEnd = useCallback<OnMoveEnd>((_event, viewport) => saveViewport(workspaceId, viewport), [workspaceId])
   useEffect(() => {
     if (hasFitted.current || isLoading) {
       return
@@ -113,6 +119,8 @@ function Flow({ assets, isLoading, error, deletingIds, onDelete, onUpdate }: Boa
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onNodeDragStop={onNodeDragStop}
+        defaultViewport={savedViewport}
+        onMoveEnd={onMoveEnd}
         nodesConnectable={false}
         deleteKeyCode={DELETE_KEYS}
         onBeforeDelete={onBeforeDelete}

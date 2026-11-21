@@ -249,6 +249,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
         </>
       ) : (
         <Board
+          workspaceId={workspaceId}
           assets={assets}
           isLoading={isLoading}
           error={actionError ?? workspaceError ?? statusMessage}
