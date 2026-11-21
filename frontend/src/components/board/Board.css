@@ -89,3 +89,26 @@
   height: 100%;
 }
 
+
+/* Resizing: the selected card's outline is the only highlight. The resizer's lines and corner squares are
+   invisible grab areas, a little wider than React Flow's 1px so the edges are easy to catch. */
+.board .react-flow__resize-control.line,
+.board .react-flow__resize-control.handle {
+  background: transparent;
+  border: 0;
+}
+
+.board .react-flow__resize-control.line.left,
+.board .react-flow__resize-control.line.right {
+  width: 8px;
+}
+
+.board .react-flow__resize-control.line.top,
+.board .react-flow__resize-control.line.bottom {
+  height: 8px;
+}
+
+.board .react-flow__resize-control.handle {
+  width: 12px;
+  height: 12px;
+}

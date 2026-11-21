@@ -20,7 +20,6 @@ function TodoNode({ data, selected, id }: NodeProps<AssetNode>) {
         minHeight={MIN_CARD_HEIGHT}
         maxWidth={MAX_CARD_SIZE}
         maxHeight={MAX_CARD_SIZE}
-        color="var(--accent)"
         onResizeEnd={handleResizeEnd}
       />
       <TodoAsset asset={asset} isDeleting={data.isDeleting} onDelete={onDelete} onUpdate={onUpdate} />
