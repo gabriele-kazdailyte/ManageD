@@ -12,7 +12,9 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
-      - run: ./scripts/coverage.sh
+      - run: dotnet tool restore
+      - run: dotnet test backend/ManageD.slnx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=../../../coverage/backend/
+      - run: dotnet reportgenerator "-reports:coverage/backend/coverage.cobertura.xml;frontend/coverage/cobertura-coverage.xml" -targetdir:coverage/report "-classfilters:-*Migrations*;-Microsoft.AspNetCore.OpenApi.Generated*;-System.Runtime.CompilerServices*" "-reporttypes:Html;MarkdownSummaryGithub"
       - name: Coverage summary
         if: always()
         run: cat coverage/report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"

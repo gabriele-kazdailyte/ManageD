@@ -121,11 +121,15 @@ as configured by the backend's HTTP launch profile.
 
 ## Tests and coverage
 
-```bash
-./scripts/coverage.sh
+Run these from the repository root. Each is a single line that works unchanged in PowerShell, cmd and bash.
+
+```
+dotnet tool restore
+dotnet test backend/ManageD.slnx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=../../../coverage/backend/
+dotnet reportgenerator "-reports:coverage/backend/coverage.cobertura.xml;frontend/coverage/cobertura-coverage.xml" -targetdir:coverage/report "-classfilters:-*Migrations*;-Microsoft.AspNetCore.OpenApi.Generated*;-System.Runtime.CompilerServices*" "-reporttypes:Html;MarkdownSummaryGithub"
 ```
 
-Runs the backend tests (the build fails below 50% line coverage), builds an HTML report in `coverage/report/` and opens it. Migrations and generated OpenAPI code are left out. If `frontend/coverage/cobertura-coverage.xml` exists (from `npm run test:coverage` in `frontend/`), it is merged into the same report. The first run restores the report tool from `.config/dotnet-tools.json`. CI runs the same script and shows the summary on the run page.
+Then open `coverage/report/index.html`. The test run fails below 50% line coverage. Migrations and generated OpenAPI code are left out of the report. To include the frontend, run `npm run test:coverage` in `frontend/` first. If `frontend/coverage/cobertura-coverage.xml` is missing, ReportGenerator prints a warning and builds the backend report anyway. CI runs the same commands and shows the summary on the run page.
 
 ## Coding Standards
 

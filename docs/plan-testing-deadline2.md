@@ -85,17 +85,17 @@ Rules for every task:
 | T8 | Frontend formatter (optional) | S |
 
 ### T1. [ ] Coverage report tooling
-- **Files:** `.config/dotnet-tools.json`, `scripts/coverage.sh`, `.gitignore`, `.github/workflows/backend-tests.yaml`, `README.md`
+- **Files:** `.config/dotnet-tools.json`, `.gitignore`, `.github/workflows/backend-tests.yaml`, `README.md`
 - **Steps:**
   1. `dotnet new tool-manifest`, then `dotnet tool install dotnet-reportgenerator-globaltool`.
-  2. `scripts/coverage.sh` runs `dotnet test backend/ManageD.slnx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=../../../coverage/backend/`. It then runs `dotnet reportgenerator` to build an HTML report in `coverage/report/`.
+  2. Three single-line commands that work unchanged in PowerShell, cmd and bash (no script, since the team uses Windows): `dotnet tool restore`, then `dotnet test backend/ManageD.slnx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=../../../coverage/backend/`, then `dotnet reportgenerator` to build an HTML report in `coverage/report/`.
      - `-classfilters:-*Migrations*;-Microsoft.AspNetCore.OpenApi.Generated*;-System.Runtime.CompilerServices*`
      - `-reporttypes:Html;MarkdownSummaryGithub`
-     - It also includes `frontend/coverage/cobertura-coverage.xml` when that file exists (from T4).
+     - `-reports:"coverage/backend/coverage.cobertura.xml;frontend/coverage/cobertura-coverage.xml"`, quoted. ReportGenerator only warns when the frontend file is missing (from T4).
   3. Ignore `coverage/` and `frontend/coverage/` in `.gitignore`.
   4. In CI, add the markdown summary to `$GITHUB_STEP_SUMMARY` and upload the HTML report as an artifact.
-  5. In the README, add a "Tests and coverage" section with the one command to run.
-- **Acceptance:** `./scripts/coverage.sh` opens a report showing about 90% line coverage with no `Migrations` classes in it, and the CI run shows the coverage summary.
+  5. In the README, add a "Tests and coverage" section with the three commands.
+- **Acceptance:** the commands produce `coverage/report/index.html`, showing about 90% line coverage with no `Migrations` classes in it, and the CI run shows the coverage summary.
 
 ### T2. [ ] Workspace endpoint tests (integration)
 - **Files:** new `backend/tests/ManageD.Api.Tests/WorkspacesApiTests.cs`. Reuse `ManageDFactory` and follow the style of `UsersApiTests.cs`.
@@ -149,7 +149,7 @@ Rules for every task:
   - how the integration tests get their own database (`ManageDFactory` and `SqliteTestDb`);
   - what the coverage report excludes, and why;
   - why frontend coverage is about 32% and not higher. The answer: the sync logic and the card interactions are tested, while pages and pure rendering aren't, because tests there would check markup rather than behaviour. The 50% requirement is met by the C# code at about 90%.
-- Everyone runs `./scripts/coverage.sh` on their own machine once before the review.
+- Everyone runs the coverage commands from the README on their own machine once before the review.
 
 ### T8. [ ] Frontend formatter (optional, for requirement 9)
 - Add Prettier with a config close to the current style. Run it once in its own PR, add `npm run format:check` to the frontend CI, and add the ESLint–Prettier compatibility config.
