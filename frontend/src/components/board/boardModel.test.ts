@@ -70,6 +70,22 @@ describe('assetsToNodes', () => {
   })
 })
 
+describe('assetsToNodes reuse', () => {
+  it('reuses unchanged node objects and keeps measured size', () => {
+    const a = asset('a', { x: 5, y: 5 })
+    const b = asset('b', { x: 9, y: 9 })
+    const first = assetsToNodes([a, b], none)
+    first[0] = { ...first[0], measured: { width: 260, height: 100 } }
+    const b2 = { ...b, title: 'changed' }
+    const second = assetsToNodes([a, b2], none, first)
+    expect(second[0]).toBe(first[0])
+    expect(second[1]).not.toBe(first[1])
+    expect(second[1].data.asset).toBe(b2)
+    const third = assetsToNodes([{ ...a, x: 6 }, b2], none, first)
+    expect(third[0].measured).toEqual({ width: 260, height: 100 })
+  })
+})
+
 describe('positionDelta', () => {
   it('rounds to whole numbers', () => {
     expect(positionDelta({ position: { x: 10.4, y: -20.6 } })).toEqual({ x: 10, y: -21 })

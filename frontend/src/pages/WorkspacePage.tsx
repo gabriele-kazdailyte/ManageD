@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { loadPresets, type AssetDelta, type AssetSnapshot, type PresetInfo } from '../api/assets'
 import Toolbar from '../components/Toolbar'
-import Canvas from '../components/Canvas'
+import Board from '../components/board/Board'
 import CalendarView from '../components/CalendarView'
 import MembersPanel from '../components/MembersPanel'
 import OnlineViewers from '../components/OnlineViewers'
@@ -248,7 +248,7 @@ function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
           <CalendarView assets={assets} />
         </>
       ) : (
-        <Canvas
+        <Board
           assets={assets}
           isLoading={isLoading}
           error={actionError ?? workspaceError ?? statusMessage}

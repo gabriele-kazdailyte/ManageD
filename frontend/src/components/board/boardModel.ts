@@ -48,12 +48,31 @@ export function assetsToNodes(
         : undefined
     const position = before?.dragging ? before.position : (savedPosition ?? slots.get(asset.id) ?? { x: 0, y: 0 })
 
+    const isDeleting = deletingIds.has(asset.id)
+    const type = asset.templateType === 'Note' ? 'note' : 'todo'
+
+    // Reuse the previous node object when nothing changed, so React Flow and the node components can skip work.
+    if (
+      before &&
+      before.type === type &&
+      before.data.asset === asset &&
+      before.data.isDeleting === isDeleting &&
+      before.position.x === position.x &&
+      before.position.y === position.y
+    ) {
+      return before
+    }
+
     const node: AssetNode = {
       id: asset.id,
-      type: asset.templateType === 'Note' ? 'note' : 'todo',
+      type,
       position,
       dragHandle: DRAG_HANDLE_SELECTOR,
-      data: { asset, isDeleting: deletingIds.has(asset.id) },
+      data: { asset, isDeleting },
+    }
+    // Measured size is kept so a re-map doesn't make React Flow hide the node until it is measured again.
+    if (before?.measured) {
+      node.measured = before.measured
     }
     if (before?.selected) {
       node.selected = true

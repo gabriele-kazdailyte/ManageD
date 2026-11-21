@@ -1,0 +1,85 @@
+.board {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+  background-color: var(--panel);
+}
+
+.board .react-flow {
+  --xy-background-color: var(--panel);
+  --xy-background-pattern-dots-color-default: rgba(20, 20, 15, 0.12);
+  --xy-node-border-radius: 12px;
+  --xy-selection-background-color: var(--accent-bg);
+  --xy-selection-border: 1px solid var(--accent);
+  --xy-minimap-background-color: var(--bg);
+  --xy-controls-button-background-color: var(--bg);
+  --xy-controls-button-background-color-hover: var(--accent-bg);
+  --xy-controls-button-color: var(--text);
+  --xy-controls-button-border-color: var(--border);
+}
+
+/* Selected cards get an accent ring instead of React Flow's default outline. */
+.board .react-flow__node {
+  width: 260px;
+  border-radius: 12px;
+}
+
+.board .react-flow__node.selected {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.board .react-flow__node.dragging .todo-asset__header,
+.board .react-flow__node.dragging .sticky-note__header {
+  cursor: grabbing;
+}
+
+.board .react-flow__minimap {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.board .react-flow__minimap-node {
+  fill: var(--accent-border);
+  stroke: var(--accent);
+}
+
+.board .react-flow__controls {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.board__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  margin: auto;
+  width: min(80%, 520px);
+  height: 220px;
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  /* Pointer events pass through, so dropping onto an empty board still works. */
+  pointer-events: none;
+}
+
+.board__error {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: 0;
+  color: #d33;
+  font-size: 14px;
+  pointer-events: none;
+}
