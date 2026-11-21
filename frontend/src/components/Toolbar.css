@@ -23,6 +23,7 @@
   padding: 8px;
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 .toolbar__block {
@@ -43,6 +44,9 @@
   padding: 4px;
   list-style: none;
   min-width: 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 10px;
