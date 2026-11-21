@@ -151,6 +151,90 @@ public class HubIntegrationTests : IClassFixture<ManageDFactory>
         Assert.Contains("not joined", error.Message);
     }
 
+    // Joins again to read what the workspace holds now.
+    private static async Task<IReadOnlyList<AssetSnapshot>> AssetsInAsync(HubConnection connection, Guid workspaceId, Guid userId)
+    {
+        var state = await connection.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, userId);
+        return state.Assets;
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task Creating_an_asset_with_an_empty_title_is_rejected_with_the_domain_message(string title)
+    {
+        var (aliceId, _, workspaceId) = await ArrangeAsync();
+        await using var alice = _factory.CreateHubConnection();
+        await alice.StartAsync();
+        await alice.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, aliceId);
+
+        var error = await Assert.ThrowsAsync<HubException>(() =>
+            alice.InvokeAsync("CreateAsset", workspaceId, title, TemplateType.Todo, (string?)null));
+
+        Assert.Contains("Title can't be empty.", error.Message);
+        Assert.Empty(await AssetsInAsync(alice, workspaceId, aliceId));
+    }
+
+    [Fact]
+    public async Task Creating_an_asset_with_a_title_over_200_characters_is_rejected_and_nothing_is_stored()
+    {
+        var (aliceId, _, workspaceId) = await ArrangeAsync();
+        await using var alice = _factory.CreateHubConnection();
+        await alice.StartAsync();
+        await alice.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, aliceId);
+
+        var error = await Assert.ThrowsAsync<HubException>(() =>
+            alice.InvokeAsync("CreateAsset", workspaceId, new string('a', 201), TemplateType.Todo, (string?)null));
+
+        Assert.Contains("Title can't be longer than 200 characters.", error.Message);
+        Assert.Empty(await AssetsInAsync(alice, workspaceId, aliceId));
+    }
+
+    [Fact]
+    public async Task Creating_an_asset_with_a_title_of_exactly_200_characters_is_accepted()
+    {
+        var (aliceId, _, workspaceId) = await ArrangeAsync();
+        await using var alice = _factory.CreateHubConnection();
+        await alice.StartAsync();
+        await alice.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, aliceId);
+        var title = new string('a', 200);
+
+        var created = NextEvent<AssetCreatedEvent>(alice, "AssetCreated");
+        await alice.InvokeAsync("CreateAsset", workspaceId, title, TemplateType.Todo, (string?)null);
+
+        Assert.Equal(title, (await created).Asset.Title);
+    }
+
+    [Fact]
+    public async Task Creating_a_sticky_note_from_a_preset_is_rejected_and_nothing_is_stored()
+    {
+        var (aliceId, _, workspaceId) = await ArrangeAsync();
+        await using var alice = _factory.CreateHubConnection();
+        await alice.StartAsync();
+        await alice.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, aliceId);
+
+        var error = await Assert.ThrowsAsync<HubException>(() =>
+            alice.InvokeAsync("CreateAsset", workspaceId, "Note", TemplateType.Note, "Daily standup"));
+
+        Assert.Contains("Sticky notes can't be filled from a to-do preset.", error.Message);
+        Assert.Empty(await AssetsInAsync(alice, workspaceId, aliceId));
+    }
+
+    [Fact]
+    public async Task Creating_an_asset_from_an_unknown_preset_is_rejected_with_the_preset_name()
+    {
+        var (aliceId, _, workspaceId) = await ArrangeAsync();
+        await using var alice = _factory.CreateHubConnection();
+        await alice.StartAsync();
+        await alice.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, aliceId);
+
+        var error = await Assert.ThrowsAsync<HubException>(() =>
+            alice.InvokeAsync("CreateAsset", workspaceId, "List", TemplateType.Todo, "No such preset"));
+
+        Assert.Contains("Unknown preset 'No such preset'.", error.Message);
+        Assert.Empty(await AssetsInAsync(alice, workspaceId, aliceId));
+    }
+
     [Fact]
     public async Task Updating_an_unknown_asset_is_rejected()
     {
