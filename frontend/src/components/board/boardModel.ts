@@ -90,3 +90,18 @@ export function positionDelta(node: Pick<AssetNode, 'position'>): { x: number; y
   const y = Math.round(node.position.y)
   return x === 0 && y === 0 ? { x: 1, y: 1 } : { x, y }
 }
+
+export type BoardPoint = { x: number; y: number }
+
+// What the page can ask the board for: where a new card should go so it lands in the middle of the view.
+export type BoardView = { getNewCardPosition: () => BoardPoint }
+
+// Cards are 260px wide. A card dropped on the cursor is held by its header; a card created from the toolbar
+// is centered in the view (the 110 is about half the height of a new note).
+export const DROP_ANCHOR: BoardPoint = { x: 130, y: 20 }
+export const CENTER_ANCHOR: BoardPoint = { x: 130, y: 110 }
+
+// Top-left position for a new card whose `anchor` point should sit at `point` (both in board coordinates).
+export function newCardPosition(point: BoardPoint, anchor: BoardPoint): BoardPoint {
+  return positionDelta({ position: { x: point.x - anchor.x, y: point.y - anchor.y } })
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { AssetSnapshot } from '../../api/assets'
-import { assetsToNodes, positionDelta, type AssetNode } from './boardModel'
+import { assetsToNodes, newCardPosition, positionDelta, type AssetNode } from './boardModel'
 
 const asset = (id: string, over: Partial<AssetSnapshot> = {}): AssetSnapshot => ({
   id,
@@ -97,5 +97,19 @@ describe('positionDelta', () => {
 
   it('keeps a single zero axis', () => {
     expect(positionDelta({ position: { x: 0, y: 5 } })).toEqual({ x: 0, y: 5 })
+  })
+})
+
+describe('newCardPosition', () => {
+  it('puts the anchor point at the given point, rounded', () => {
+    expect(newCardPosition({ x: 500.4, y: 300.6 }, { x: 130, y: 20 })).toEqual({ x: 370, y: 281 })
+  })
+
+  it('allows negative positions', () => {
+    expect(newCardPosition({ x: 10, y: 10 }, { x: 130, y: 20 })).toEqual({ x: -120, y: -10 })
+  })
+
+  it('never returns exactly (0,0), which means "unmoved"', () => {
+    expect(newCardPosition({ x: 130, y: 20 }, { x: 130, y: 20 })).toEqual({ x: 1, y: 1 })
   })
 })

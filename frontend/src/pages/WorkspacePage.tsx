@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { loadPresets, type AssetDelta, type AssetSnapshot, type PresetInfo } from '../api/assets'
 import Toolbar from '../components/Toolbar'
 import Board from '../components/board/Board'
+import type { BoardPoint, BoardView } from '../components/board/boardModel'
 import CalendarView from '../components/CalendarView'
 import MembersPanel from '../components/MembersPanel'
 import OnlineViewers from '../components/OnlineViewers'
@@ -32,6 +33,7 @@ function WorkspaceBoard({ workspaceId }: WorkspaceBoardProps) {
   const [skipDeleteConfirmation, setSkipDeleteConfirmation] = useState(false)
   const [confirmFutureDeletes, setConfirmFutureDeletes] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const boardViewRef = useRef<BoardView | null>(null)
   const dialogRef = useRef<HTMLElement>(null)
   const cancelButtonRef = useRef<HTMLButtonElement>(null)
   const confirmButtonRef = useRef<HTMLButtonElement>(null)
@@ -126,7 +128,7 @@ function WorkspaceBoard({ workspaceId }: WorkspaceBoardProps) {
     return () => controller.abort()
   }, [])
 
-  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = async (event: React.DragEvent<HTMLElement>, position: BoardPoint) => {
     event.preventDefault()
 
     // dataTransfer can only be read while the drop event is being handled, so before any await.
@@ -140,7 +142,7 @@ function WorkspaceBoard({ workspaceId }: WorkspaceBoardProps) {
 
     try {
       // The new asset shows up when the server's AssetCreated event arrives.
-      await createAsset(label, templateType === 'Todo' ? selectedPreset : null, templateType)
+      await createAsset(label, templateType === 'Todo' ? selectedPreset : null, templateType, position)
       setActionError(null)
     } catch (createError) {
       setActionError(createError instanceof Error ? createError.message : 'Could not create the asset.')
@@ -235,7 +237,8 @@ function WorkspaceBoard({ workspaceId }: WorkspaceBoardProps) {
         selectedPreset={selectedPreset}
         onPresetChange={setSelectedPreset}
         onCreateNote={() => {
-          createAsset('Sticky Note', null, 'Note').catch((createError: unknown) =>
+          // At the center of what the viewer is looking at, or the default spot if the board isn't shown
+          createAsset('Sticky Note', null, 'Note', boardViewRef.current?.getNewCardPosition()).catch((createError: unknown) =>
             setActionError(createError instanceof Error ? createError.message : 'Could not create the sticky note.'),
           )
         }}
@@ -254,6 +257,7 @@ function WorkspaceBoard({ workspaceId }: WorkspaceBoardProps) {
           isLoading={isLoading}
           error={actionError ?? workspaceError ?? statusMessage}
           deletingIds={deletingIds}
+          viewRef={boardViewRef}
           onDrop={handleDrop}
           onDelete={handleRequestDelete}
           onUpdate={handleUpdate}

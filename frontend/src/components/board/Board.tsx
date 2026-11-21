@@ -16,7 +16,16 @@ import {
 } from '@xyflow/react'
 import type { AssetDelta, AssetSnapshot } from '../../api/assets'
 import { BoardActionsContext, type BoardActions } from './BoardActionsContext'
-import { assetsToNodes, positionDelta, type AssetNode } from './boardModel'
+import {
+  assetsToNodes,
+  CENTER_ANCHOR,
+  DROP_ANCHOR,
+  newCardPosition,
+  positionDelta,
+  type AssetNode,
+  type BoardPoint,
+  type BoardView,
+} from './boardModel'
 import NoteNode from './NoteNode'
 import TodoNode from './TodoNode'
 import { loadViewport, saveViewport } from './boardViewport'
@@ -30,10 +39,14 @@ type BoardProps = {
   isLoading: boolean
   error: string | null
   deletingIds: ReadonlySet<string>
-  onDrop: (event: React.DragEvent<HTMLDivElement>) => void
+  // position is where the card should go, in board coordinates
+  onDrop: (event: React.DragEvent<HTMLElement>, position: BoardPoint) => void
+  viewRef?: RefObject<BoardView | null>
   onDelete: (asset: AssetSnapshot) => void
   onUpdate: (asset: AssetSnapshot, delta: AssetDelta) => void
 }
+
+const handleDragOver = (event: React.DragEvent<HTMLElement>) => event.preventDefault()
 
 // Defined outside the component so React Flow always sees the same object.
 const nodeTypes: NodeTypes = { todo: TodoNode, note: NoteNode }
@@ -51,6 +64,8 @@ function Flow({
   deletingIds,
   onDelete,
   onUpdate,
+  onDrop,
+  viewRef,
   containerRef,
 }: BoardProps & { containerRef: RefObject<HTMLElement | null> }) {
   useBoardCamera(containerRef)
@@ -108,7 +123,33 @@ function Flow({
     return false
   }, [])
 
-  const { fitView } = useReactFlow()
+  const { fitView, screenToFlowPosition } = useReactFlow()
+
+  const handleDrop = useCallback(
+    (event: React.DragEvent<HTMLElement>) => {
+      onDrop(event, newCardPosition(screenToFlowPosition({ x: event.clientX, y: event.clientY }), DROP_ANCHOR))
+    },
+    [onDrop, screenToFlowPosition],
+  )
+
+  useEffect(() => {
+    if (!viewRef) {
+      return
+    }
+    viewRef.current = {
+      getNewCardPosition: () => {
+        const rect = containerRef.current?.getBoundingClientRect()
+        const center = screenToFlowPosition({
+          x: (rect?.left ?? 0) + (rect?.width ?? 0) / 2,
+          y: (rect?.top ?? 0) + (rect?.height ?? 0) / 2,
+        })
+        return newCardPosition(center, CENTER_ANCHOR)
+      },
+    }
+    return () => {
+      viewRef.current = null
+    }
+  }, [viewRef, containerRef, screenToFlowPosition])
   const initialized = useNodesInitialized()
   // A saved view for this workspace wins over fitting to the cards. Read once, on mount.
   const [savedViewport] = useState(() => loadViewport(workspaceId))
@@ -137,6 +178,8 @@ function Flow({
         onNodeDragStop={onNodeDragStop}
         defaultViewport={savedViewport}
         onMoveEnd={onMoveEnd}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
         nodesConnectable={false}
         deleteKeyCode={DELETE_KEYS}
         onBeforeDelete={onBeforeDelete}
@@ -166,12 +209,7 @@ function Flow({
 function Board(props: BoardProps) {
   const containerRef = useRef<HTMLElement>(null)
   return (
-    <section
-      ref={containerRef}
-      className="board"
-      onDragOver={(event) => event.preventDefault()}
-      onDrop={props.onDrop}
-    >
+    <section ref={containerRef} className="board">
       <ReactFlowProvider>
         <Flow {...props} containerRef={containerRef} />
       </ReactFlowProvider>
