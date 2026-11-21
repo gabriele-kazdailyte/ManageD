@@ -29,6 +29,9 @@ const assets: AssetSnapshot[] = [1, 2, 3].map((n) => ({
   templateType: 'Todo',
   x: n * 300,
   y: 10,
+  sizeX: 0,
+  sizeY: 0,
+  zPos: 0,
   items: [],
   noteContent: '',
 }))

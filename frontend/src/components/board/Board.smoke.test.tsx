@@ -20,8 +20,8 @@ it('renders cards as nodes', () => {
       <Board
         workspaceId="w"
         assets={[
-          { id: 'a', title: 'Groceries', templateType: 'Todo', x: 10, y: 10, items: [], noteContent: '' },
-          { id: 'b', title: 'Memo', templateType: 'Note', x: -50, y: 20, items: [], noteContent: 'hi' },
+          { id: 'a', title: 'Groceries', templateType: 'Todo', x: 10, y: 10, sizeX: 0, sizeY: 0, zPos: 0, items: [], noteContent: '' },
+          { id: 'b', title: 'Memo', templateType: 'Note', x: -50, y: 20, sizeX: 0, sizeY: 0, zPos: 0, items: [], noteContent: 'hi' },
         ]}
         isLoading={false}
         error={null}

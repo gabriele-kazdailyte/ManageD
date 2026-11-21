@@ -8,6 +8,9 @@ const asset = (id: string, over: Partial<AssetSnapshot> = {}): AssetSnapshot => 
   templateType: 'Todo',
   x: 0,
   y: 0,
+  sizeX: 0,
+  sizeY: 0,
+  zPos: 0,
   items: [],
   noteContent: '',
   ...over,
@@ -97,6 +100,45 @@ describe('positionDelta', () => {
 
   it('keeps a single zero axis', () => {
     expect(positionDelta({ position: { x: 0, y: 5 } })).toEqual({ x: 0, y: 5 })
+  })
+})
+
+describe('size and z-order', () => {
+  it('maps zPos to zIndex, including 0 and negatives', () => {
+    const nodes = assetsToNodes([asset('a', { zPos: 0 }), asset('b', { zPos: 7 }), asset('c', { zPos: -2 })], none)
+    expect(nodes.map((n) => n.zIndex)).toEqual([0, 7, -2])
+  })
+
+  it('maps sizes above 0 to width and height', () => {
+    const [node] = assetsToNodes([asset('a', { sizeX: 320, sizeY: 240 })], none)
+    expect(node.width).toBe(320)
+    expect(node.height).toBe(240)
+  })
+
+  it('leaves width and height unset for auto size (0)', () => {
+    const [node] = assetsToNodes([asset('a')], none)
+    expect(node.width).toBeUndefined()
+    expect(node.height).toBeUndefined()
+  })
+
+  it('treats each axis on its own', () => {
+    const [node] = assetsToNodes([asset('a', { sizeX: 400 })], none)
+    expect(node.width).toBe(400)
+    expect(node.height).toBeUndefined()
+  })
+
+  it('updates a reused node when the size or z-order changes', () => {
+    const first = assetsToNodes([asset('a')], none)
+    const second = assetsToNodes([asset('a', { sizeX: 300, sizeY: 200, zPos: 3 })], none, first)
+    expect(second[0]).not.toBe(first[0])
+    expect([second[0].width, second[0].height, second[0].zIndex]).toEqual([300, 200, 3])
+  })
+
+  it('keeps the local size while the card is being resized', () => {
+    const first = assetsToNodes([asset('a', { sizeX: 300, sizeY: 200 })], none)
+    const resizing: AssetNode = { ...first[0], width: 450, height: 380, resizing: true }
+    const [node] = assetsToNodes([asset('a', { sizeX: 300, sizeY: 200, zPos: 1 })], none, [resizing])
+    expect([node.width, node.height, node.resizing]).toEqual([450, 380, true])
   })
 })
 

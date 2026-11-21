@@ -46,10 +46,17 @@ export function assetsToNodes(
       Number.isFinite(asset.x) && Number.isFinite(asset.y) && !isUnmoved(asset)
         ? { x: asset.x, y: asset.y }
         : undefined
-    const position = before?.dragging ? before.position : (savedPosition ?? slots.get(asset.id) ?? { x: 0, y: 0 })
+    // While the user is dragging or resizing this card, the local node is the truth, not the server's last echo.
+    const isBeingChanged = before?.dragging || before?.resizing
+    const position = isBeingChanged && before ? before.position : (savedPosition ?? slots.get(asset.id) ?? { x: 0, y: 0 })
 
     const isDeleting = deletingIds.has(asset.id)
     const type = asset.templateType === 'Note' ? 'note' : 'todo'
+
+    // 0 means auto size: no width/height, so the card sizes itself.
+    const width = isBeingChanged && before ? before.width : asset.sizeX > 0 ? asset.sizeX : undefined
+    const height = isBeingChanged && before ? before.height : asset.sizeY > 0 ? asset.sizeY : undefined
+    const zIndex = asset.zPos
 
     // Reuse the previous node object when nothing changed, so React Flow and the node components can skip work.
     if (
@@ -58,7 +65,10 @@ export function assetsToNodes(
       before.data.asset === asset &&
       before.data.isDeleting === isDeleting &&
       before.position.x === position.x &&
-      before.position.y === position.y
+      before.position.y === position.y &&
+      before.width === width &&
+      before.height === height &&
+      before.zIndex === zIndex
     ) {
       return before
     }
@@ -67,8 +77,15 @@ export function assetsToNodes(
       id: asset.id,
       type,
       position,
+      zIndex,
       dragHandle: DRAG_HANDLE_SELECTOR,
       data: { asset, isDeleting },
+    }
+    if (width !== undefined) {
+      node.width = width
+    }
+    if (height !== undefined) {
+      node.height = height
     }
     // Measured size is kept so a re-map doesn't make React Flow hide the node until it is measured again.
     if (before?.measured) {
@@ -79,6 +96,9 @@ export function assetsToNodes(
     }
     if (before?.dragging) {
       node.dragging = true
+    }
+    if (before?.resizing) {
+      node.resizing = true
     }
     return node
   })
