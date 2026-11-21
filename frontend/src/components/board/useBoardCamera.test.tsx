@@ -146,8 +146,43 @@ describe('useBoardCamera wheel zoom', () => {
 describe('useBoardCamera keyboard shortcuts', () => {
   const center = { x: PANE.width / 2, y: PANE.height / 2 }
 
-  it('Ctrl + = zooms in around the center', async () => {
+  // The shortcuts only apply while the mouse is over the board or focus is inside it.
+  const screenContainer = () => document.querySelector<HTMLElement>('[data-testid="container"]')!
+  const mountWithFocus = () => {
+    const mounted = mount()
+    mounted.container.tabIndex = -1
+    mounted.container.focus()
+    return mounted
+  }
+
+  it('leaves the shortcuts to the browser when neither the mouse nor focus is on the board', async () => {
     mount()
+    await setStartViewport({ x: 0, y: 0, zoom: 1 })
+
+    const zoomIn = await keydown({ key: '=', ctrlKey: true })
+    const fit = await keydown({ key: '!', code: 'Digit1', shiftKey: true })
+
+    expect(zoomIn.defaultPrevented).toBe(false)
+    expect(fit.defaultPrevented).toBe(false)
+    expect(flow.getViewport().zoom).toBe(1)
+    expect(fitViewSpy).not.toHaveBeenCalled()
+  })
+
+  it('handles the shortcuts while the mouse is over the board, without focus', async () => {
+    const { container } = mount()
+    await setStartViewport({ x: 0, y: 0, zoom: 1 })
+    // jsdom has no pointer, so :hover never matches on its own
+    const matches = container.matches.bind(container)
+    vi.spyOn(container, 'matches').mockImplementation((selector) => selector === ':hover' || matches(selector))
+
+    const event = await keydown({ key: '=', ctrlKey: true })
+
+    expect(event.defaultPrevented).toBe(true)
+    expect(flow.getViewport()).toEqual(zoomAround({ x: 0, y: 0, zoom: 1 }, ZOOM_STEP, center))
+  })
+
+  it('Ctrl + = zooms in around the center', async () => {
+    mountWithFocus()
     await setStartViewport({ x: 0, y: 0, zoom: 1 })
 
     const event = await keydown({ key: '=', ctrlKey: true })
@@ -157,7 +192,7 @@ describe('useBoardCamera keyboard shortcuts', () => {
   })
 
   it('Ctrl + + also zooms in', async () => {
-    mount()
+    mountWithFocus()
     await setStartViewport({ x: 0, y: 0, zoom: 1 })
 
     await keydown({ key: '+', ctrlKey: true })
@@ -166,7 +201,7 @@ describe('useBoardCamera keyboard shortcuts', () => {
   })
 
   it('Cmd + - zooms out around the center', async () => {
-    mount()
+    mountWithFocus()
     await setStartViewport({ x: 0, y: 0, zoom: 1 })
 
     await keydown({ key: '-', metaKey: true })
@@ -175,7 +210,7 @@ describe('useBoardCamera keyboard shortcuts', () => {
   })
 
   it('Ctrl + 0 resets the zoom to 100%', async () => {
-    mount()
+    mountWithFocus()
     await setStartViewport({ x: 30, y: 40, zoom: 2.5 })
 
     await keydown({ key: '0', ctrlKey: true })
@@ -184,7 +219,7 @@ describe('useBoardCamera keyboard shortcuts', () => {
   })
 
   it('ignores the shortcuts without the modifier', async () => {
-    mount()
+    mountWithFocus()
     await setStartViewport({ x: 0, y: 0, zoom: 1 })
 
     const event = await keydown({ key: '=' })
@@ -194,10 +229,11 @@ describe('useBoardCamera keyboard shortcuts', () => {
   })
 
   it('ignores the shortcuts while typing in a text field', async () => {
-    mount()
+    mountWithFocus()
     await setStartViewport({ x: 0, y: 0, zoom: 1 })
     const input = document.createElement('input')
-    document.body.appendChild(input)
+    screenContainer().appendChild(input)
+    input.focus()
 
     const event = await keydown({ key: '=', ctrlKey: true }, input)
 
@@ -206,7 +242,7 @@ describe('useBoardCamera keyboard shortcuts', () => {
   })
 
   it('ignores the shortcuts while a modal dialog is open', async () => {
-    mount()
+    mountWithFocus()
     await setStartViewport({ x: 0, y: 0, zoom: 1 })
     const dialog = document.createElement('div')
     dialog.setAttribute('aria-modal', 'true')
@@ -218,7 +254,7 @@ describe('useBoardCamera keyboard shortcuts', () => {
   })
 
   it('Shift + 1 asks React Flow to fit all cards, up to 100% zoom, and is kept from the browser', async () => {
-    mount()
+    mountWithFocus()
 
     const event = await keydown({ key: '!', code: 'Digit1', shiftKey: true })
 
@@ -227,7 +263,7 @@ describe('useBoardCamera keyboard shortcuts', () => {
   })
 
   it('does not fit the view when Shift + 1 comes with a modifier', async () => {
-    mount()
+    mountWithFocus()
 
     const event = await keydown({ key: '!', code: 'Digit1', shiftKey: true, ctrlKey: true })
 
