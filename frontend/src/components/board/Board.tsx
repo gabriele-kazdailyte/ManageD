@@ -38,6 +38,9 @@ const nodeTypes: NodeTypes = { todo: TodoNode, note: NoteNode }
 const MULTI_SELECT_KEYS = ['Shift', 'Meta', 'Control']
 const DELETE_KEYS = ['Delete', 'Backspace']
 
+// Hides the "React Flow" link. Allowed by the MIT license; the authors ask commercial users who hide it to consider a Pro subscription.
+const PRO_OPTIONS = { hideAttribution: true }
+
 function Flow({ workspaceId, assets, isLoading, error, deletingIds, onDelete, onUpdate }: BoardProps) {
   const [model, setModel] = useState(() => ({
     assets,
@@ -132,6 +135,7 @@ function Flow({ workspaceId, assets, isLoading, error, deletingIds, onDelete, on
         multiSelectionKeyCode={MULTI_SELECT_KEYS}
         minZoom={0.15}
         maxZoom={3}
+        proOptions={PRO_OPTIONS}
       >
         <Background variant={BackgroundVariant.Dots} gap={22} />
         <Controls />

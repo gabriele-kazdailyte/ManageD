@@ -77,7 +77,7 @@ The plan has two tracks:
   3. `onNodeDragStop(_, _node, dragged)`: for each dragged node, call `onUpdate(asset, positionDelta(node))`.
   4. `nodeTypes = { todo: TodoNode, note: NoteNode }`, defined outside the component.
   5. Pan and zoom: `panOnScroll`, `zoomOnScroll={false}`, `zoomOnPinch`, `panOnDrag={[1]}`, `selectionOnDrag`, `minZoom={0.15}`, `maxZoom={3}`.
-  6. `<Background variant="dots" gap={22} />`, `<Controls />`, `<MiniMap pannable zoomable />`, styled with `--panel`, `--border`, `--accent`. Leave the attribution visible.
+  6. `<Background variant="dots" gap={22} />`, `<Controls />`, `<MiniMap pannable zoomable />`, styled with `--panel`, `--border`, `--accent`. Hide the React Flow attribution (`proOptions={{ hideAttribution: true }}`).
   7. Remove the "Fit all components" checkbox. Call `fitView` once after the first load.
   8. Loading, error and empty states go in an overlay on top of the flow, not in place of it, so dropping onto an empty board still works.
   9. The sidebar drop (`onDrop`) keeps working as today. The drop position is still ignored until FE8.
