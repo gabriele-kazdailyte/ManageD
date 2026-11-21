@@ -11,11 +11,11 @@ import { WorkspaceProvider } from '../context/WorkspaceProvider'
 import '../components/DeleteConfirmation.css'
 import './WorkspacePage.css'
 
-type WorkspaceCanvasProps = {
+type WorkspaceBoardProps = {
   workspaceId: string
 }
 
-function WorkspaceCanvas({ workspaceId }: WorkspaceCanvasProps) {
+function WorkspaceBoard({ workspaceId }: WorkspaceBoardProps) {
   const {
     assets,
     viewers,
@@ -325,7 +325,7 @@ function WorkspacePage() {
 
   return (
     <WorkspaceProvider key={workspaceId} workspaceId={workspaceId}>
-      <WorkspaceCanvas workspaceId={workspaceId} />
+      <WorkspaceBoard workspaceId={workspaceId} />
     </WorkspaceProvider>
   )
 }

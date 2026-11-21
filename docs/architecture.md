@@ -163,6 +163,17 @@ Not built in alpha; the columns exist (see Entities). Layout operations — `Mov
 - On success the server broadcasts `AssetMoved(assetId, x, y)` to the whole group, including the sender. On failure it sends `AssetMoved` with the asset's current coordinates to the caller only. Either way the client shows the coordinates it receives.
 - Someone can drag a card another user is working on. That is accepted.
 
+### Frontend board
+
+The workspace board (`frontend/src/components/board/`) is built on React Flow (`@xyflow/react`). Each asset is a node (`todo` or `note`) drawn by `TodoAsset` / `StickyNoteAsset`; there are no edges. `boardModel.ts` maps assets to nodes: saved positions are used as-is (negative values are fine), and assets still at exactly (0,0) get a stable grid slot ranked by id. A drag sends `{ x, y }` (rounded; (0,0) is sent as (1,1) so the card isn't treated as unmoved) through `UpdateAsset` once, on release. Interactions:
+
+- **Pan:** mouse wheel or trackpad scroll; or hold Space and drag, or drag with the middle mouse button.
+- **Zoom:** Ctrl (or Cmd) + wheel, trackpad pinch, or the zoom controls (zoom range 15%–300%; a minimap and a fit-view button are also shown).
+- **Select:** click a card, Shift-click (or Ctrl/Cmd-click) to add to the selection, or drag on the empty background to marquee-select. Selected cards move together.
+- **Move:** drag a card by its header. The new position is sent once, when you release.
+- **Delete:** with one card selected, press Delete or Backspace to open the delete confirmation (Backspace inside a text field only edits text).
+- The view (pan and zoom) is remembered per workspace in the browser (`board-viewport:<workspaceId>`).
+
 ## Service Layer
 
 | Service | Responsibility |

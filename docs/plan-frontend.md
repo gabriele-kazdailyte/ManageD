@@ -16,6 +16,17 @@ See `architecture.md` for design, `alpha.md` for scope, `api-contract.md` for ex
 10. [x] **Add-member UI** — in the workspace view, a way to enter a `userId` and call `POST /api/workspaces/{id}/members`. No lookup-by-name yet (see caveat below).
 11. [ ] **Rename templates to presets** — after the backend rename lands: `loadTemplates` → `loadPresets` and its endpoint, `TemplateInfo` → `PresetInfo`, the `templates` state and props, `handleSelectTemplate` / `onSelectTemplate` → preset names, and the `templateName` field sent to `POST /api/assets` (until the hub replaces it). `TemplateType` stays.
 
+## Board interactions
+
+The board is a React Flow canvas (see `plan-canvas-react-flow.md` and the Frontend board section of `architecture.md`):
+
+- **Pan:** mouse wheel or trackpad scroll; or hold Space and drag, or drag with the middle mouse button.
+- **Zoom:** Ctrl (or Cmd) + wheel, trackpad pinch, or the zoom controls (zoom range 15%–300%; a minimap and a fit-view button are also shown).
+- **Select:** click a card, Shift-click (or Ctrl/Cmd-click) to add to the selection, or drag on the empty background to marquee-select. Selected cards move together.
+- **Move:** drag a card by its header. The new position is sent once, when you release.
+- **Delete:** with one card selected, press Delete or Backspace to open the delete confirmation (Backspace inside a text field only edits text).
+- The view (pan and zoom) is remembered per workspace in the browser (`board-viewport:<workspaceId>`).
+
 ## Sequencing notes
 
 - Steps 1–4 don't need a real backend — build against a stub REST layer (hardcoded/mocked responses) while backend is still wiring up the database.
