@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 import {
   Background,
   BackgroundVariant,
@@ -20,6 +20,8 @@ import { assetsToNodes, positionDelta, type AssetNode } from './boardModel'
 import NoteNode from './NoteNode'
 import TodoNode from './TodoNode'
 import { loadViewport, saveViewport } from './boardViewport'
+import { MAX_ZOOM, MIN_ZOOM } from './boardCamera'
+import { useBoardCamera } from './useBoardCamera'
 import './Board.css'
 
 type BoardProps = {
@@ -41,7 +43,18 @@ const DELETE_KEYS = ['Delete', 'Backspace']
 // Hides the "React Flow" link. Allowed by the MIT license; the authors ask commercial users who hide it to consider a Pro subscription.
 const PRO_OPTIONS = { hideAttribution: true }
 
-function Flow({ workspaceId, assets, isLoading, error, deletingIds, onDelete, onUpdate }: BoardProps) {
+function Flow({
+  workspaceId,
+  assets,
+  isLoading,
+  error,
+  deletingIds,
+  onDelete,
+  onUpdate,
+  containerRef,
+}: BoardProps & { containerRef: RefObject<HTMLElement | null> }) {
+  useBoardCamera(containerRef)
+
   const [model, setModel] = useState(() => ({
     assets,
     deletingIds,
@@ -128,13 +141,16 @@ function Flow({ workspaceId, assets, isLoading, error, deletingIds, onDelete, on
         deleteKeyCode={DELETE_KEYS}
         onBeforeDelete={onBeforeDelete}
         panOnScroll
+        // 1:1 with the trackpad or wheel, like Excalidraw (React Flow's default is half speed).
+        panOnScrollSpeed={1}
+        zoomOnDoubleClick={false}
         zoomOnScroll={false}
         zoomOnPinch
         panOnDrag={[1]}
         selectionOnDrag
         multiSelectionKeyCode={MULTI_SELECT_KEYS}
-        minZoom={0.15}
-        maxZoom={3}
+        minZoom={MIN_ZOOM}
+        maxZoom={MAX_ZOOM}
         proOptions={PRO_OPTIONS}
       >
         <Background variant={BackgroundVariant.Dots} gap={22} />
@@ -148,10 +164,16 @@ function Flow({ workspaceId, assets, isLoading, error, deletingIds, onDelete, on
 }
 
 function Board(props: BoardProps) {
+  const containerRef = useRef<HTMLElement>(null)
   return (
-    <section className="board" onDragOver={(event) => event.preventDefault()} onDrop={props.onDrop}>
+    <section
+      ref={containerRef}
+      className="board"
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={props.onDrop}
+    >
       <ReactFlowProvider>
-        <Flow {...props} />
+        <Flow {...props} containerRef={containerRef} />
       </ReactFlowProvider>
     </section>
   )
