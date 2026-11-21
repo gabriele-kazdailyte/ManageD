@@ -140,26 +140,27 @@ Can run at any time, in parallel with the frontend track. The two tracks share n
 
 # Frontend follow-ups (after the backend track)
 
-### FE8. [ ] Drop at the cursor — needs BE1
+### FE8. [x] Drop at the cursor — needs BE1
 - **Steps:**
   1. In `onDrop`, `screenToFlowPosition({ x: e.clientX, y: e.clientY })` gives the board position. Pass it to `createAsset(title, presetName, templateType, position?)`, which calls `CreateAssetAt(..., x, y)` (see BE1).
   2. The toolbar's "new note" button places the note at the center of the current view.
 - **Acceptance:** a dropped card appears under the cursor for every viewer.
 
-### FE9. [ ] Size and z-order fields in the frontend — needs BE2
+### FE9. [x] Size and z-order fields in the frontend — needs BE2
 - **Steps:**
   1. Mirror the new fields in `frontend/src/api/assets.ts`.
   2. Handle them in `context/applyDelta.ts` and add a test.
   3. In `assetsToNodes`, map `zIndex` from `zPos`, and `width`/`height` from `sizeX`/`sizeY` when they're greater than 0.
 
-### FE10. [ ] Bring to front and resizable cards — needs FE9
+### FE10. [x] Bring to front and resizable cards — needs FE9
 - **Steps:**
   1. Bring to front: on drag start or click, if the card isn't on top, send `{ zPos: max + 1 }`.
   2. Resize: `<NodeResizer minWidth={200} minHeight={120} isVisible={selected} />`, and `onResizeEnd` sends `{ sizeX, sizeY }`. The card CSS fills the node and scrolls inside it (with `nowheel`).
 - **Acceptance:** z-order and size are kept after a reload and shown to other viewers. Cards that were never resized look the same as before.
 
-### FE11. [ ] Remove the unmoved-card fallback — needs FE8
+### FE11. [x] Remove the unmoved-card fallback — needs FE8
 - Once every new card is created with a position, assets at (0,0) only come from old data. Decide whether to keep the fallback for those or drop it, and remove the (0,0) → (1,1) rule if it's dropped.
+- **Decision:** keep both. The fallback keeps old boards readable, and the (0,0) → (1,1) rule is what stops a card the user drags to exactly (0,0) from jumping back to a grid slot. They can go together once old data is gone. See `architecture.md`, Frontend board.
 
 ## Order
 

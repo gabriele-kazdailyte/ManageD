@@ -169,12 +169,19 @@ Position, size and z-order travel in the asset delta (`x`, `y`, `sizeX`, `sizeY`
 
 ### Frontend board
 
-The workspace board (`frontend/src/components/board/`) is built on React Flow (`@xyflow/react`). Each asset is a node (`todo` or `note`) drawn by `TodoAsset` / `StickyNoteAsset`; there are no edges. `boardModel.ts` maps assets to nodes: saved positions are used as-is (negative values are fine), and assets still at exactly (0,0) get a stable grid slot ranked by id. A drag sends `{ x, y }` (rounded; (0,0) is sent as (1,1) so the card isn't treated as unmoved) through `UpdateAsset` once, on release. Interactions:
+The workspace board (`frontend/src/components/board/`) is built on React Flow (`@xyflow/react`). Each asset is a node (`todo` or `note`) drawn by `TodoAsset` / `StickyNoteAsset`; there are no edges. `boardModel.ts` maps assets to nodes: saved positions are used as-is (negative values are fine), and assets still at exactly (0,0) get a stable grid slot ranked by id. A drag sends `{ x, y }` (rounded; (0,0) is sent as (1,1) so the card isn't treated as unmoved) through `UpdateAsset` once, on release. Size and stacking come from the asset: `sizeX`/`sizeY` above 0 become the node's width and height (0 is auto: 260px wide, as tall as the content), and `zPos` becomes its `zIndex`.
+
+**Cards at (0,0).** New cards are always created with a position (dropped at the cursor, or at the center of the view for the toolbar's note button), and a new card that would land on exactly (0,0) is placed at (1,1). So (0,0) only comes from data created before this, or from a client that still calls `CreateAsset` without a position. Decision: keep the stable grid fallback for those, so old boards still open as a tidy grid instead of a stack at the origin, and keep the (0,0) → (1,1) rule on moves and new cards. The rule is what makes the fallback safe: without it, a card the user drags to exactly (0,0) would jump back to a grid slot. If old data is ever migrated (or confirmed gone), both can be removed together.
+
+Interactions:
 
 - **Pan:** mouse wheel or trackpad scroll; or hold Space and drag, or drag with the middle mouse button.
 - **Zoom:** Ctrl (or Cmd) + wheel, trackpad pinch, or the zoom controls (zoom range 15%–300%; a minimap and a fit-view button are also shown).
 - **Select:** click a card, Shift-click (or Ctrl/Cmd-click) to add to the selection, or drag on the empty background to marquee-select. Selected cards move together.
 - **Move:** drag a card by its header. The new position is sent once, when you release.
+- **Create:** drag a card from the sidebar onto the board and it lands under the cursor; the toolbar's Sticky Note button puts the note at the center of the current view.
+- **Stack:** grabbing or clicking a card brings it above the others (`zPos` = highest + 1, sent only if it isn't already on top).
+- **Resize:** a selected card shows resize handles (minimum 200×120, maximum 1200). The size (and the position, if a top or left edge moved) is sent once, when you release. A resized card scrolls its content inside; cards never resized look as before.
 - **Delete:** with one card selected, press Delete or Backspace to open the delete confirmation (Backspace inside a text field only edits text).
 - The view (pan and zoom) is remembered per workspace in the browser (`board-viewport:<workspaceId>`).
 
