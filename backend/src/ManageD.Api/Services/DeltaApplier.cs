@@ -148,9 +148,9 @@ public static class DeltaApplier
         float? y,
         string? noteContent)
     {
-        if (x is < 0 || y is < 0 || x is float xValue && !float.IsFinite(xValue) || y is float yValue && !float.IsFinite(yValue))
+        if (x is float xValue && !float.IsFinite(xValue) || y is float yValue && !float.IsFinite(yValue))
         {
-            throw new InvalidDeltaException("Asset coordinates must be finite and non-negative.");
+            throw new InvalidDeltaException("Asset coordinates must be finite numbers.");
         }
 
         if (asset.TemplateType == TemplateType.Note && (added.Count > 0 || updated.Count > 0))

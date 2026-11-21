@@ -74,12 +74,23 @@ public class DeltaApplierTests
     }
 
     [Fact]
-    public void Canvas_position_must_be_finite_and_non_negative()
+    public void Canvas_position_can_be_negative()
+    {
+        var asset = AssetWith();
+
+        DeltaApplier.Apply(asset, new AssetDelta(null, null, null, X: -120, Y: -45.5f));
+
+        Assert.Equal(-120f, asset.X);
+        Assert.Equal(-45.5f, asset.Y);
+    }
+
+    [Fact]
+    public void Canvas_position_must_be_finite()
     {
         var asset = AssetWith();
 
         Assert.Throws<InvalidDeltaException>(() =>
-            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, X: -1)));
+            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, X: float.NaN)));
         Assert.Throws<InvalidDeltaException>(() =>
             DeltaApplier.Apply(asset, new AssetDelta(null, null, null, Y: float.PositiveInfinity)));
 
