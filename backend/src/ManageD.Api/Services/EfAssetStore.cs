@@ -17,6 +17,12 @@ public class EfAssetStore : IAssetStore
 
     public async Task<AssetSnapshot> AddAsync(Asset asset, CancellationToken cancellationToken)
     {
+        // A new asset goes on top of everything already in its workspace.
+        var top = await _dbContext.Assets
+            .Where(existing => existing.WorkspaceId == asset.WorkspaceId)
+            .MaxAsync(existing => (int?)existing.ZPos, cancellationToken);
+        asset.ZPos = (top ?? -1) + 1;
+
         _dbContext.Assets.Add(asset);
         await _dbContext.SaveChangesAsync(cancellationToken);
         return ToSnapshot(asset);

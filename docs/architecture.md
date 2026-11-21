@@ -51,7 +51,7 @@ Exact request/response/payload shapes are in `api-contract.md` — this doc cove
 | `Items` | one-to-many navigation | Its `TodoItem`s. |
 | `X`, `Y` | float | Canvas position in pixels. Any finite number, negative included. Set by `CreateAssetAt` and changed through the delta. |
 | `SizeX`, `SizeY` | float | Canvas size in pixels. `0` means auto (the card sizes itself); otherwise 160–1200. Sent in snapshots and changed through the delta. |
-| `ZPos` | int | Stacking order on the canvas, higher is on top. Any integer. Sent in snapshots and changed through the delta. |
+| `ZPos` | int | Stacking order on the canvas, higher is on top. Any integer. A new asset starts on top (highest in its workspace + 1). Sent in snapshots and changed through the delta. |
 | `CreatedAt`, `UpdatedAt` | datetime, UTC | Creation time; last content change. |
 
 There is no revision field. Concurrent changes are merged by delta, see Concurrency. The `Revision` column and `[ConcurrencyCheck]` that exist today are removed by a migration in the backend work.
