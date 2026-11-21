@@ -143,7 +143,6 @@ function Flow({ workspaceId, assets, isLoading, error, deletingIds, onDelete, on
       </ReactFlow>
       {error ? <p className="board__error" role="alert">{error}</p> : null}
       {isLoading ? <div className="board__overlay">Loading…</div> : null}
-      {!isLoading && assets.length === 0 ? <div className="board__overlay">Drop here</div> : null}
     </BoardActionsContext.Provider>
   )
 }
