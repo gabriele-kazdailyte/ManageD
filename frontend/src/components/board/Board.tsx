@@ -205,8 +205,9 @@ function Flow({
         zoomOnDoubleClick={false}
         zoomOnScroll={false}
         zoomOnPinch
-        panOnDrag={[1]}
-        selectionOnDrag
+        // Dragging empty canvas with the left or middle button pans the board; holding Shift draws a selection box instead.
+        panOnDrag={[0, 1]}
+        selectionKeyCode="Shift"
         multiSelectionKeyCode={MULTI_SELECT_KEYS}
         minZoom={MIN_ZOOM}
         maxZoom={MAX_ZOOM}

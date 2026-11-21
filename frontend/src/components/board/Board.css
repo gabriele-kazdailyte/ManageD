@@ -112,3 +112,9 @@
   width: 12px;
   height: 12px;
 }
+
+/* After a box selection, selected cards show only their own outline. React Flow's group rectangle is square and
+   sits over the rounded outlines; dragging any selected card still moves them all. */
+.board .react-flow__nodesselection-rect {
+  display: none;
+}
