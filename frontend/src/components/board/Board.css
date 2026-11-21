@@ -83,3 +83,9 @@
   font-size: 14px;
   pointer-events: none;
 }
+
+/* The wrapper inside each node fills it, so a resized card (explicit node size) can scroll its content. */
+.board .asset-node {
+  height: 100%;
+}
+

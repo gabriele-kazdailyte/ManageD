@@ -78,7 +78,7 @@ function TodoAsset({ asset, isDeleting, onDelete, onUpdate }: TodoAssetProps) {
 
       {asset.items.length === 0 ? <p className="todo-asset__empty">No items yet</p> : null}
 
-      <ul className="todo-asset__items nodrag">
+      <ul className={asset.sizeY > 0 ? 'todo-asset__items nodrag nowheel' : 'todo-asset__items nodrag'}>
         {asset.items.map((item) => (
           <TodoItemRow
             key={item.id}

@@ -1,5 +1,9 @@
 .todo-asset {
-  width: 260px;
+  /* Fills its board node: 260px wide unless the card was resized, and as tall as its content unless resized. */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -53,6 +57,14 @@
   list-style: none;
   margin: 0;
   padding: 0;
+  /* Only matters on a resized card: the list scrolls inside it. */
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.todo-asset__header,
+.todo-asset__add {
+  flex-shrink: 0;
 }
 
 .todo-asset__item {

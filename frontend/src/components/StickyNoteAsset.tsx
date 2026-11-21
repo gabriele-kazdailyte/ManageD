@@ -57,7 +57,7 @@ function StickyNoteAsset({ asset, isDeleting, onDelete, onUpdate }: StickyNoteAs
         </button>
       </header>
       {isPreview ? (
-        <div className="sticky-note__preview nodrag">
+        <div className={asset.sizeY > 0 ? 'sticky-note__preview nodrag nowheel' : 'sticky-note__preview nodrag'}>
           {content ? <ReactMarkdown>{content}</ReactMarkdown> : <p>Nothing to preview yet.</p>}
         </div>
       ) : (

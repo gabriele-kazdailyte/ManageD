@@ -12,6 +12,7 @@ import {
   type OnMoveEnd,
   type OnNodesChange,
   type NodeTypes,
+  type NodeMouseHandler,
   type OnNodeDrag,
 } from '@xyflow/react'
 import type { AssetDelta, AssetSnapshot } from '../../api/assets'
@@ -20,6 +21,7 @@ import {
   assetsToNodes,
   CENTER_ANCHOR,
   DROP_ANCHOR,
+  bringToFrontDelta,
   newCardPosition,
   positionDelta,
   type AssetNode,
@@ -83,9 +85,9 @@ function Flow({
 
   // The node components get actions through context. Keeping the latest callbacks in refs makes the
   // context value stable, so a parent re-render doesn't re-render every card.
-  const latest = useRef({ onDelete, onUpdate })
+  const latest = useRef({ assets, onDelete, onUpdate })
   useEffect(() => {
-    latest.current = { onDelete, onUpdate }
+    latest.current = { assets, onDelete, onUpdate }
   })
   const actions = useMemo<BoardActions>(
     () => ({
@@ -102,6 +104,18 @@ function Flow({
     }
     setModel((current) => ({ ...current, nodes: changes.applyTo(current.nodes) }))
   }, [])
+
+  // Grabbing or clicking a card brings it above the others, once, and only if it isn't already on top.
+  const bringToFront = useCallback((assetId: string) => {
+    const { assets: current, onUpdate: update } = latest.current
+    const delta = bringToFrontDelta(current, assetId)
+    const asset = current.find((candidate) => candidate.id === assetId)
+    if (delta && asset) {
+      update(asset, delta)
+    }
+  }, [])
+  const onNodeDragStart = useCallback<OnNodeDrag<AssetNode>>((_event, node) => bringToFront(node.id), [bringToFront])
+  const onNodeClick = useCallback<NodeMouseHandler<AssetNode>>((_event, node) => bringToFront(node.id), [bringToFront])
 
   const onNodeDragStop = useCallback<OnNodeDrag<AssetNode>>((_event, _node, dragged) => {
     for (const node of dragged) {
@@ -175,7 +189,9 @@ function Flow({
         nodes={nodes}
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
+        onNodeDragStart={onNodeDragStart}
         onNodeDragStop={onNodeDragStop}
+        onNodeClick={onNodeClick}
         defaultViewport={savedViewport}
         onMoveEnd={onMoveEnd}
         onDragOver={handleDragOver}

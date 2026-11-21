@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { AssetSnapshot } from '../../api/assets'
-import { assetsToNodes, newCardPosition, positionDelta, type AssetNode } from './boardModel'
+import { assetsToNodes, bringToFrontDelta, newCardPosition, resizeDelta, positionDelta, type AssetNode } from './boardModel'
 
 const asset = (id: string, over: Partial<AssetSnapshot> = {}): AssetSnapshot => ({
   id,
@@ -153,5 +153,48 @@ describe('newCardPosition', () => {
 
   it('never returns exactly (0,0), which means "unmoved"', () => {
     expect(newCardPosition({ x: 130, y: 20 }, { x: 130, y: 20 })).toEqual({ x: 1, y: 1 })
+  })
+})
+
+describe('bringToFrontDelta', () => {
+  it('sends one above the highest card when the card is not on top', () => {
+    const assets = [asset('a', { zPos: 1 }), asset('b', { zPos: 5 }), asset('c', { zPos: 3 })]
+    expect(bringToFrontDelta(assets, 'a')).toEqual({ zPos: 6 })
+  })
+
+  it('sends nothing when the card is already strictly on top', () => {
+    const assets = [asset('a', { zPos: 6 }), asset('b', { zPos: 5 })]
+    expect(bringToFrontDelta(assets, 'a')).toBeNull()
+  })
+
+  it('moves a card that only ties for the top', () => {
+    expect(bringToFrontDelta([asset('a'), asset('b')], 'a')).toEqual({ zPos: 1 })
+  })
+
+  it('sends nothing for a lone card or an unknown id', () => {
+    expect(bringToFrontDelta([asset('a')], 'a')).toBeNull()
+    expect(bringToFrontDelta([asset('a')], 'zzz')).toBeNull()
+  })
+
+  it('works with negative z-orders', () => {
+    expect(bringToFrontDelta([asset('a', { zPos: -3 }), asset('b', { zPos: -2 })], 'a')).toEqual({ zPos: -1 })
+  })
+})
+
+describe('resizeDelta', () => {
+  it('rounds the size and leaves the position out when it did not change', () => {
+    expect(resizeDelta({ x: 10, y: 20 }, { x: 10, y: 20, width: 300.4, height: 199.6 })).toEqual({
+      sizeX: 300,
+      sizeY: 200,
+    })
+  })
+
+  it('includes the position when a top or left edge moved it', () => {
+    expect(resizeDelta({ x: 10, y: 20 }, { x: -40.2, y: 20, width: 350, height: 200 })).toEqual({
+      sizeX: 350,
+      sizeY: 200,
+      x: -40,
+      y: 20,
+    })
   })
 })
