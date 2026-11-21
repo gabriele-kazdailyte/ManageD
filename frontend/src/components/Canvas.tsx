@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { AssetDelta, AssetSnapshot } from '../api/assets'
 import TodoAsset from './TodoAsset'
 import StickyNoteAsset from './StickyNoteAsset'
@@ -15,17 +15,6 @@ type CanvasProps = {
 }
 
 function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpdate }: CanvasProps) {
-  const [drag, setDrag] = useState<{
-    asset: AssetSnapshot
-    pointerId: number
-    pointerStartX: number
-    pointerStartY: number
-    startX: number
-    startY: number
-    scale: number
-    x: number
-    y: number
-  } | null>(null)
   const canvasRef = useRef<HTMLElement>(null)
   const assetElements = useRef(new Map<string, HTMLDivElement>())
   const [fitToCanvas, setFitToCanvas] = useState(false)
@@ -80,61 +69,18 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
     return () => observer.disconnect()
   }, [assets])
 
-  const handleMove = (event: ReactPointerEvent<HTMLElement>) => {
-    if (!drag || drag.pointerId !== event.pointerId) {
-      return
-    }
-
-    setDrag({
-      ...drag,
-      x: Math.max(0, drag.startX + (event.clientX - drag.pointerStartX) / drag.scale),
-      y: Math.max(0, drag.startY + (event.clientY - drag.pointerStartY) / drag.scale),
-    })
-  }
-
-  const endMove = (event: ReactPointerEvent<HTMLElement>) => {
-    if (!drag || drag.pointerId !== event.pointerId) {
-      return
-    }
-
-    const x = Math.max(0, drag.startX + (event.clientX - drag.pointerStartX) / drag.scale)
-    const y = Math.max(0, drag.startY + (event.clientY - drag.pointerStartY) / drag.scale)
-    onUpdate(drag.asset, { x, y })
-    setDrag(null)
-  }
-
   const handleWheel = (event: React.WheelEvent<HTMLElement>) => {
     event.preventDefault()
     setFitToCanvas(false)
     setZoom((current) => Math.min(3, Math.max(0.15, current * Math.exp(-event.deltaY * 0.001))))
   }
 
-  const beginMove = (asset: AssetSnapshot, x: number, y: number, scale: number, event: ReactPointerEvent<HTMLElement>) => {
-    if (event.button !== 0 || (event.target instanceof Element && event.target.closest('button'))) {
-      return
-    }
-
-    event.preventDefault()
-    event.currentTarget.setPointerCapture(event.pointerId)
-    setDrag({
-      asset,
-      pointerId: event.pointerId,
-      pointerStartX: event.clientX,
-      pointerStartY: event.clientY,
-      startX: x,
-      startY: y,
-      scale,
-      x,
-      y,
-    })
-  }
-
   const getPosition = (asset: AssetSnapshot, index: number) => {
     const defaultX = (index % 3) * 280
     const defaultY = Math.floor(index / 3) * 280
     const hasSavedPosition = Number.isFinite(asset.x) && Number.isFinite(asset.y) && (asset.x !== 0 || asset.y !== 0)
-    const x = drag?.asset.id === asset.id ? drag.x : hasSavedPosition ? asset.x : defaultX
-    const y = drag?.asset.id === asset.id ? drag.y : hasSavedPosition ? asset.y : defaultY
+    const x = hasSavedPosition ? asset.x : defaultX
+    const y = hasSavedPosition ? asset.y : defaultY
     return { x, y }
   }
 
@@ -153,7 +99,7 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
               }
             }}
             data-asset-id={asset.id}
-            className={`canvas__asset${drag?.asset.id === asset.id ? ' canvas__asset--dragging' : ''}`}
+            className={`canvas__asset`}
             style={{ left: x, top: y }}
           >
             <TodoAsset
@@ -161,9 +107,6 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
               isDeleting={deletingIds.has(asset.id)}
               onDelete={onDelete}
               onUpdate={onUpdate}
-              onMoveStart={(event) => beginMove(asset, x, y, scale, event)}
-              onMove={handleMove}
-              onMoveEnd={endMove}
             />
           </div>
         )
@@ -179,7 +122,7 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
               }
             }}
             data-asset-id={asset.id}
-            className={`canvas__asset${drag?.asset.id === asset.id ? ' canvas__asset--dragging' : ''}`}
+            className={`canvas__asset`}
             style={{ left: x, top: y }}
           >
             <StickyNoteAsset
@@ -187,9 +130,6 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
               isDeleting={deletingIds.has(asset.id)}
               onDelete={onDelete}
               onUpdate={onUpdate}
-              onMoveStart={(event) => beginMove(asset, x, y, scale, event)}
-              onMove={handleMove}
-              onMoveEnd={endMove}
             />
           </div>
         )
@@ -208,7 +148,7 @@ function Canvas({ assets, isLoading, error, deletingIds, onDrop, onDelete, onUpd
   const fittedScale = fitToCanvas && boardWidth > 0 && boardHeight > 0 && canvasSize.width > 0 && canvasSize.height > 0
     ? Math.min(canvasSize.width / boardWidth, canvasSize.height / boardHeight)
     : 1
-  const scale = drag?.scale ?? (fitToCanvas ? fittedScale : zoom)
+  const scale = fitToCanvas ? fittedScale : zoom
 
   const renderContent = () => {
     if (isLoading) {

@@ -1,4 +1,4 @@
-import { useState, type PointerEvent } from 'react'
+import { useState } from 'react'
 import type { AssetDelta, AssetSnapshot } from '../api/assets'
 import {
   MAX_ITEM_TEXT_LENGTH,
@@ -17,12 +17,9 @@ type TodoAssetProps = {
   isDeleting: boolean
   onDelete: (asset: AssetSnapshot) => void
   onUpdate: (asset: AssetSnapshot, delta: AssetDelta) => void
-  onMoveStart: (event: PointerEvent<HTMLElement>) => void
-  onMove: (event: PointerEvent<HTMLElement>) => void
-  onMoveEnd: (event: PointerEvent<HTMLElement>) => void
 }
 
-function TodoAsset({ asset, isDeleting, onDelete, onUpdate, onMoveStart, onMove, onMoveEnd }: TodoAssetProps) {
+function TodoAsset({ asset, isDeleting, onDelete, onUpdate }: TodoAssetProps) {
   const [newText, setNewText] = useState('')
   const [draggedId, setDraggedId] = useState<string | null>(null)
   const [overId, setOverId] = useState<string | null>(null)
@@ -66,17 +63,11 @@ function TodoAsset({ asset, isDeleting, onDelete, onUpdate, onMoveStart, onMove,
 
   return (
     <article className="todo-asset">
-      <header
-        className="todo-asset__header"
-        onPointerDown={onMoveStart}
-        onPointerMove={onMove}
-        onPointerUp={onMoveEnd}
-        onPointerCancel={onMoveEnd}
-      >
+      <header className="todo-asset__header asset-drag-handle">
         <h2 className="todo-asset__title">{asset.title}</h2>
         <button
           type="button"
-          className="todo-asset__delete"
+          className="todo-asset__delete nodrag"
           onClick={handleDelete}
           disabled={isDeleting}
           aria-label={`Delete ${asset.title}`}
@@ -87,7 +78,7 @@ function TodoAsset({ asset, isDeleting, onDelete, onUpdate, onMoveStart, onMove,
 
       {asset.items.length === 0 ? <p className="todo-asset__empty">No items yet</p> : null}
 
-      <ul className="todo-asset__items">
+      <ul className="todo-asset__items nodrag">
         {asset.items.map((item) => (
           <TodoItemRow
             key={item.id}
@@ -109,7 +100,7 @@ function TodoAsset({ asset, isDeleting, onDelete, onUpdate, onMoveStart, onMove,
 
       <input
         type="text"
-        className="todo-asset__add"
+        className="todo-asset__add nodrag"
         placeholder="Add item…"
         value={newText}
         maxLength={MAX_ITEM_TEXT_LENGTH}

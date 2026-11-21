@@ -1,4 +1,4 @@
-import { useEffect, useState, type PointerEvent } from 'react'
+import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import type { AssetDelta, AssetSnapshot } from '../api/assets'
 import './StickyNoteAsset.css'
@@ -8,20 +8,9 @@ type StickyNoteAssetProps = {
   isDeleting: boolean
   onDelete: (asset: AssetSnapshot) => void
   onUpdate: (asset: AssetSnapshot, delta: AssetDelta) => void
-  onMoveStart: (event: PointerEvent<HTMLElement>) => void
-  onMove: (event: PointerEvent<HTMLElement>) => void
-  onMoveEnd: (event: PointerEvent<HTMLElement>) => void
 }
 
-function StickyNoteAsset({
-  asset,
-  isDeleting,
-  onDelete,
-  onUpdate,
-  onMoveStart,
-  onMove,
-  onMoveEnd,
-}: StickyNoteAssetProps) {
+function StickyNoteAsset({ asset, isDeleting, onDelete, onUpdate }: StickyNoteAssetProps) {
   const [draft, setDraft] = useState({
     assetId: asset.id,
     savedContent: asset.noteContent,
@@ -47,17 +36,11 @@ function StickyNoteAsset({
 
   return (
     <article className="sticky-note">
-      <header
-        className="sticky-note__header"
-        onPointerDown={onMoveStart}
-        onPointerMove={onMove}
-        onPointerUp={onMoveEnd}
-        onPointerCancel={onMoveEnd}
-      >
+      <header className="sticky-note__header asset-drag-handle">
         <h2 className="sticky-note__title">{asset.title}</h2>
         <button
           type="button"
-          className="sticky-note__mode"
+          className="sticky-note__mode nodrag"
           onClick={() => setIsPreview((current) => !current)}
           aria-label={isPreview ? 'Edit note' : 'Preview Markdown'}
         >
@@ -65,7 +48,7 @@ function StickyNoteAsset({
         </button>
         <button
           type="button"
-          className="sticky-note__delete"
+          className="sticky-note__delete nodrag"
           onClick={() => onDelete(asset)}
           disabled={isDeleting}
           aria-label={`Delete ${asset.title}`}
@@ -74,12 +57,12 @@ function StickyNoteAsset({
         </button>
       </header>
       {isPreview ? (
-        <div className="sticky-note__preview">
+        <div className="sticky-note__preview nodrag">
           {content ? <ReactMarkdown>{content}</ReactMarkdown> : <p>Nothing to preview yet.</p>}
         </div>
       ) : (
         <textarea
-          className="sticky-note__content"
+          className="sticky-note__content nodrag nowheel"
           value={content}
           maxLength={5000}
           placeholder="Write a note…"
