@@ -53,7 +53,8 @@ describe('setDoneDelta', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     // Midday local time, so the date is the same in UTC and in local time anywhere near Europe.
-    // setDoneDelta uses the UTC date (see "Known bugs" in docs/plan-testing-deadline2.md), so this stays away from midnight.
+    // Known bug, not fixed yet: setDoneDelta takes the completion date in UTC while deadlineStatus uses the
+    // local date, so an item ticked just after local midnight gets yesterday's date. This test stays away from midnight.
     vi.setSystemTime(new Date(2026, 10, 21, 12, 0, 0))
   })
 
