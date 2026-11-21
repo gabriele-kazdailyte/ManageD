@@ -9,7 +9,8 @@ const isTyping = (target: EventTarget | null) =>
 // Excalidraw-style camera controls on top of React Flow:
 // - Ctrl/Cmd + wheel and trackpad pinch zoom around the cursor in small, capped steps, applied instantly.
 //   (React Flow's own pinch handler multiplies mouse-wheel deltas by 10 on macOS, so one notch jumps several levels.)
-// - Ctrl/Cmd + = / − zoom in and out around the center, Ctrl/Cmd + 0 resets to 100%, Shift + 1 fits all cards.
+// - Ctrl/Cmd + = / − zoom in and out around the center, Ctrl/Cmd + 0 resets to 100%, Shift + 1 fits all cards,
+//   while the mouse is over the board or focus is inside it. Elsewhere the browser keeps its own zoom.
 // Plain wheel panning stays with React Flow (`panOnScroll`).
 export function useBoardCamera(containerRef: RefObject<HTMLElement | null>) {
   const { getViewport, setViewport, fitView } = useReactFlow()
@@ -40,8 +41,12 @@ export function useBoardCamera(containerRef: RefObject<HTMLElement | null>) {
       void setViewport(zoomAround(getViewport(), zoom, { x: rect.width / 2, y: rect.height / 2 }))
     }
 
+    // The shortcuts only apply while the mouse is over the board or focus is inside it. Elsewhere on the page,
+    // Ctrl/Cmd + = / − / 0 stay with the browser's own zoom.
+    const isOnBoard = () => container.matches(':hover') || container.contains(document.activeElement)
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (isTyping(event.target) || document.querySelector('[aria-modal="true"]')) {
+      if (!isOnBoard() || isTyping(event.target) || document.querySelector('[aria-modal="true"]')) {
         return
       }
       const modifier = event.ctrlKey || event.metaKey

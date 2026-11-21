@@ -41,7 +41,7 @@ The plan has two tracks:
 
 # Frontend track (no backend changes)
 
-### FE1. [ ] Dependencies, test runner and the mapping layer
+### FE1. [x] Dependencies, test runner and the mapping layer
 - **Files:** `frontend/package.json`, `frontend/vite.config.ts`, global CSS import (`main.tsx`), new `frontend/src/components/board/boardModel.ts` and `boardModel.test.ts`
 - **Steps:**
   1. `npm i @xyflow/react`. `npm i -D vitest @testing-library/react @testing-library/jest-dom jsdom`. Add `"test": "vitest run"` and `test: { environment: 'jsdom' }`. Import `@xyflow/react/dist/style.css` once.
@@ -59,7 +59,7 @@ The plan has two tracks:
   - Selection and drag position surviving a re-map.
   - The delta rounding and the (0,0) → (1,1) rule.
 
-### FE2. [ ] Card components become React Flow nodes
+### FE2. [x] Card components become React Flow nodes
 - **Files:** `TodoAsset.tsx`, `StickyNoteAsset.tsx` and their CSS, new `components/board/TodoNode.tsx`, `NoteNode.tsx`, `BoardActionsContext.ts`
 - **Steps:**
   1. Remove the `onMoveStart` / `onMove` / `onMoveEnd` props and the header pointer handlers. Add the class `asset-drag-handle` to each header.
@@ -69,7 +69,7 @@ The plan has two tracks:
   5. Keep the fixed width of 260px.
 - **Acceptance:** lint and build pass, and nothing references `onMoveStart`.
 
-### FE3. [ ] `Board` replaces `Canvas`
+### FE3. [x] `Board` replaces `Canvas`
 - **Files:** new `components/board/Board.tsx` and `Board.css`; `pages/WorkspacePage.tsx`; delete `Canvas.tsx` and `Canvas.css`
 - **Steps:**
   1. `<ReactFlowProvider>` + `<ReactFlow>`. Props stay the same as `Canvas`, so `WorkspacePage` only swaps the import.
@@ -92,7 +92,7 @@ The plan has two tracks:
   - A remote update doesn't clear your selection or interrupt your drag.
   - Create, delete, edit, presence and the calendar all still work.
 
-### FE4. [ ] Keyboard delete through the confirmation dialog
+### FE4. [x] Keyboard delete through the confirmation dialog
 - **Files:** `Board.tsx`, `WorkspacePage.tsx`
 - **Steps:**
   1. `deleteKeyCode={['Delete', 'Backspace']}`.
@@ -100,17 +100,17 @@ The plan has two tracks:
   3. With several cards selected, either show one "Delete N items?" dialog or limit it to one card. Note the choice in the commit.
 - **Acceptance:** Delete opens the dialog, and confirming removes the card for everyone. Backspace inside an input only edits text.
 
-### FE5. [ ] Save the view per workspace
+### FE5. [x] Save the view per workspace
 - **Steps:**
   1. `onMoveEnd` saves `{ x, y, zoom }` to `localStorage` under the key `board-viewport:<workspaceId>`.
   2. On load, restore the saved view, or `fitView` if there isn't one.
 - **Acceptance:** pan and zoom, switch to Calendar and back, or reload, and the view is the same.
 
-### FE6. [ ] Performance check
+### FE6. [x] Performance check
 - **Steps:** with about 200 cards (create them through the hub), check that dragging and panning stay smooth. Node components must be `memo`'d, and `nodeTypes` and the callbacks stable. Fix anything that re-renders every node on each move.
 - **Acceptance:** with React DevTools' profiler, dragging one card re-renders only that node.
 
-### FE7. [ ] Cleanup and docs
+### FE7. [x] Cleanup and docs
 - **Steps:**
   1. Remove the CSS selectors only the old canvas used.
   2. Update `docs/plan-frontend.md`, `docs/architecture.md` (Frontend / board) and `frontend/README.md` with the interactions: wheel pans, Ctrl or pinch zooms, space/middle-drag, marquee select, Delete key.
