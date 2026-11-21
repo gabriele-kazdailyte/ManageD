@@ -33,6 +33,7 @@ import TodoNode from './TodoNode'
 import { loadViewport, saveViewport } from './boardViewport'
 import { MAX_ZOOM, MIN_ZOOM } from './boardCamera'
 import { useBoardCamera } from './useBoardCamera'
+import '@xyflow/react/dist/style.css'
 import './Board.css'
 
 type BoardProps = {
