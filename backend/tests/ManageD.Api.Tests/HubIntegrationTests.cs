@@ -74,6 +74,40 @@ public class HubIntegrationTests : IClassFixture<ManageDFactory>
     }
 
     [Fact]
+    public async Task CreateAssetAt_stores_the_given_position_and_CreateAsset_means_the_origin()
+    {
+        var (aliceId, bobId, workspaceId) = await ArrangeAsync();
+        await using var alice = _factory.CreateHubConnection();
+        await using var bob = _factory.CreateHubConnection();
+        await alice.StartAsync();
+        await bob.StartAsync();
+        await alice.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, aliceId);
+        await bob.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, bobId);
+
+        var placed = NextEvent<AssetCreatedEvent>(bob, "AssetCreated");
+        await alice.InvokeAsync("CreateAssetAt", workspaceId, "Placed", TemplateType.Todo, (string?)null, -120.5f, 300f);
+        var placedAsset = (await placed).Asset;
+        Assert.Equal(-120.5f, placedAsset.X);
+        Assert.Equal(300f, placedAsset.Y);
+        Assert.Equal(0f, placedAsset.SizeX);
+        Assert.Equal(0, placedAsset.ZPos);
+
+        // The original four-argument CreateAsset keeps working and places the asset at the origin
+        var plain = NextEvent<AssetCreatedEvent>(bob, "AssetCreated");
+        await alice.InvokeAsync("CreateAsset", workspaceId, "Plain", TemplateType.Todo, (string?)null);
+        var plainAsset = (await plain).Asset;
+        Assert.Equal(0f, plainAsset.X);
+        Assert.Equal(0f, plainAsset.Y);
+
+        var carol = await _factory.CreateUserAsync("Carol");
+        await _factory.AddMemberAsync(workspaceId, carol);
+        await using var late = _factory.CreateHubConnection();
+        await late.StartAsync();
+        var state = await late.InvokeAsync<WorkspaceState>("JoinWorkspace", workspaceId, carol);
+        Assert.Equal(-120.5f, state.Assets.Single(a => a.Title == "Placed").X);
+    }
+
+    [Fact]
     public async Task A_new_viewer_joining_later_gets_the_existing_assets()
     {
         var (aliceId, bobId, workspaceId) = await ArrangeAsync();
