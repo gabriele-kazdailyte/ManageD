@@ -15,8 +15,7 @@
 
 .sticky-note__header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
   gap: 8px;
   margin-bottom: 8px;
 }
@@ -30,6 +29,8 @@
 }
 
 .sticky-note__mode {
+  /* Pushes Edit and × to the right edge, together. */
+  margin-left: auto;
   flex-shrink: 0;
   border: 1px solid var(--border);
   border-radius: 6px;
