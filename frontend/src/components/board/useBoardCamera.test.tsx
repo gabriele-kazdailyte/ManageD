@@ -273,6 +273,9 @@ describe('useBoardCamera keyboard shortcuts', () => {
 
   it('stops listening after unmount', async () => {
     const { container, unmount } = mount()
+    // Keeps the mouse "over" the board after unmount, so a leaked key listener would still act and fail the test
+    const matches = container.matches.bind(container)
+    vi.spyOn(container, 'matches').mockImplementation((selector) => selector === ':hover' || matches(selector))
     unmount()
 
     const wheelEvent = wheel(container, { ctrlKey: true, deltaY: -100 })
