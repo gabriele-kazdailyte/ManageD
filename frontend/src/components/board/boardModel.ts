@@ -10,9 +10,9 @@ export type AssetNode = Node<AssetNodeData, 'todo' | 'note'>
 
 export const DRAG_HANDLE_SELECTOR = '.asset-drag-handle'
 
-// Limits while resizing. The server accepts 160 to 1200; the board's minimums are a little larger so a card stays usable.
+// Limits while resizing. The server accepts 160 to 1200 on both axes; the minimum width is larger so a card stays usable.
 export const MIN_CARD_WIDTH = 200
-export const MIN_CARD_HEIGHT = 120
+export const MIN_CARD_HEIGHT = 160
 export const MAX_CARD_SIZE = 1200
 
 const GRID_COLUMNS = 3
