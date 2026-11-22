@@ -116,7 +116,16 @@ function Flow({
     }
   }, [])
   const onNodeDragStart = useCallback<OnNodeDrag<AssetNode>>((_event, node) => bringToFront(node.id), [bringToFront])
-  const onNodeClick = useCallback<NodeMouseHandler<AssetNode>>((_event, node) => bringToFront(node.id), [bringToFront])
+  const onNodeClick = useCallback<NodeMouseHandler<AssetNode>>(
+    (event, node) => {
+      // A button acts on the card itself (× deletes it), so a z-order update sent with it could reach the server after the delete
+      if (event.target instanceof Element && event.target.closest('button')) {
+        return
+      }
+      bringToFront(node.id)
+    },
+    [bringToFront],
+  )
 
   const onNodeDragStop = useCallback<OnNodeDrag<AssetNode>>((_event, _node, dragged) => {
     for (const node of dragged) {
