@@ -13,7 +13,7 @@ See `architecture.md` for design, `alpha.md` for scope, `api-contract.md` for ex
 7. [ ] **Reconciliation** — the `AssetUpdated` broadcast is applied idempotently (items have ids), so the sender's own echo changes nothing. If `UpdateAsset` is rejected with a `HubException`, discard the optimistic change and call `JoinWorkspace` again to resync.
 8. [ ] **Presence UI** — render the live list of viewers from `UserJoined`/`UserLeft`.
 9. [ ] **Connection status** — surface reconnecting/disconnected state from the SignalR client so users know when their edits aren't going through. If `JoinWorkspace` is rejected because the user isn't a member, show that and send them back to `/` instead of retrying.
-10. [x] **Add-member UI** — in the workspace view, a way to enter a `userId` and call `POST /api/workspaces/{id}/members`. No lookup-by-name yet (see caveat below).
+10. [x] **Add-member UI** — in the workspace view, a way to enter a teammate's username and call `POST /api/workspaces/{id}/members`. (Originally a `userId`, see caveat below.)
 11. [ ] **Rename templates to presets** — after the backend rename lands: `loadTemplates` → `loadPresets` and its endpoint, `TemplateInfo` → `PresetInfo`, the `templates` state and props, `handleSelectTemplate` / `onSelectTemplate` → preset names, and the `templateName` field sent to `POST /api/assets` (until the hub replaces it). `TemplateType` stays.
 
 ## Board interactions
@@ -35,7 +35,7 @@ The board is a React Flow canvas (see `plan-canvas-react-flow.md` and the Fronte
 
 ## Caveat: adding a member requires their raw id
 
-Alpha has no user directory or search — `POST /api/workspaces/{id}/members` takes a `userId`, and there's no endpoint to look one up by display name. In practice this means whoever wants to add someone has to already have that person's id (e.g. copy-pasted from them after they created their identity). This is a real UX rough edge, not a hidden implementation detail — worth deciding whether it's acceptable for alpha or needs a minimal lookup endpoint before this ships.
+*Resolved in Beta: members are now added by username.* Alpha has no user directory or search — `POST /api/workspaces/{id}/members` takes a `userId`, and there's no endpoint to look one up by display name. In practice this means whoever wants to add someone has to already have that person's id (e.g. copy-pasted from them after they created their identity). This is a real UX rough edge, not a hidden implementation detail — worth deciding whether it's acceptable for alpha or needs a minimal lookup endpoint before this ships.
 
 ## Out of scope for alpha
 
