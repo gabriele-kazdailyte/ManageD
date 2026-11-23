@@ -29,11 +29,11 @@ export async function listMembers(workspaceId: string, signal?: AbortSignal) {
 }
 
 // The backend answers 201 when the user was added and 200 when they were already a member.
-export async function addMember(workspaceId: string, userId: string) {
+export async function addMember(workspaceId: string, username: string) {
   const response = await fetch(`/api/workspaces/${encodeURIComponent(workspaceId)}/members`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId }),
+    body: JSON.stringify({ username }),
   })
 
   if (!response.ok) {

@@ -12,9 +12,6 @@ type PanelMessage = {
   text: string
 }
 
-// Checked before sending, so an obviously wrong paste gets a clear message instead of the backend's generic 400.
-const USER_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-
 function byDisplayName(a: Member, b: Member) {
   return a.displayName.localeCompare(b.displayName)
 }
@@ -25,7 +22,7 @@ function MembersPanel({ workspaceId }: MembersPanelProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [isOpen, setIsOpen] = useState(false)
-  const [draftId, setDraftId] = useState('')
+  const [draftUsername, setDraftUsername] = useState('')
   const [isAdding, setIsAdding] = useState(false)
   const [message, setMessage] = useState<PanelMessage | null>(null)
 
@@ -50,10 +47,10 @@ function MembersPanel({ workspaceId }: MembersPanelProps) {
 
   const handleAddMember = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const userId = draftId.trim()
+    const username = draftUsername.trim()
 
-    if (!USER_ID_PATTERN.test(userId)) {
-      setMessage({ kind: 'error', text: "That doesn't look like a user ID." })
+    if (!username) {
+      setMessage({ kind: 'error', text: 'Enter a username.' })
       return
     }
 
@@ -61,11 +58,11 @@ function MembersPanel({ workspaceId }: MembersPanelProps) {
     setMessage(null)
 
     try {
-      const { member, outcome } = await addMember(workspaceId, userId)
+      const { member, outcome } = await addMember(workspaceId, username)
 
       if (outcome === 'added') {
         setMembers((current) => [...current, member].sort(byDisplayName))
-        setDraftId('')
+        setDraftUsername('')
         setMessage({
           kind: 'success',
           text: `${member.displayName} was added. They'll see the workspace after refreshing.`,
@@ -113,14 +110,15 @@ function MembersPanel({ workspaceId }: MembersPanelProps) {
           )}
 
           <form className="members-panel__form" onSubmit={handleAddMember}>
-            <label htmlFor="memberUserId">Add a member by their user ID</label>
+            <label htmlFor="memberUsername">Add a member by their username</label>
             <div className="members-panel__row">
               <input
-                id="memberUserId"
+                id="memberUsername"
                 type="text"
-                value={draftId}
-                onChange={(event) => setDraftId(event.target.value)}
-                placeholder="Paste a user ID"
+                value={draftUsername}
+                onChange={(event) => setDraftUsername(event.target.value)}
+                placeholder="Username"
+                maxLength={32}
                 autoComplete="off"
                 spellCheck={false}
                 disabled={isAdding}
