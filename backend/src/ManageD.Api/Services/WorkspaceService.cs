@@ -77,7 +77,7 @@ public class WorkspaceService : IWorkspaceService
 
     public async Task<Result<MemberSummary>> AddMemberAsync(
         Guid workspaceId,
-        Guid userId,
+        string username,
         CancellationToken cancellationToken)
     {
         var workspace = await _dbContext.Workspaces.Include(w => w.Users).FirstOrDefaultAsync(w => w.Id == workspaceId, cancellationToken);
@@ -87,11 +87,13 @@ public class WorkspaceService : IWorkspaceService
             return Result<MemberSummary>.NotFound("Workspace not found.");
         }
 
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        // Same normalizing as login, so "Marius" and "marius" find the same user.
+        var normalizedUsername = UserService.Normalize(username);
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.NormalizedUsername == normalizedUsername, cancellationToken);
 
         if (user is null)
         {
-            return Result<MemberSummary>.NotFound("No user with that ID exists.");
+            return Result<MemberSummary>.NotFound("No user with that username exists.");
         }
 
         var member = new MemberSummary(user.Id, user.DisplayName);

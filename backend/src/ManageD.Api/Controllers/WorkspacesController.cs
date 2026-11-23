@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using ManageD.Api.Models;
 using ManageD.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,8 +17,10 @@ public class CreateWorkspaceRequest
 
 public class AddMemberRequest
 {
+    // Only length-checked, like login: an unknown username gets a 404 from the service.
     [Required]
-    public Guid? UserId { get; set; }
+    [MaxLength(User.UsernameMaxLength)]
+    public string Username { get; set; } = string.Empty;
 }
 
 [ApiController]
@@ -58,8 +61,7 @@ public class WorkspacesController : ApiControllerBase
     [HttpPost("{id}/members")]
     public async Task<IActionResult> AddMemberAsync(Guid id, AddMemberRequest request, CancellationToken cancellationToken)
     {
-        // [Required] rejects a missing UserId with a 400 before this runs, so it can't be null here.
-        return ToActionResult(await _workspaceService.AddMemberAsync(id, request.UserId!.Value, cancellationToken));
+        return ToActionResult(await _workspaceService.AddMemberAsync(id, request.Username, cancellationToken));
     }
 
     [HttpDelete("{id}")]
