@@ -68,9 +68,21 @@ public class WorkspaceHub : Hub
         }
     }
 
-    public async Task CreateAsset(Guid workspaceId, string title, TemplateType? templateType, string? presetName)
+    public Task CreateAsset(Guid workspaceId, string title, TemplateType? templateType, string? presetName)
+    {
+        return CreateAssetAt(workspaceId, title, templateType, presetName, null, null);
+    }
+
+    // SignalR matches hub methods by name and exact argument count (no optional parameters, no overloads),
+    // so the position can't be added to CreateAsset without breaking clients that still send four arguments.
+    public async Task CreateAssetAt(Guid workspaceId, string title, TemplateType? templateType, string? presetName, float? x, float? y)
     {
         EnsureJoined(workspaceId);
+
+        if (x is float xValue && !float.IsFinite(xValue) || y is float yValue && !float.IsFinite(yValue))
+        {
+            throw new InvalidRequestException("Asset coordinates must be finite numbers.");
+        }
 
         if (string.IsNullOrWhiteSpace(title))
         {
@@ -100,6 +112,8 @@ public class WorkspaceHub : Hub
             workspaceId,
             templateType ?? TemplateType.Todo,
             initialItems,
+            x ?? 0,
+            y ?? 0,
             Context.ConnectionAborted);
 
         await Clients.Group(GroupName(workspaceId)).SendAsync("AssetCreated", new AssetCreatedEvent(asset));

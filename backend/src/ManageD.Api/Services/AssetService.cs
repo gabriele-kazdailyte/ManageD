@@ -25,6 +25,8 @@ public class AssetService : IAssetService
         Guid workspaceId,
         TemplateType templateType = TemplateType.Todo,
         IReadOnlyList<string>? initialItems = null, // Only used by TemplateType.Todo
+        float x = 0,
+        float y = 0,
         CancellationToken cancellationToken = default)
     {
         if (!await WorkspaceExistsAsync(workspaceId, cancellationToken))
@@ -39,6 +41,8 @@ public class AssetService : IAssetService
             Title = title.Trim(),
             TemplateType = templateType,
             WorkspaceId = workspaceId,
+            X = x,
+            Y = y,
             CreatedAt = now,
             UpdatedAt = now,
 

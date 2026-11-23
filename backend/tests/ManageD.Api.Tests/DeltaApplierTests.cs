@@ -74,17 +74,125 @@ public class DeltaApplierTests
     }
 
     [Fact]
-    public void Canvas_position_must_be_finite_and_non_negative()
+    public void Canvas_position_can_be_negative()
+    {
+        var asset = AssetWith();
+
+        DeltaApplier.Apply(asset, new AssetDelta(null, null, null, X: -120, Y: -45.5f));
+
+        Assert.Equal(-120f, asset.X);
+        Assert.Equal(-45.5f, asset.Y);
+    }
+
+    [Fact]
+    public void Canvas_position_must_be_finite()
     {
         var asset = AssetWith();
 
         Assert.Throws<InvalidDeltaException>(() =>
-            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, X: -1)));
+            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, X: float.NaN)));
         Assert.Throws<InvalidDeltaException>(() =>
             DeltaApplier.Apply(asset, new AssetDelta(null, null, null, Y: float.PositiveInfinity)));
 
         Assert.Equal(0, asset.X);
         Assert.Equal(0, asset.Y);
+    }
+
+    [Fact]
+    public void Size_and_z_order_can_be_updated_and_are_echoed()
+    {
+        var asset = AssetWith();
+
+        var applied = DeltaApplier.Apply(asset, new AssetDelta(null, null, null, SizeX: 320f, SizeY: 200f, ZPos: 7));
+
+        Assert.Equal(320f, asset.SizeX);
+        Assert.Equal(200f, asset.SizeY);
+        Assert.Equal(7, asset.ZPos);
+        Assert.Equal(320f, applied.SizeX);
+        Assert.Equal(200f, applied.SizeY);
+        Assert.Equal(7, applied.ZPos);
+        Assert.False(applied.IsEmpty);
+    }
+
+    [Fact]
+    public void Each_layout_field_alone_makes_a_delta_non_empty()
+    {
+        Assert.False(new AssetDelta(null, null, null, SizeX: 200f).IsEmpty);
+        Assert.False(new AssetDelta(null, null, null, SizeY: 200f).IsEmpty);
+        Assert.False(new AssetDelta(null, null, null, ZPos: 0).IsEmpty);
+    }
+
+    [Fact]
+    public void Size_fields_change_independently_and_omitted_ones_stay()
+    {
+        var asset = AssetWith();
+        asset.SizeX = 300f;
+        asset.SizeY = 250f;
+        asset.ZPos = 3;
+
+        DeltaApplier.Apply(asset, new AssetDelta(null, null, null, SizeY: 400f));
+
+        Assert.Equal(300f, asset.SizeX);
+        Assert.Equal(400f, asset.SizeY);
+        Assert.Equal(3, asset.ZPos);
+    }
+
+    [Fact]
+    public void Size_zero_means_auto_and_the_range_edges_are_allowed()
+    {
+        var asset = AssetWith();
+
+        DeltaApplier.Apply(asset, new AssetDelta(null, null, null, SizeX: 160f, SizeY: 1200f));
+        Assert.Equal(160f, asset.SizeX);
+        Assert.Equal(1200f, asset.SizeY);
+
+        DeltaApplier.Apply(asset, new AssetDelta(null, null, null, SizeX: 0f, SizeY: 0f));
+        Assert.Equal(0f, asset.SizeX);
+        Assert.Equal(0f, asset.SizeY);
+    }
+
+    [Theory]
+    [InlineData(159.9f)]
+    [InlineData(1200.1f)]
+    [InlineData(-200f)]
+    [InlineData(float.NaN)]
+    [InlineData(float.PositiveInfinity)]
+    public void Size_outside_the_allowed_range_is_rejected(float size)
+    {
+        var asset = AssetWith();
+
+        Assert.Throws<InvalidDeltaException>(() =>
+            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, SizeX: size)));
+        Assert.Throws<InvalidDeltaException>(() =>
+            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, SizeY: size)));
+
+        Assert.Equal(0, asset.SizeX);
+        Assert.Equal(0, asset.SizeY);
+    }
+
+    [Fact]
+    public void A_rejected_size_leaves_the_rest_of_the_delta_unapplied()
+    {
+        var asset = AssetWith();
+
+        Assert.Throws<InvalidDeltaException>(() =>
+            DeltaApplier.Apply(asset, new AssetDelta(null, null, null, X: 50f, SizeX: 10f, ZPos: 4)));
+
+        Assert.Equal(0, asset.X);
+        Assert.Equal(0, asset.ZPos);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-5)]
+    [InlineData(int.MaxValue)]
+    public void Z_order_accepts_any_integer(int zPos)
+    {
+        var asset = AssetWith();
+
+        DeltaApplier.Apply(asset, new AssetDelta(null, null, null, ZPos: zPos));
+
+        Assert.Equal(zPos, asset.ZPos);
     }
 
     [Fact]

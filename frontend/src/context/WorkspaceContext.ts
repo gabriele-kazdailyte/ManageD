@@ -9,7 +9,13 @@ export type WorkspaceContextValue = {
   error: string | null
   connectionStatus: ConnectionStatus
   // The created asset arrives as an AssetCreated event, so these return nothing
-  createAsset: (title: string, presetName: string | null, templateType?: TemplateType) => Promise<void>
+  // An optional position places the card there (board coordinates); without one it is created at (0,0)
+  createAsset: (
+    title: string,
+    presetName: string | null,
+    templateType?: TemplateType,
+    position?: { x: number; y: number },
+  ) => Promise<void>
   deleteAsset: (assetId: string) => Promise<void>
   // Shows the change at once, then sends it. If the server rejects it, local state is reloaded from the server
   updateAsset: (assetId: string, delta: AssetDelta) => Promise<void>

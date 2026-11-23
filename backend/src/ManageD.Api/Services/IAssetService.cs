@@ -10,6 +10,8 @@ public interface IAssetService
         Guid workspaceId,
         TemplateType templateType = TemplateType.Todo,
         IReadOnlyList<string>? initialItems = null,
+        float x = 0,
+        float y = 0,
         CancellationToken cancellationToken = default);
 
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken);

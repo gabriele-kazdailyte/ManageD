@@ -9,6 +9,8 @@ public static class DeltaApplier
     public const int MaxTextLength = 200;
     public const int MaxTitleLength = 200;
     public const int MaxNoteContentLength = 5000;
+    public const float MinSize = 160;
+    public const float MaxSize = 1200;
 
     /// <summary>
     /// Applies the delta to the asset and returns what was really applied
@@ -21,7 +23,7 @@ public static class DeltaApplier
         var updated = delta.Updated ?? [];
         var deleted = delta.Deleted ?? [];
 
-        Validate(asset, added, updated, delta.Title, delta.X, delta.Y, delta.NoteContent);
+        Validate(asset, added, updated, delta.Title, delta.X, delta.Y, delta.NoteContent, delta.SizeX, delta.SizeY);
 
         // 1. Deletes first: an edit of an item deleted in the same delta is skipped
         var appliedDeleted = new List<Guid>();
@@ -123,6 +125,21 @@ public static class DeltaApplier
             asset.Y = delta.Y.Value;
         }
 
+        if (delta.SizeX is not null)
+        {
+            asset.SizeX = delta.SizeX.Value;
+        }
+
+        if (delta.SizeY is not null)
+        {
+            asset.SizeY = delta.SizeY.Value;
+        }
+
+        if (delta.ZPos is not null)
+        {
+            asset.ZPos = delta.ZPos.Value;
+        }
+
         var appliedNoteContent = delta.NoteContent;
         if (appliedNoteContent is not null)
         {
@@ -136,7 +153,10 @@ public static class DeltaApplier
             appliedTitle,
             delta.X,
             delta.Y,
-            appliedNoteContent);
+            appliedNoteContent,
+            delta.SizeX,
+            delta.SizeY,
+            delta.ZPos);
     }
 
     private static void Validate(
@@ -146,12 +166,17 @@ public static class DeltaApplier
         string? title,
         float? x,
         float? y,
-        string? noteContent)
+        string? noteContent,
+        float? sizeX,
+        float? sizeY)
     {
-        if (x is < 0 || y is < 0 || x is float xValue && !float.IsFinite(xValue) || y is float yValue && !float.IsFinite(yValue))
+        if (x is float xValue && !float.IsFinite(xValue) || y is float yValue && !float.IsFinite(yValue))
         {
-            throw new InvalidDeltaException("Asset coordinates must be finite and non-negative.");
+            throw new InvalidDeltaException("Asset coordinates must be finite numbers.");
         }
+
+        ValidateSize(sizeX, "width");
+        ValidateSize(sizeY, "height");
 
         if (asset.TemplateType == TemplateType.Note && (added.Count > 0 || updated.Count > 0))
         {
@@ -217,6 +242,15 @@ public static class DeltaApplier
             {
                 ValidateText(change.Text);
             }
+        }
+    }
+
+    // 0 means "auto size"; anything else must be a finite number within the allowed range
+    private static void ValidateSize(float? size, string name)
+    {
+        if (size is float value && value != 0 && !(float.IsFinite(value) && value >= MinSize && value <= MaxSize))
+        {
+            throw new InvalidDeltaException($"Asset {name} must be 0 (auto) or between {MinSize} and {MaxSize}.");
         }
     }
 

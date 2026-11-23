@@ -49,9 +49,9 @@ Exact request/response/payload shapes are in `api-contract.md` — this doc cove
 | `TemplateType` | enum | The kind of asset; only `Todo` in alpha. Decides how the card renders. |
 | `WorkspaceId` | uuid, ForeignKey→Workspace | The workspace it lives on. |
 | `Items` | one-to-many navigation | Its `TodoItem`s. |
-| `X`, `Y` | float | Canvas position. Stored now, unused in alpha. |
-| `SizeX`, `SizeY` | float | Canvas size. Stored now, unused in alpha. |
-| `ZPos` | int | Stacking order on the canvas. Stored now, unused in alpha. |
+| `X`, `Y` | float | Canvas position in pixels. Any finite number, negative included. Set by `CreateAssetAt` and changed through the delta. |
+| `SizeX`, `SizeY` | float | Canvas size in pixels. `0` means auto (the card sizes itself); otherwise 160–1200. Sent in snapshots and changed through the delta. |
+| `ZPos` | int | Stacking order on the canvas, higher is on top. Any integer. A new asset starts on top (highest in its workspace + 1). Sent in snapshots and changed through the delta. |
 | `CreatedAt`, `UpdatedAt` | datetime, UTC | Creation time; last content change. |
 
 There is no revision field. Concurrent changes are merged by delta, see Concurrency. The `Revision` column and `[ConcurrencyCheck]` that exist today are removed by a migration in the backend work.
@@ -118,6 +118,7 @@ One group per workspace. A connection joins a workspace and receives every chang
 | `JoinWorkspace(workspaceId, userId)` | Adds the connection to the workspace's group, registers presence, notifies the group, and returns the workspace's current state: every asset with its items, plus who is already viewing. The group is joined *before* the state is read, so no change can slip between the read and the first broadcast. |
 | `LeaveWorkspace(workspaceId)` | Removes the connection from the group and presence. |
 | `CreateAsset(workspaceId, title, templateType?, presetName?)` | Creates an asset. `templateType` defaults to `Todo`. If `presetName` names a server-defined preset, the asset is created with that template's items; otherwise it is empty. The client sends only the name, never item content, and an unknown name throws a `HubException`. Seeding happens only here — templates can't be applied to an existing asset. |
+| `CreateAssetAt(workspaceId, title, templateType?, presetName?, x?, y?)` | Same as `CreateAsset`, and the new asset is stored at `x`, `y`. A missing or `null` coordinate is 0; a non-finite one throws a `HubException`. SignalR matches hub methods by name and exact argument count, so this is a separate method: adding optional arguments to `CreateAsset` would break clients that still send four. |
 | `UpdateAsset(assetId, delta)` | Applies a delta to the asset's content, see below. |
 | `DeleteAsset(assetId)` | Deletes an asset. |
 
@@ -128,6 +129,9 @@ A delta holds only what changed. Every part is optional.
 | Part | Holds |
 |---|---|
 | `title` | The new title. |
+| `x`, `y` | New canvas position. Each can be sent alone. |
+| `sizeX`, `sizeY` | New canvas size. `0` means auto, otherwise 160–1200. Each can be sent alone. |
+| `zPos` | New stacking order. Any integer. |
 | `added` | New items: `id` (client-generated uuid), `text`, `isDone`, `order`. |
 | `updated` | Changed items: `id` plus any of `text`, `isDone`, `order`. A field left out is unchanged; a field present is set. |
 | `deleted` | Ids of items to remove. |
@@ -156,12 +160,30 @@ On disconnect — explicit `LeaveWorkspace`, or an ungraceful drop (tab closed, 
 
 ### Layout (beta)
 
-Not built in alpha; the columns exist (see Entities). Layout operations — `MoveAsset(assetId, x, y)`, with resize and z-order the same way — are last-write-wins:
+Position, size and z-order travel in the asset delta (`x`, `y`, `sizeX`, `sizeY`, `zPos`) and are last-write-wins. The original plan below, with separate `MoveAsset` / `AssetMoved` messages, was not built:
 
 - The client moves the card locally and calls the hub only on drop, never during the drag.
 - The server validates (asset exists, caller is in the workspace, values are sane) and saves.
 - On success the server broadcasts `AssetMoved(assetId, x, y)` to the whole group, including the sender. On failure it sends `AssetMoved` with the asset's current coordinates to the caller only. Either way the client shows the coordinates it receives.
 - Someone can drag a card another user is working on. That is accepted.
+
+### Frontend board
+
+The workspace board (`frontend/src/components/board/`) is built on React Flow (`@xyflow/react`). Each asset is a node (`todo` or `note`) drawn by `TodoAsset` / `StickyNoteAsset`; there are no edges. `boardModel.ts` maps assets to nodes: saved positions are used as-is (negative values are fine), and assets still at exactly (0,0) get a stable grid slot ranked by id. A drag sends `{ x, y }` (rounded; (0,0) is sent as (1,1) so the card isn't treated as unmoved) through `UpdateAsset` once, on release. Size and stacking come from the asset: `sizeX`/`sizeY` above 0 become the node's width and height (0 is auto: 260px wide, as tall as the content), and `zPos` becomes its `zIndex`.
+
+**Cards at (0,0).** New cards are always created with a position (dropped at the cursor, or at the center of the view for the toolbar's note button), and a new card that would land on exactly (0,0) is placed at (1,1). So (0,0) only comes from data created before this, or from a client that still calls `CreateAsset` without a position. Decision: keep the stable grid fallback for those, so old boards still open as a tidy grid instead of a stack at the origin, and keep the (0,0) → (1,1) rule on moves and new cards. The rule is what makes the fallback safe: without it, a card the user drags to exactly (0,0) would jump back to a grid slot. If old data is ever migrated (or confirmed gone), both can be removed together.
+
+Interactions:
+
+- **Pan:** mouse wheel or trackpad scroll; or hold Space and drag, or drag with the middle mouse button.
+- **Zoom:** Ctrl (or Cmd) + wheel, trackpad pinch, or the zoom controls (zoom range 15%–300%; a minimap and a fit-view button are also shown).
+- **Select:** click a card, Shift-click (or Ctrl/Cmd-click) to add to the selection, or drag on the empty background to marquee-select. Selected cards move together.
+- **Move:** drag a card by its header. The new position is sent once, when you release.
+- **Create:** drag a card from the sidebar onto the board and it lands under the cursor; the toolbar's Sticky Note button puts the note at the center of the current view.
+- **Stack:** grabbing or clicking a card brings it above the others (`zPos` = highest + 1, sent only if it isn't already on top).
+- **Resize:** a selected card shows resize handles (minimum 200×120, maximum 1200). The size (and the position, if a top or left edge moved) is sent once, when you release. A resized card scrolls its content inside; cards never resized look as before.
+- **Delete:** with one card selected, press Delete or Backspace to open the delete confirmation (Backspace inside a text field only edits text).
+- The view (pan and zoom) is remembered per workspace in the browser (`board-viewport:<workspaceId>`).
 
 ## Service Layer
 

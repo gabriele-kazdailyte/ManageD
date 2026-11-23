@@ -1,13 +1,16 @@
-import { useCallback, useEffect, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import Layout from './components/Layout'
 import { getUser } from './api/users'
 import { UserContext, clearStoredIdentity, persistIdentity, readStoredIdentity, toIdentity, type UserIdentity } from './context/UserContext'
 import LoginPage from './pages/LoginPage'
-import WorkspacePage from './pages/WorkspacePage'
 import WorkspacesPage from './pages/WorkspacesPage'
 import { WorkspaceListProvider } from './context/WorkspaceListContext'
 import './App.css'
+
+// The workspace page pulls in React Flow, the largest dependency. Loading it on demand keeps the login page and
+// the workspace list light.
+const WorkspacePage = lazy(() => import('./pages/WorkspacePage'))
 
 function App() {
   const [identity, setIdentity] = useState<UserIdentity | null>(() => readStoredIdentity())
@@ -67,7 +70,14 @@ function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<WorkspacesPage />} />
-            <Route path="/workspaces/:workspaceId" element={<WorkspacePage />} />
+            <Route
+              path="/workspaces/:workspaceId"
+              element={
+                <Suspense fallback={null}>
+                  <WorkspacePage />
+                </Suspense>
+              }
+            />
           </Route>
         </Routes>
       </WorkspaceListProvider>

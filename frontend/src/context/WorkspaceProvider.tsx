@@ -107,14 +107,23 @@ export function WorkspaceProvider({ workspaceId, children }: WorkspaceProviderPr
   }, [workspaceId, identity.userId])
 
   const createAsset = useCallback(
-    async (title: string, presetName: string | null, templateType: TemplateType = 'Todo') => {
+    async (
+      title: string,
+      presetName: string | null,
+      templateType: TemplateType = 'Todo',
+      position?: { x: number; y: number },
+    ) => {
       const connection = connectionRef.current
       if (!connection || connection.state !== HubConnectionState.Connected) {
         throw new Error('Not connected to the server.')
       }
 
       try {
-        await connection.invoke('CreateAsset', workspaceId, title, templateType, presetName)
+        if (position) {
+          await connection.invoke('CreateAssetAt', workspaceId, title, templateType, presetName, position.x, position.y)
+        } else {
+          await connection.invoke('CreateAsset', workspaceId, title, templateType, presetName)
+        }
       } catch (invokeError) {
         throw new Error(hubErrorMessage(invokeError, 'Could not create the asset.'), { cause: invokeError })
       }

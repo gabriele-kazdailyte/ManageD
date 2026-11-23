@@ -100,4 +100,26 @@ public class AssetServiceTests : IDisposable
         await Assert.ThrowsAsync<WorkspaceNotFoundException>(() =>
             service.CreateAsync("t", Guid.NewGuid(), cancellationToken: CancellationToken.None));
     }
+
+    [Fact]
+    public async Task New_assets_are_created_on_top_of_their_workspace()
+    {
+        var context = _db.CreateContext();
+        var workspace = new Workspace { Id = Guid.NewGuid(), Name = "w", CreatedAt = DateTime.UtcNow };
+        var other = new Workspace { Id = Guid.NewGuid(), Name = "o", CreatedAt = DateTime.UtcNow };
+        context.Workspaces.AddRange(workspace, other);
+        await context.SaveChangesAsync();
+        var service = new AssetService(context, new EfAssetStore(context));
+
+        var first = await service.CreateAsync("a", workspace.Id, cancellationToken: CancellationToken.None);
+        var second = await service.CreateAsync("b", workspace.Id, cancellationToken: CancellationToken.None);
+        await service.ApplyDeltaAsync(first.Id, new AssetDelta(null, null, null, ZPos: 7), CancellationToken.None);
+        var third = await service.CreateAsync("c", workspace.Id, cancellationToken: CancellationToken.None);
+        var elsewhere = await service.CreateAsync("d", other.Id, cancellationToken: CancellationToken.None);
+
+        Assert.Equal(0, first.ZPos);
+        Assert.Equal(1, second.ZPos);
+        Assert.Equal(8, third.ZPos);
+        Assert.Equal(0, elsewhere.ZPos);
+    }
 }

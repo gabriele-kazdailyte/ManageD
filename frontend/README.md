@@ -1,5 +1,18 @@
 # React + TypeScript + Vite
 
+## Board
+
+The workspace board uses React Flow (`@xyflow/react`) in `src/components/board/`. Interactions:
+
+- **Pan:** mouse wheel or trackpad scroll; or hold Space and drag, or drag with the middle mouse button.
+- **Zoom:** Ctrl (or Cmd) + wheel, trackpad pinch, or the zoom controls (zoom range 15%–300%; a minimap and a fit-view button are also shown).
+- **Select:** click a card, Shift-click (or Ctrl/Cmd-click) to add to the selection, or drag on the empty background to marquee-select. Selected cards move together.
+- **Move:** drag a card by its header. The new position is sent once, when you release.
+- **Delete:** with one card selected, press Delete or Backspace to open the delete confirmation (Backspace inside a text field only edits text).
+- The view (pan and zoom) is remembered per workspace in the browser (`board-viewport:<workspaceId>`).
+
+Run the tests with `npm test` (Vitest + jsdom).
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

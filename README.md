@@ -118,6 +118,40 @@ Frontend runs on `localhost:5173`. The proxy in `frontend/vite.config.ts`
 forwards `/api/*` requests to the .NET backend on `http://localhost:5093`,
 as configured by the backend's HTTP launch profile.
 
+### Tests and Coverage Report
+
+Run from the repository root. Each command works unchanged in PowerShell, cmd and bash.
+
+1. Restore the report tool, once per machine:
+
+   ```bash
+   dotnet tool restore
+   ```
+
+2. Run the backend tests with coverage:
+
+   ```bash
+   dotnet test backend/ManageD.slnx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=../../../coverage/backend/
+   ```
+
+3. Run the frontend tests with coverage. Run `npm install` in `frontend/` first if you haven't.
+
+   ```bash
+   npm --prefix frontend run test:coverage
+   ```
+
+4. Merge both into one report:
+
+   ```bash
+   dotnet reportgenerator "-reports:coverage/backend/coverage.cobertura.xml;frontend/coverage/cobertura-coverage.xml" "-targetdir:coverage/report" "-classfilters:-*Migrations*;-Microsoft.AspNetCore.OpenApi.Generated*;-System.Runtime.CompilerServices*" "-reporttypes:Html;TextSummary"
+   ```
+
+Open `coverage/report/index.html` in a browser. `coverage/report/Summary.txt` has the same numbers as text.
+
+- **Excluded:** migrations, generated OpenAPI code, compiler-generated classes, and frontend test files.
+- **One side only:** if you skip step 2 or 3, the report contains just the other side.
+- The `coverage/` folders are ignored by git.
+
 
 ## Coding Standards
 

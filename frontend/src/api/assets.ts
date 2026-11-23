@@ -16,6 +16,11 @@ export type AssetSnapshot = {
   templateType: TemplateType
   x: number
   y: number
+  // Card size in pixels; 0 means auto (the card sizes itself). Otherwise 160 to 1200.
+  sizeX: number
+  sizeY: number
+  // Stacking order, higher is on top
+  zPos: number
   items: TodoItem[]
   noteContent: string
 }
@@ -35,6 +40,9 @@ export type AssetDelta = {
   title?: string | null
   x?: number | null
   y?: number | null
+  sizeX?: number | null
+  sizeY?: number | null
+  zPos?: number | null
   noteContent?: string | null
   added?: TodoItem[]
   updated?: TodoItemChange[]

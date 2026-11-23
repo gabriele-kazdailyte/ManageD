@@ -1,5 +1,7 @@
 .sticky-note {
-  width: 260px;
+  /* Fills its board node: 260px wide and at least 220px tall unless the card was resized. */
+  width: 100%;
+  height: 100%;
   min-height: 220px;
   padding: 14px 16px;
   box-sizing: border-box;
@@ -13,8 +15,7 @@
 
 .sticky-note__header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
   gap: 8px;
   margin-bottom: 8px;
 }
@@ -28,6 +29,8 @@
 }
 
 .sticky-note__mode {
+  /* Pushes Edit and × to the right edge, together. */
+  margin-left: auto;
   flex-shrink: 0;
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -133,4 +136,24 @@
   font-size: 12px;
   color: var(--text);
   text-align: right;
+}
+
+/* A resized card: the content scrolls inside it instead of growing it. */
+.asset-node--sized .sticky-note {
+  min-height: 0;
+}
+
+.asset-node--sized .sticky-note__content,
+.asset-node--sized .sticky-note__preview {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.asset-node--sized .sticky-note__content {
+  resize: none;
+}
+
+.asset-node--sized .sticky-note__header,
+.asset-node--sized .sticky-note__status {
+  flex-shrink: 0;
 }
