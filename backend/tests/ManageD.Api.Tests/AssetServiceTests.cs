@@ -33,6 +33,7 @@ public class AssetServiceTests : IDisposable
         public Task<bool> RemoveAsync(Guid id, CancellationToken ct) => _inner.RemoveAsync(id, ct);
         public Task<Asset?> GetForUpdateAsync(Guid id, CancellationToken ct) => _inner.GetForUpdateAsync(id, ct);
         public Task<Guid?> GetWorkspaceIdAsync(Guid id, CancellationToken ct) => _inner.GetWorkspaceIdAsync(id, ct);
+        public Task<bool> WorkspaceExistsAsync(Guid id, CancellationToken ct) => _inner.WorkspaceExistsAsync(id, ct);
 
         public Task SaveAsync(Asset asset, CancellationToken ct)
         {
@@ -56,7 +57,7 @@ public class AssetServiceTests : IDisposable
         await context.SaveChangesAsync();
 
         var store = new FlakyStore(new EfAssetStore(context), context, failures);
-        var service = new AssetService(context, store);
+        var service = new AssetService(store);
         var created = await service.CreateAsync("t", workspace.Id, cancellationToken: CancellationToken.None);
         return (service, store, created.Id);
     }
@@ -109,7 +110,7 @@ public class AssetServiceTests : IDisposable
         var other = new Workspace { Id = Guid.NewGuid(), Name = "o", CreatedAt = DateTime.UtcNow };
         context.Workspaces.AddRange(workspace, other);
         await context.SaveChangesAsync();
-        var service = new AssetService(context, new EfAssetStore(context));
+        var service = new AssetService(new EfAssetStore(context));
 
         var first = await service.CreateAsync("a", workspace.Id, cancellationToken: CancellationToken.None);
         var second = await service.CreateAsync("b", workspace.Id, cancellationToken: CancellationToken.None);

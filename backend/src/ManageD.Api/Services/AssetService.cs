@@ -1,8 +1,6 @@
 using ManageD.Api.Common;
-using ManageD.Api.Data;
 using ManageD.Api.Dtos;
 using ManageD.Api.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace ManageD.Api.Services;
 
@@ -10,12 +8,10 @@ public class AssetService : IAssetService
 {
     private const int MaxSaveAttempts = 2;
 
-    private readonly ManageDDbContext _dbContext;
     private readonly IAssetStore _store;
 
-    public AssetService(ManageDDbContext dbContext, IAssetStore store)
+    public AssetService(IAssetStore store)
     {
-        _dbContext = dbContext;
         _store = store;
     }
 
@@ -29,7 +25,7 @@ public class AssetService : IAssetService
         float y = 0,
         CancellationToken cancellationToken = default)
     {
-        if (!await WorkspaceExistsAsync(workspaceId, cancellationToken))
+        if (!await _store.WorkspaceExistsAsync(workspaceId, cancellationToken))
         {
             throw new WorkspaceNotFoundException(workspaceId);
         }
@@ -96,11 +92,6 @@ public class AssetService : IAssetService
                 // The store dropped its stale copy, the next loop iteration reloads fresh data and re-applies.
             }
         }
-    }
-
-    private Task<bool> WorkspaceExistsAsync(Guid workspaceId, CancellationToken cancellationToken)
-    {
-        return _dbContext.Workspaces.AnyAsync(workspace => workspace.Id == workspaceId, cancellationToken);
     }
 
     private static List<TodoItem> BuildItems(IReadOnlyList<string>? texts)
