@@ -6,6 +6,8 @@ public class User
     public const int UsernameMaxLength = 32;
     public const int DisplayNameMaxLength = 32;
 
+    public static string NormalizeUsername(string username) => username.Trim().ToLowerInvariant();
+
     public Guid Id { get; set; }
 
     // The name used to log in, kept with the capitals it was registered with.

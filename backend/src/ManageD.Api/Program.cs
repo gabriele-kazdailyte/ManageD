@@ -28,7 +28,7 @@ builder.Services.AddScoped<IWorkspaceService, WorkspaceService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddAuthRateLimits(builder.Configuration);
-builder.Services.AddSingleton<PresetCatalog>();
+builder.Services.AddSingleton<IPresetCatalog, PresetCatalog>();
 builder.Services.AddSingleton<IAssetLocks, AssetLocks>();
 
 builder.Services.AddSignalR(options => options.AddFilter<DomainExceptionHubFilter>())

@@ -38,23 +38,39 @@ The working skeleton: real profiles, shared workspaces, and persisted to-do list
 **Persistence**
 - Users, workspaces, members, and to-do lists (with their items) are stored in SQLite via EF Core, so everything survives a backend restart.
 
-**Not in the alpha yet** (planned for Beta): live multi-user editing and presence via the SignalR hub, editing list items (add / check off / reorder), and conflict resolution. For now, a list's items are seeded at creation and shown read-only.
-
 ### Beta Version
-Building on the stable core: presence, automation, and history.
+Building on the stable core: live collaboration, richer cards, and a real board.
 
-- **Accounts** *(done)*: create an account with a username, display name and password, log in from any browser, and log out. Usernames are unique regardless of capitals; passwords are stored only as salted hashes, and login and sign-up are rate limited. The profile button at the bottom of the sidebar shows your display name, `@username` and user ID (with a *Copy ID* button), and has *Log out*.
-- **Add members by username** *(done)*: in a workspace's *Members* panel, type a teammate's username to add them; capitals don't matter. No more copying user IDs around.
-- **Presence indicators**: see who else is currently viewing or editing the sheet, and where.
-- **Recurring tasks**: tasks that regenerate on a schedule (weekly, custom), handled by a background service.
-- **Automatic status transitions**: tasks flip states (e.g. to overdue) automatically based on due dates, without manual intervention.
-- **Activity feed / audit log**: a full, immutable history of every change: who did what, when, and what changed.
+**Live collaboration**
+- **Real-time sync**: everyone in a workspace sees cards being created, edited, moved and deleted as it happens.
+- **Presence**: an *Online* list shows who else has the workspace open. If the connection drops, a banner says so, and the app reconnects and reloads the workspace on its own.
+- **Conflict resolution**: edits made at the same time are merged field by field. Edits to different fields both survive, the last write wins on the same field, and deleting an item beats editing it. The server handles changes to one card one at a time, so none get lost.
+
+**Cards**
+- **Editable to-do lists**: add, rename, check off, remove and reorder items (drag an item's handle, or focus it and press ↑ / ↓).
+- **Deadlines & calendar**: give an item a due date. A coloured dot shows whether it was done on time, done late, is overdue, or is still pending, and a *Calendar* view shows every deadline by month.
+- **Sticky notes**: Markdown notes with an *Edit* / *Preview* toggle. The text saves by itself shortly after you stop typing.
+
+**Board**
+- **Infinite board**: pan by dragging the background or scrolling; zoom with Ctrl/Cmd + wheel, a trackpad pinch, Ctrl/Cmd + `=` / `-` / `0`, or the zoom buttons. Shift + 1 fits all cards in view. A minimap is shown, and the board remembers view per workspace.
+- **Layout**: move a card by its title bar, and select it to resize it from its edges, the card grabbed comes to the front. New cards appear where they are dropped. Positions, sizes and stacking order are shared with everyone.
+- **Selection**: Shift-drag on the background to select several cards, or Shift/Ctrl-click to add one. Selected cards move together. With one card selected, Delete or Backspace opens the delete confirmation.
+
+**Accounts & members**
+- **Accounts**: create an account with a username, display name and password, log in from any browser, and log out. Usernames are unique regardless of capitals, passwords are stored only as salted hashes, and login and sign-up are rate limited. The profile button at the bottom of the sidebar shows display name, `@username` and user ID (with a *Copy ID* button), and has *Log out*.
+- **Add members by username**: in a workspace's *Members* panel, type a teammate's username to add them, capitals don't matter. No more copying user IDs around.
+
+**Not in Beta** (moved to the Final version): recurring tasks, an activity feed / audit log, showing *where* in the sheet other people are working, and a background service that changes task statuses by itself. For now, whether an item is overdue is worked out when it is shown.
 
 ### Final Version
 Tying the system together and extending it beyond the app itself.
 
 - **Notifications**: a background service that watches for due dates and mentions, and delivers in-app or email alerts.
 - **Import / export**: bring data in or take it out via CSV, Excel, or JSON.
+- **Recurring tasks**: tasks that regenerate on a schedule (weekly, custom), handled by a background service.
+- **Automatic status transitions**: tasks flip states (e.g. to overdue) on their own, based on due dates.
+- **Activity feed / audit log**: a full, immutable history of every change: who did what, when, and what changed.
+- **Presence locations**: see *where* in the sheet other people are viewing or editing, not just that they're online.
 
 ## Getting Started
 

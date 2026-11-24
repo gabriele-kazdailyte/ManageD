@@ -113,4 +113,9 @@ public class EfAssetStore : IAssetStore
             .Select(a => (Guid?)a.WorkspaceId)
             .FirstOrDefaultAsync(cancellationToken);
     }
+
+    public Task<bool> WorkspaceExistsAsync(Guid workspaceId, CancellationToken cancellationToken)
+    {
+        return _dbContext.Workspaces.AnyAsync(workspace => workspace.Id == workspaceId, cancellationToken);
+    }
 }

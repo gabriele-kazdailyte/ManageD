@@ -7,9 +7,9 @@ namespace ManageD.Api.Controllers;
 [Route("api/assets")]
 public class AssetsController : ControllerBase
 {
-    private readonly PresetCatalog _presetCatalog;
+    private readonly IPresetCatalog _presetCatalog;
 
-    public AssetsController(PresetCatalog presetCatalog)
+    public AssetsController(IPresetCatalog presetCatalog)
     {
         _presetCatalog = presetCatalog;
     }

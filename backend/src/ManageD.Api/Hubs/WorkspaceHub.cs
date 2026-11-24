@@ -13,7 +13,7 @@ public class WorkspaceHub : Hub
     private readonly IAssetService _assetService;
     private readonly IPresenceService _presenceService;
     private readonly IAssetLocks _locks;
-    private readonly PresetCatalog _presets;
+    private readonly IPresetCatalog _presets;
 
     public WorkspaceHub(
         IWorkspaceService workspaceService,
@@ -21,7 +21,7 @@ public class WorkspaceHub : Hub
         IAssetService assetService,
         IPresenceService presenceService,
         IAssetLocks locks,
-        PresetCatalog presets)
+        IPresetCatalog presets)
     {
         _workspaceService = workspaceService;
         _userService = userService;

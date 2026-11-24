@@ -19,4 +19,6 @@ public interface IAssetStore
     Task SaveAsync(Asset asset, CancellationToken cancellationToken);
 
     Task<Guid?> GetWorkspaceIdAsync(Guid assetId, CancellationToken cancellationToken);
+
+    Task<bool> WorkspaceExistsAsync(Guid workspaceId, CancellationToken cancellationToken);
 }
