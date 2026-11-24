@@ -92,7 +92,7 @@ There is no revision field. Concurrent changes are merged by delta, see Concurre
 |---|---|
 | `POST /api/workspaces` | Creates a workspace and adds the creator as its first member. |
 | `GET /api/workspaces?userId=` | Lists workspaces the given user is a member of. `userId` is required. |
-| `POST /api/workspaces/{id}/members` | Adds a user to the workspace. No permission check — any caller naming a `userId` can add it, consistent with alpha having no real auth. |
+| `POST /api/workspaces/{id}/members` | Adds a user to the workspace, looked up by `username` (case-insensitive). No permission check — any caller can add any existing username, consistent with alpha having no real auth. |
 | `DELETE /api/workspaces/{id}` | Deletes a workspace. |
 
 ### AssetsController — `/api/assets`

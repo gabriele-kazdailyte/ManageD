@@ -28,7 +28,7 @@ The working skeleton: real profiles, shared workspaces, and persisted to-do list
 **Identity & workspaces**
 - **Profiles (no auth yet)**: create a profile from a display name and the identity is remembered on the device. Share your user ID with the sidebar's *Copy my ID* so teammates can add you. *(Replaced in Beta by accounts with a password, see below.)*
 - **Workspaces**: create a workspace, see the ones you belong to, open one as a canvas, and delete it (with a confirmation dialog).
-- **Members**: view a workspace's members and add people by their user ID.
+- **Members**: view a workspace's members and add people by their user ID. *(Changed in Beta to adding by username, see below.)*
 
 **Canvas & to-do lists**
 - **Drag-to-create**: drag a *Todo* block from the toolbar onto a workspace canvas to create a to-do list.
@@ -43,7 +43,8 @@ The working skeleton: real profiles, shared workspaces, and persisted to-do list
 ### Beta Version
 Building on the stable core: presence, automation, and history.
 
-- **Accounts** *(done)*: create an account with a username, display name and password, log in from any browser, and log out. Usernames are unique regardless of capitals; passwords are stored only as salted hashes, and login and sign-up are rate limited. The profile button at the bottom of the sidebar shows your display name, `@username` and user ID (with a *Copy ID* button, so teammates can add you), and has *Log out*.
+- **Accounts** *(done)*: create an account with a username, display name and password, log in from any browser, and log out. Usernames are unique regardless of capitals; passwords are stored only as salted hashes, and login and sign-up are rate limited. The profile button at the bottom of the sidebar shows your display name, `@username` and user ID (with a *Copy ID* button), and has *Log out*.
+- **Add members by username** *(done)*: in a workspace's *Members* panel, type a teammate's username to add them; capitals don't matter. No more copying user IDs around.
 - **Presence indicators**: see who else is currently viewing or editing the sheet, and where.
 - **Recurring tasks**: tasks that regenerate on a schedule (weekly, custom), handled by a background service.
 - **Automatic status transitions**: tasks flip states (e.g. to overdue) automatically based on due dates, without manual intervention.

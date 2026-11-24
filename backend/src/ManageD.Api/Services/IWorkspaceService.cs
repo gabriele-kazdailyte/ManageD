@@ -16,7 +16,7 @@ public interface IWorkspaceService
 
     Task<Result<MemberSummary>> AddMemberAsync(
         Guid workspaceId,
-        Guid userId,
+        string username,
         CancellationToken cancellationToken);
 
     Task<bool> DeleteAsync(Guid workspaceId, CancellationToken cancellationToken);

@@ -83,18 +83,20 @@ Response `200`:
 
 ### `POST /api/workspaces/{id}/members`
 
-Adds a user to the workspace by id. Adding someone who is already a member is not an error, so the same request can safely be sent twice.
+Adds a user to the workspace by username. The lookup ignores capitals and surrounding spaces, like login. Adding someone who is already a member is not an error, so the same request can safely be sent twice.
 
 Request:
 ```json
-{ "userId": "uuid" }
+{ "username": "string" }
 ```
+`username` is required and at most 32 characters, otherwise `400`.
+
 Response `201` (the user was added) or `200` (the user was already a member):
 ```json
 { "id": "uuid", "displayName": "string" }
 ```
 
-A missing workspace or user is a `404` with a `detail` message saying which one (`"Workspace not found."` / `"No user with that ID exists."`), see Errors.
+A missing workspace or user is a `404` with a `detail` message saying which one (`"Workspace not found."` / `"No user with that username exists."`), see Errors.
 
 ### `DELETE /api/workspaces/{id}`
 

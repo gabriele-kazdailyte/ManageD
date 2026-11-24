@@ -90,9 +90,12 @@ public sealed class ManageDFactory : WebApplicationFactory<Program>
         return workspace!.Id;
     }
 
+    // Members are added by username, so look it up from the id the other helpers return.
     public async Task AddMemberAsync(Guid workspaceId, Guid userId)
     {
-        var response = await CreateClient().PostAsJsonAsync($"/api/workspaces/{workspaceId}/members", new { userId });
+        var client = CreateClient();
+        var user = await client.GetFromJsonAsync<UserSummary>($"/api/users/{userId}");
+        var response = await client.PostAsJsonAsync($"/api/workspaces/{workspaceId}/members", new { username = user!.Username });
         response.EnsureSuccessStatusCode();
     }
 }
