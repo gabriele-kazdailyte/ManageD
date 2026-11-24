@@ -4,7 +4,7 @@ using ManageD.Api.Models;
 
 namespace ManageD.Api.Services;
 
-public class PresetCatalog
+public class PresetCatalog : IPresetCatalog
 {
     private const int MaxTextLength = 200;
 
