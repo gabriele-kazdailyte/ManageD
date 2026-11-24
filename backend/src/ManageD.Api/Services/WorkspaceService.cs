@@ -88,7 +88,7 @@ public class WorkspaceService : IWorkspaceService
         }
 
         // Same normalizing as login, so "Marius" and "marius" find the same user.
-        var normalizedUsername = UserService.Normalize(username);
+        var normalizedUsername = User.NormalizeUsername(username);
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.NormalizedUsername == normalizedUsername, cancellationToken);
 
         if (user is null)

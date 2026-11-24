@@ -29,12 +29,10 @@ public class UserService : IUserService
             () => passwordHasher.HashPassword(new User(), Guid.NewGuid().ToString()));
     }
 
-    public static string Normalize(string username) => username.Trim().ToLowerInvariant();
-
     public async Task<Result<UserSummary>> RegisterAsync(string username, string password, string displayName, CancellationToken cancellationToken)
     {
         var trimmedUsername = username.Trim();
-        var normalizedUsername = Normalize(trimmedUsername);
+        var normalizedUsername = User.NormalizeUsername(trimmedUsername);
 
         if (await _dbContext.Users.AnyAsync(u => u.NormalizedUsername == normalizedUsername, cancellationToken))
         {
@@ -69,7 +67,7 @@ public class UserService : IUserService
 
     public async Task<Result<UserSummary>> LoginAsync(string username, string password, CancellationToken cancellationToken)
     {
-        var normalizedUsername = Normalize(username);
+        var normalizedUsername = User.NormalizeUsername(username);
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.NormalizedUsername == normalizedUsername, cancellationToken);
 
         if (user is null)
