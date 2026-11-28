@@ -1,6 +1,5 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
-using ManageD.Api.Data;
 using ManageD.Api.Dtos;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Connections;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace ManageD.Api.Tests;
 
@@ -31,16 +29,6 @@ public sealed class ManageDFactory : WebApplicationFactory<Program>
         // Every test request comes from the same address, so the normal per-IP limits would trip across tests.
         builder.UseSetting("RateLimits:Login:PermitLimit", "10000");
         builder.UseSetting("RateLimits:Register:PermitLimit", "10000");
-    }
-
-    protected override IHost CreateHost(IHostBuilder builder)
-    {
-        var host = base.CreateHost(builder);
-
-        using var scope = host.Services.CreateScope();
-        scope.ServiceProvider.GetRequiredService<ManageDDbContext>().Database.EnsureCreated();
-
-        return host;
     }
 
     protected override void Dispose(bool disposing)

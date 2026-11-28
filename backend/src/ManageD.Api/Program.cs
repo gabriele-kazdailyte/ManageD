@@ -47,6 +47,11 @@ builder.Services.AddSingleton<IPresenceService, PresenceService>();
 
 var app = builder.Build();
 
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ManageDDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -60,6 +65,6 @@ app.UseRateLimiter();
 app.MapControllers();
 app.MapHub<WorkspaceHub>("/hubs/workspace");
 
-app.Run();
+await app.RunAsync();
 
 public partial class Program { }
