@@ -93,27 +93,22 @@ The backend uses SQLite through EF Core. The database file (`manageD.db`) is cre
 
 **First-time setup** (once per machine):
 
-```bash
-dotnet tool install --global dotnet-ef
-cd backend/src/ManageD.Api
-dotnet ef database update
-```
-
-This creates `manageD.db` and applies every migration in `Migrations/`. Run `dotnet ef database update` again after pulling any change that adds a migration.
+The backend applies all migrations automatically when it starts, so a fresh clone creates `manageD.db` on the first `dotnet run`, and pulled migrations are applied on the next start.
 
 **Changing the data model** (add or edit an entity or property):
 
 ```bash
 cd backend/src/ManageD.Api
 dotnet ef migrations add DescribeTheChange
-dotnet ef database update
 ```
+
+`dotnet-ef` (`dotnet tool install --global dotnet-ef`) is only needed for creating migrations.
 
 Commit the generated files in `Migrations/` together with the code change. Never edit a migration that is already merged to `main`; add a new one instead.
 
 **Accounts from before login existed** keep a placeholder username and no password after the `AddUserLogin` migration, so they can't log in. Create a new account, or delete the database files (below) to start clean.
 
-**If `database update` fails** with a "table already exists" error, your local database is out of sync with the migration history. Delete `manageD.db`, `manageD.db-shm` and `manageD.db-wal` from `backend/src/ManageD.Api/`, then run `dotnet ef database update` again. Deleting is fine during development because the database holds no real data.
+**If the backend fails to start** with a "table already exists" error, your local database is out of sync with the migration history. Stop the backend, delete `manageD.db`, `manageD.db-shm` and `manageD.db-wal` from `backend/src/ManageD.Api/`, then start the backend again. It rebuilds the database from the migrations. Deleting is fine during development because the database holds no real data.
 
 ### Running
 
